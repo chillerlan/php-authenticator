@@ -87,6 +87,8 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 
 	public function testVerifyCode(){
 		$this->assertEquals(true, Authenticator::verifyCode(Authenticator::getCode($this->secret), $this->secret));
+		$this->assertEquals(false, Authenticator::verifyCode(Authenticator::getCode($this->secret), 'SECRETTEST234567'));
+		$this->assertEquals(false, Authenticator::verifyCode('123456', $this->secret));
 	}
 
 	public function testVerifyCodeWithTimeslice(){
