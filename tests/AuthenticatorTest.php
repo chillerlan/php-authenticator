@@ -135,9 +135,17 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 			'issuer' => $issuer,
 		];
 
-		$expected = 'otpauth://totp/'.$label.'?'.http_build_query($values);
+		$expected = 'otpauth://totp/'.$label.'?';
+		$this->assertEquals($expected.http_build_query($values), Authenticator::getUri($this->secret, $label, $issuer));
 
-		$this->assertEquals($expected, Authenticator::getUri($this->secret, $label, $issuer));
+		Authenticator::setDigits(8);
+		$values['digits'] = Authenticator::$digits;
+		$this->assertEquals($expected.http_build_query($values), Authenticator::getUri($this->secret, $label, $issuer));
+
+		Authenticator::setPeriod(45);
+		$values['period'] = Authenticator::$period;
+		$this->assertEquals($expected.http_build_query($values), Authenticator::getUri($this->secret, $label, $issuer));
+
 	}
 
 	/*
