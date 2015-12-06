@@ -13,6 +13,17 @@ use chillerlan\GoogleAuth\Authenticator;
 
 class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 
+	protected $secret;
+
+	protected function setUp(){
+		$this->secret = Authenticator::createSecret();
+	}
+
+	protected function tearDown(){
+		Authenticator::setDigits(6);
+		Authenticator::setPeriod(30);
+	}
+
 	/*
 	 * Authenticator::setDigits()
 	 */
@@ -40,49 +51,112 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 	 */
 
 	public function testCreateSecretDefaultLength(){
-		$secret = Authenticator::createSecret();
-		$this->assertEquals(16, strlen($secret));
+		$this->assertEquals(16, strlen(Authenticator::createSecret()));
 	}
 
 	public function testCreateSecretWithLength(){
-		for ($secretLength = 1; $secretLength <= 100; $secretLength++) {
-			$secret = Authenticator::createSecret($secretLength);
-			$this->assertEquals($secretLength, strlen($secret));
+		for($secretLength = 1; $secretLength <= 100; $secretLength++){
+			$this->assertEquals($secretLength, strlen(Authenticator::createSecret($secretLength)));
 		}
+	}
+
+	/*
+	 * Authenticator::getCode()
+	 */
+
+	public function codeProvider(){
+		// secret, time, code
+		return [
+			['SECRETTEST234567',          0, '730741'],
+			['SECRETTEST234567', 1385909245, '040137'],
+			['SECRETTEST234567', 1378934578, '341779'],
+			['SECRETTEST234567', 1449438863, '889844'],
+		];
+	}
+
+	/**
+	 * @dataProvider codeProvider
+	 */
+	public function testGetCode($secret, $timestamp, $code){
+		$this->assertEquals($code, Authenticator::getCode($secret, floor($timestamp / Authenticator::$period)));
 	}
 
 	/*
 	 * Authenticator::verifyCode()
 	 */
+
+	public function testVerifyCode(){
+		$this->assertEquals(true, Authenticator::verifyCode(Authenticator::getCode($this->secret), $this->secret));
+	}
+
 	public function testVerifyCodeWithTimeslice(){
-		Authenticator::setPeriod(30);
-		$secret = Authenticator::createSecret();
-		$code = Authenticator::getCode($secret);
+		$code = Authenticator::getCode($this->secret);
+		$timestamp = time();
+		$p = Authenticator::$period;
+
+		// first adjacent code (default value)
+		$timeslice = floor(($timestamp - (1 * $p)) / $p);
+		$this->assertEquals(true, Authenticator::verifyCode($code, $this->secret, $timeslice));
+
+		$timeslice = floor(($timestamp - (2 * $p)) / $p);
+		$this->assertEquals(false, Authenticator::verifyCode($code, $this->secret, $timeslice));
+	}
+
+	public function testVerifyCodeWithTimesliceAndAdjacent(){
+		$code = Authenticator::getCode($this->secret);
 		$timestamp = time();
 		$adjacent = 100;
+		$p = Authenticator::$period;
 
-		for($i = 0; $i <= $adjacent+1; $i++){
-			$timestamp = $timestamp - $i * Authenticator::$period;
-			$timeslice = floor($timestamp / Authenticator::$period);
+		for($i = 0; $i <= $adjacent + 1; $i++){
+			$timeslice = floor(($timestamp - ($i * $p)) / $p);
 
-/*
-			print_r([
-				$i,
-				$timestamp,
-				$timeslice,
-				(int)Authenticator::verifyCode($code, $secret, $timeslice, $adjacent),
-			]);
-*/
-
-			if($i === $adjacent+1){
-				$this->assertEquals(false, Authenticator::verifyCode($code, $secret, $timeslice, $adjacent));
+			if($i === $adjacent + 1){
+				$this->assertEquals(false, Authenticator::verifyCode($code, $this->secret, $timeslice, $adjacent));
 			}
 			else{
-				$this->assertEquals(true, Authenticator::verifyCode($code, $secret, $timeslice, $adjacent));
+				$this->assertEquals(true, Authenticator::verifyCode($code, $this->secret, $timeslice, $adjacent));
 			}
 
 		}
 
+	}
+
+	/*
+	 * Authenticator::getUri()
+	 */
+
+	public function testGetUri(){
+		$label = 'test';
+		$issuer = 'chillerlan.net';
+
+		$values = [
+			'secret' => $this->secret,
+			'issuer' => $issuer,
+		];
+
+		$expected = 'otpauth://totp/'.$label.'?'.http_build_query($values);
+
+		$this->assertEquals($expected, Authenticator::getUri($this->secret, $label, $issuer));
+	}
+
+	/*
+	 * Authenticator::getGoogleQr()
+	 */
+	public function testGetGoogleQr(){
+		$label = 'test';
+		$issuer = 'chillerlan.net';
+
+		$query = [
+			'chs'  => '200x200',
+			'chld' => 'M|0',
+			'cht'  => 'qr',
+			'chl'  => Authenticator::getUri($this->secret, $label, $issuer),
+		];
+
+		$expected = 'https://chart.googleapis.com/chart?'.http_build_query($query);
+
+		$this->assertEquals($expected, Authenticator::getGoogleQr($this->secret, $label, $issuer));
 	}
 
 }
