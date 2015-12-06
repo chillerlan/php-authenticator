@@ -14,7 +14,7 @@
 
 namespace chillerlan\GoogleAuth;
 
-use Exception;
+use chillerlan\Base32\Base32;
 
 /**
  * Yet another Google authenticator implemetation!
@@ -44,12 +44,12 @@ class Authenticator{
 	 *
 	 * @param int $digits
 	 *
-	 * @throws \Exception
+	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public static function setDigits($digits = 6){
 
 		if(!in_array($digits, [6, 8], true)){
-			throw new Exception('Invalid code length: '.$digits);
+			throw new AuthenticatorException('Invalid code length: '.$digits);
 		}
 
 		self::$digits = $digits;
@@ -60,12 +60,12 @@ class Authenticator{
 	 *
 	 * @param int $period
 	 *
-	 * @throws \Exception
+	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public static function setPeriod($period = 30){
 
 		if(!is_int($period) || $period < 15 || $period > 60){ // for cereal?
-			throw new Exception('Invalid period: '.$period);
+			throw new AuthenticatorException('Invalid period: '.$period);
 		}
 
 		self::$period = $period;
@@ -78,11 +78,11 @@ class Authenticator{
 	 * @param int $secretLength
 	 *
 	 * @return string
-	 * @throws \Exception
+	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public static function createSecret($secretLength = 16){
 		if(!is_int($secretLength) || $secretLength < 1){
-			throw new Exception('Invalid secret length!');
+			throw new AuthenticatorException('Invalid secret length!');
 		}
 
 		$chars = str_split(Base32::RFC3548);
@@ -102,12 +102,12 @@ class Authenticator{
 	 * @param float  $timeslice -> floor($timestamp / 30)
 	 *
 	 * @return string
-	 * @throws \Exception
+	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public static function getCode($secret, $timeslice = null){
 
 		if(!preg_match('/^['.Base32::RFC3548.']+$/', $secret)){
-			throw new Exception('Invalid secret phrase!');
+			throw new AuthenticatorException('Invalid secret phrase!');
 		}
 
 		if($timeslice === null || !is_float($timeslice)){
@@ -135,12 +135,12 @@ class Authenticator{
 	 * @param int    $adjacent
 	 *
 	 * @return bool
-	 * @throws \Exception
+	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public static function verifyCode($code, $secret, $timeslice = null, $adjacent = 1){
 
 		if(!preg_match('/^['.Base32::RFC3548.']+$/', $secret)){
-			throw new Exception('Invalid secret phrase!');
+			throw new AuthenticatorException('Invalid secret phrase!');
 		}
 
 		if($timeslice === null || !is_float($timeslice)){
@@ -164,12 +164,12 @@ class Authenticator{
 	 * @param string $issuer
 	 *
 	 * @return string
-	 * @throws \Exception
+	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public static function getUri($secret, $label, $issuer){
 
 		if(!preg_match('/^['.Base32::RFC3548.']+$/', $secret)){
-			throw new Exception('Invalid secret phrase!');
+			throw new AuthenticatorException('Invalid secret phrase!');
 		}
 
 		// https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters
