@@ -1,13 +1,19 @@
 # php-googleauth
 
-[![Packagist](https://img.shields.io/packagist/v/chillerlan/php-googleauth.svg?style=flat-square)](https://packagist.org/packages/chillerlan/php-googleauth)
-[![License](https://img.shields.io/packagist/l/chillerlan/php-googleauth.svg?style=flat-square)](LICENSE)
-[![Travis Build Status](https://img.shields.io/travis/chillerlan/php-googleauth.svg?style=flat-square)](https://travis-ci.org/chillerlan/php-googleauth)
-[![codecov.io](https://img.shields.io/codecov/c/github/chillerlan/php-googleauth.svg?style=flat-square)](https://codecov.io/github/chillerlan/php-googleauth?branch=master)
+[![version][packagist-badge]][packagist]
+[![license][license-badge]][LICENSE]
+[![Travis][travis-badge]][travis]
+[![Coverage][coverage-badge]][coverage]
+
+[packagist-badge]: https://img.shields.io/packagist/v/chillerlan/php-googleauth.svg?style=flat-square
+[license-badge]: https://img.shields.io/packagist/l/chillerlan/php-googleauth.svg?style=flat-square
+[travis-badge]: https://img.shields.io/travis/chillerlan/php-googleauth.svg?style=flat-square
+[coverage-badge]: https://img.shields.io/codecov/c/github/chillerlan/php-googleauth.svg?style=flat-square
+[packagist]: https://packagist.org/packages/gw2treasures/gw2api
+[travis]: https://travis-ci.org/GW2Treasures/gw2api
+[coverage]: https://codecov.io/github/GW2Treasures/gw2api
 
 Yet another Google Authenticator implementation! Well, it's mostly a fork of [PHPGangsta](https://github.com/PHPGangsta/GoogleAuthenticator/), cleaned up and with new features.
-
-[2FA ALL THE THINGS!](https://www.turnon2fa.com)
 
 ## Requirements
 - PHP 5.6+, PHP 7
@@ -41,7 +47,8 @@ Profit!
 
 ### Usage
 
-The secret is usually being created once during the activetion process in a user control panel. 
+#### Creating a secret 
+The secret is usually being created once during the activation process in a user control panel. 
 So all you need to do there is to create a code and display it to the user in a convenient way, as text string and QR code for example.
 ```php
 // create a secret (stored somewhere on the server *coughs*)
@@ -62,6 +69,7 @@ $uri = Authenticator::getUri($secret, $label, $issuer);
 $uri = Authenticator::getGoogleQr($secret, $label, $issuer);
 ```
 
+#### Verify a one time code
 Now during the login process - after the user has successfully entered their credentials - you would 
 ask them for a one time code to check it against the secret from your user database.
 ```php
@@ -82,6 +90,7 @@ if(Authenticator::verifyCode($code, $secret, null, 0)){
 
 ```
 
+#### Advanced settings
 If your authenticator produces wrong one time codes, you may want to check your timezone settings.
 In case you can't adjust them server side, you can do it in the script like so:
 ```php
@@ -109,3 +118,5 @@ Authenticator::setDigits(8);
 // valid period between 10 and 60 seconds
 Authenticator::setPeriod(45);
 ```
+
+[![2FA ALL THE THINGS!](https://raw.githubusercontent.com/codemasher/php-googleauth/master/stuff/2fa-all-the-things.jpg)](https://www.turnon2fa.com)
