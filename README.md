@@ -3,7 +3,7 @@
 [![Packagist](https://img.shields.io/packagist/v/chillerlan/php-googleauth.svg?style=flat-square)](https://packagist.org/packages/chillerlan/php-googleauth)
 [![License](https://img.shields.io/packagist/l/chillerlan/php-googleauth.svg?style=flat-square)](LICENSE)
 [![Travis Build Status](https://img.shields.io/travis/chillerlan/php-googleauth.svg?style=flat-square)](https://travis-ci.org/chillerlan/php-googleauth)
-[![codecov.io](https://img.shields.io/codecov/c/github/chillerlan/php-googleauth?style=flat-square)](https://codecov.io/github/chillerlan/php-googleauth?branch=master)
+[![codecov.io](https://img.shields.io/codecov/c/github/chillerlan/php-googleauth.svg?style=flat-square)](https://codecov.io/github/chillerlan/php-googleauth?branch=master)
 
 Yet another Google Authenticator implementation! Well, it's mostly a fork of [PHPGangsta](https://github.com/PHPGangsta/GoogleAuthenticator/), cleaned up and with new features.
 
