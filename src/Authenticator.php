@@ -135,7 +135,7 @@ class Authenticator{
 		self::checkSecret($secret);
 
 		for($i = -$adjacent; $i <= $adjacent; $i++){
-			if($code === self::getCode($secret, $timeslice + $i)){
+			if(self::timingSafeEquals(self::getCode($secret, $timeslice + $i), $code)){
 				return true;
 			}
 		}
@@ -224,6 +224,40 @@ class Authenticator{
 		}
 
 		return $timeslice;
+	}
+
+	/**
+	 * A timing safe equals comparison
+	 * more info here: http://blog.ircmaxell.com/2014/11/its-all-about-time.html
+	 *
+	 * @author https://github.com/leandro-lugaresi
+	 * @link   https://github.com/PHPGangsta/GoogleAuthenticator/pull/25
+	 *
+	 * @param string $safeString The internal (safe) value to be checked
+	 * @param string $userString The user submitted (unsafe) value
+	 *
+	 * @return boolean True if the two strings are identical.
+	 */
+	protected static function timingSafeEquals($safeString, $userString){
+
+		if(function_exists('hash_equals')){
+			return hash_equals($safeString, $userString);
+		}
+
+		$userLen = strlen($userString);
+
+		if($userLen !== strlen($safeString)){
+			return false;
+		}
+
+		$result = 0;
+
+		for($i = 0; $i < $userLen; $i++){
+			$result |= (ord($safeString[$i])^ord($userString[$i]));
+		}
+
+		// They are only identical strings if $result is exactly 0...
+		return $result === 0;
 	}
 
 }

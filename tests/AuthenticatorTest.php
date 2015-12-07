@@ -72,7 +72,7 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 	public function codeProvider(){
 		// secret, time, code
 		return [
-			['SECRETTEST234567',          0, '730741'],
+			['SECRETTEST234567', 0, '730741'],
 			['SECRETTEST234567', 1385909245, '040137'],
 			['SECRETTEST234567', 1378934578, '341779'],
 			['SECRETTEST234567', 1449438863, '889844'],
@@ -122,6 +122,15 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 			$this->assertEquals($i <= $adjacent, $verify);
 		}
 
+	}
+
+	// https://github.com/PHPGangsta/GoogleAuthenticator/pull/25
+	public function testVerifyCodeWithLeadingZero(){
+		$code = Authenticator::getCode($this->secret);
+		$this->assertEquals(true, Authenticator::verifyCode($code, $this->secret));
+
+		$code = '0'.$code;
+		$this->assertEquals(false, Authenticator::verifyCode($code, $this->secret));
 	}
 
 	/*
