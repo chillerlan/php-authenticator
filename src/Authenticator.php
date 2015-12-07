@@ -84,16 +84,17 @@ class Authenticator{
 	 */
 	public static function createSecret($secretLength = 16){
 
-		if(!is_int($secretLength) || $secretLength < 16){
+		// ~ 80 to 640 bits
+		if(!is_int($secretLength) || $secretLength < 16 || $secretLength > 128){
 			throw new AuthenticatorException('Invalid secret length: '.$secretLength);
 		}
 
-		if(!function_exists('mcrypt_create_iv')){
-			throw new AuthenticatorException('No source of secure random!');
-		}
+		// https://github.com/paragonie/random_compat/blob/7cf3fdb7797f40d4480d0f2e6e128f4c8b25600b/ERRATA.md
+		$random = function_exists('random_bytes')
+			? random_bytes($secretLength) // PHP 7
+			: mcrypt_create_iv($secretLength, MCRYPT_DEV_URANDOM); // PHP 5.6+
 
 		$chars = str_split(Base32::RFC3548);
-		$random = mcrypt_create_iv($secretLength, MCRYPT_DEV_URANDOM);
 		$secret = '';
 
 		for($i = 0; $i < $secretLength; $i++){
@@ -139,8 +140,8 @@ class Authenticator{
 	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public static function verifyCode($code, $secret, $timeslice = null, $adjacent = 1){
-		$timeslice = self::checkTimeslice($timeslice);
 		self::checkSecret($secret);
+		$timeslice = self::checkTimeslice($timeslice);
 
 		for($i = -$adjacent; $i <= $adjacent; $i++){
 			/**
