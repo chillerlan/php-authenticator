@@ -10,6 +10,7 @@
  */
 
 use chillerlan\GoogleAuth\Authenticator;
+use chillerlan\Base32\Base32;
 
 class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 
@@ -58,6 +59,10 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 		for($secretLength = 1; $secretLength <= 100; $secretLength++){
 			$this->assertEquals($secretLength, strlen(Authenticator::createSecret($secretLength)));
 		}
+	}
+
+	public function testCreateSecretCheckCharacterSet(){
+		$this->assertRegExp('/^['.Base32::RFC3548.']+$/', $this->secret);
 	}
 
 	/*
