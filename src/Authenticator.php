@@ -48,7 +48,7 @@ class Authenticator{
 	 */
 	public static function setDigits($digits = 6){
 
-		if(!in_array($digits, [6, 8], true)){
+		if(!in_array(intval($digits), [6, 8], true)){
 			throw new AuthenticatorException('Invalid code length: '.$digits);
 		}
 
@@ -63,8 +63,9 @@ class Authenticator{
 	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public static function setPeriod($period = 30){
+		$period = intval($period);
 
-		if(!is_int($period) || $period < 15 || $period > 60){ // for cereal?
+		if($period < 15 || $period > 60){ // for cereal?
 			throw new AuthenticatorException('Invalid period: '.$period);
 		}
 
@@ -83,9 +84,10 @@ class Authenticator{
 	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public static function createSecret($secretLength = 16){
+		$secretLength = intval($secretLength);
 
 		// ~ 80 to 640 bits
-		if(!is_int($secretLength) || $secretLength < 16 || $secretLength > 128){
+		if($secretLength < 16 || $secretLength > 128){
 			throw new AuthenticatorException('Invalid secret length: '.$secretLength);
 		}
 
