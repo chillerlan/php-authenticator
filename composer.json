@@ -3,11 +3,15 @@
 	"description": "Time based authentication codes. PHP 5.6+, PHP 7",
 	"homepage": "https://github.com/codemasher/php-googleauth",
 	"license": "MIT",
+	"type": "library",
 	"keywords": [
-		"totp",
-		"authenticator"
+		"authenticator", "totp", "2fa"
 	],
 	"authors": [
+		{
+			"name": "Michael Kliewe",
+			"homepage": "http://www.phpgangsta.de"
+		},
 		{
 			"name": "Smiley",
 			"email": "smiley@chillerlan.net"
@@ -21,7 +25,8 @@
 		"phpunit/phpunit": "5.1.*"
 	},
 	"suggest": {
-		"chillerlan/php-qrcode": "dev-master"
+		"chillerlan/php-qrcode": "dev-master",
+		"paragonie/random_compat": "Strong crypt fallback for PHP < 7 (~1.1)"
 	},
 	"autoload": {
 		"psr-4": {
