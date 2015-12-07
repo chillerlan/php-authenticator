@@ -72,8 +72,10 @@ class Authenticator{
 	}
 
 	/**
-	 * Generates a new secret phrase
+	 * Generates a new (secure random) secret phrase
 	 * "an arbitrary key value encoded in Base32 according to RFC 3548"
+	 *
+	 * @link https://github.com/PHPGangsta/GoogleAuthenticator/pull/10
 	 *
 	 * @param int $secretLength
 	 *
@@ -81,15 +83,21 @@ class Authenticator{
 	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public static function createSecret($secretLength = 16){
-		if(!is_int($secretLength) || $secretLength < 1){
+
+		if(!is_int($secretLength) || $secretLength < 16){
 			throw new AuthenticatorException('Invalid secret length: '.$secretLength);
 		}
 
+		if(!function_exists('mcrypt_create_iv')){
+			throw new AuthenticatorException('No source of secure random!');
+		}
+
 		$chars = str_split(Base32::RFC3548);
+		$random = mcrypt_create_iv($secretLength, MCRYPT_DEV_URANDOM);
 		$secret = '';
 
 		for($i = 0; $i < $secretLength; $i++){
-			$secret .= $chars[array_rand($chars)];
+			$secret .= $chars[ord($random[$i])&31];
 		}
 
 		return $secret;
