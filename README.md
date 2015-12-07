@@ -53,7 +53,7 @@ Profit!
 
 #### Creating a secret 
 The secret is usually being created once during the activation process in a user control panel. 
-So all you need to do there is to create a code and display it to the user in a convenient way, as text string and QR code for example.
+So all you need to do there is to create a secret and display it to the user in a convenient way, as text string and QR code for example.
 ```php
 // create a secret (stored somewhere on the server *coughs*)
 $secret = Authenticator::createSecret();
@@ -106,7 +106,7 @@ if(Authenticator::verifyCode($code, $secret, $timeslice)){
 	//  verified
 }
 
-if((string)$_POST['code'] === Authenticator::getCode($secret, $timeslice)){
+if(hash_equals(Authenticator::getCode($secret, $timeslice), $_POST['code'])){
 	// verified
 }
 
@@ -123,4 +123,8 @@ Authenticator::setDigits(8);
 Authenticator::setPeriod(45);
 ```
 
-[![2FA ALL THE THINGS!](https://raw.githubusercontent.com/codemasher/php-googleauth/master/stuff/2fa-all-the-things.jpg)](https://www.turnon2fa.com)
+<p align="center">
+  <a href="https://www.turnon2fa.com">
+    <img alt="2FA ALL THE THINGS!" src="https://raw.githubusercontent.com/codemasher/php-googleauth/master/stuff/2fa-all-the-things.jpg">
+  </a>
+</p>
