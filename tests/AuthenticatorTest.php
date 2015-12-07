@@ -21,8 +21,8 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 	}
 
 	protected function tearDown(){
-		Authenticator::setDigits(6);
-		Authenticator::setPeriod(30);
+		Authenticator::setDigits();
+		Authenticator::setPeriod();
 	}
 
 	/*
@@ -117,14 +117,9 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 
 		for($i = 0; $i <= $adjacent + 1; $i++){
 			$timeslice = floor(($timestamp - ($i * $p)) / $p);
+			$verify = Authenticator::verifyCode($code, $this->secret, $timeslice, $adjacent);
 
-			if($i === $adjacent + 1){
-				$this->assertEquals(false, Authenticator::verifyCode($code, $this->secret, $timeslice, $adjacent));
-			}
-			else{
-				$this->assertEquals(true, Authenticator::verifyCode($code, $this->secret, $timeslice, $adjacent));
-			}
-
+			$this->assertEquals($i <= $adjacent, $verify);
 		}
 
 	}
