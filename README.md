@@ -1,7 +1,7 @@
 # php-googleauth
 
 [![version][packagist-badge]][packagist]
-[![license][license-badge]][LICENSE]
+[![license][license-badge]][license]
 [![Travis][travis-badge]][travis]
 [![Coverage][coverage-badge]][coverage]
 
@@ -12,6 +12,7 @@
 [packagist]: https://packagist.org/packages/gw2treasures/gw2api
 [travis]: https://travis-ci.org/GW2Treasures/gw2api
 [coverage]: https://codecov.io/github/GW2Treasures/gw2api
+[license]: http://opensource.org/licenses/MIT
 
 Yet another Google Authenticator implementation! Well, it's mostly a fork of [PHPGangsta](https://github.com/PHPGangsta/GoogleAuthenticator/), cleaned up and with new features.
 
