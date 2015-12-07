@@ -4,15 +4,18 @@
 [![license][license-badge]][license]
 [![Travis][travis-badge]][travis]
 [![Coverage][coverage-badge]][coverage]
+[![Issues][issue-badge]][issues]
 
 [packagist-badge]: https://img.shields.io/packagist/v/chillerlan/php-googleauth.svg?style=flat-square
-[license-badge]: https://img.shields.io/packagist/l/chillerlan/php-googleauth.svg?style=flat-square
-[travis-badge]: https://img.shields.io/travis/chillerlan/php-googleauth.svg?style=flat-square
-[coverage-badge]: https://img.shields.io/codecov/c/github/chillerlan/php-googleauth.svg?style=flat-square
+[license-badge]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
+[travis-badge]: https://img.shields.io/travis/codemasher/php-googleauth.svg?style=flat-square
+[coverage-badge]: https://img.shields.io/codecov/c/github/codemasher/php-googleauth.svg?style=flat-square
+[issue-badge]: https://img.shields.io/github/issues/codemasher/php-googleauth.svg?style=flat-square
 [packagist]: https://packagist.org/packages/chillerlan/php-googleauth
 [travis]: https://travis-ci.org/codemasher/php-googleauth
 [coverage]: https://codecov.io/github/codemasher/php-googleauth
-[license]: http://opensource.org/licenses/MIT
+[issues]: https://github.com/codemasher/php-googleauth/issues
+[license]: https://github.com/codemasher/php-googleauth/blob/master/LICENSE
 
 Yet another Google Authenticator implementation! Well, it's mostly a fork of [PHPGangsta](https://github.com/PHPGangsta/GoogleAuthenticator/), cleaned up and with new features.
 
