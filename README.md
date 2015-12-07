@@ -83,7 +83,7 @@ if(Authenticator::verifyCode($code, $secret)){
 }
 
 // or just the strict method...
-if((string)$_POST['code'] === Authenticator::getCode($secret)){
+if(hash_equals(Authenticator::getCode($secret), $_POST['code'])){
 	// verified
 }
 
