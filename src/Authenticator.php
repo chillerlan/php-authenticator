@@ -221,7 +221,7 @@ class Authenticator{
 	 */
 	protected static function checkSecret($secret){
 
-		if(!preg_match('/^['.Base32::RFC3548.']+$/', $secret)){
+		if(!(bool)preg_match('/^['.Base32::RFC3548.']+$/', $secret)){
 			throw new AuthenticatorException('Invalid secret phrase!');
 		}
 
