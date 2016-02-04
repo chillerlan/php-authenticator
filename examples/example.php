@@ -13,34 +13,23 @@ require_once '../vendor/autoload.php';
 
 use chillerlan\GoogleAuth\Authenticator;
 
+// change the code length
+Authenticator::setDigits(8);
 
-$label = 'test';
-$issuer = 'chillerlan.net';
+// set validation period (seconds)
+Authenticator::setPeriod(45);
 
 // create a secret
 $secret = Authenticator::createSecret();
-var_dump($secret);
 
 // get a one time code
 $code = Authenticator::getCode($secret);
 
-var_dump([
-	// create an URI for use in e.g. QR codes
-	Authenticator::getUri($secret, $label, $issuer),
-	Authenticator::getGoogleQr($secret, $label, $issuer),
-	$code,
-	// verify the code
-	Authenticator::verifyCode($code, $secret)
-]);
+// create an URI for use in e.g. QR codes
+$label = 'test';
+$issuer = 'chillerlan.net';
+Authenticator::getUri($secret, $label, $issuer);
+Authenticator::getGoogleQr($secret, $label, $issuer);
 
-
-// change the code length
-Authenticator::setDigits(8);
-$code = Authenticator::getCode($secret);
-
-var_dump([
-	Authenticator::getUri($secret, $label, $issuer),
-	Authenticator::getGoogleQr($secret, $label, $issuer),
-	$code,
-	Authenticator::verifyCode($code, $secret)
-]);
+// verify the code
+Authenticator::verifyCode($code, $secret);

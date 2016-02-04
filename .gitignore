@@ -1,22 +1,2 @@
-#################
-## PHPStorm
-#################
-
-.idea/
-
-#################
-## Eclipse
-#################
-
-.settings/
-.buildpath
-.project
-
-#################
-## Misc
-#################
-
-pdoc.bat
 composer.lock
-docs
 vendor
