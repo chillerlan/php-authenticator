@@ -12,7 +12,7 @@
 [travis-badge]: https://img.shields.io/travis/codemasher/php-googleauth.svg?style=flat-square
 [coverage-badge]: https://img.shields.io/codecov/c/github/codemasher/php-googleauth.svg?style=flat-square
 [issue-badge]: https://img.shields.io/github/issues/codemasher/php-googleauth.svg?style=flat-square
-[sensio-badge]: https://insight.sensiolabs.com/projects/4e036bab-4c4c-4ffa-9fd9-69fc7d7effd4/mini.png
+[sensio-badge]: https://img.shields.io/sensiolabs/i/4e036bab-4c4c-4ffa-9fd9-69fc7d7effd4.svg?style=flat-square
 [packagist]: https://packagist.org/packages/chillerlan/php-googleauth
 [travis]: https://travis-ci.org/codemasher/php-googleauth
 [coverage]: https://codecov.io/github/codemasher/php-googleauth
