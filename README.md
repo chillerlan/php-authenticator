@@ -6,6 +6,7 @@
 [![Coverage][coverage-badge]][coverage]
 [![Issues][issue-badge]][issues]
 [![SensioLabsInsight][sensio-badge]][sensio]
+[![Scrunitizer][scrutinizer-badge]][scrutinizer]
 
 [packagist-badge]: https://img.shields.io/packagist/v/chillerlan/php-googleauth.svg?style=flat-square
 [license-badge]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
@@ -13,12 +14,14 @@
 [coverage-badge]: https://img.shields.io/codecov/c/github/codemasher/php-googleauth.svg?style=flat-square
 [issue-badge]: https://img.shields.io/github/issues/codemasher/php-googleauth.svg?style=flat-square
 [sensio-badge]: https://img.shields.io/sensiolabs/i/4e036bab-4c4c-4ffa-9fd9-69fc7d7effd4.svg?style=flat-square
+[scrutinizer-badge]: https://scrutinizer-ci.com/g/codemasher/php-googleauth/badges/quality-score.png?b=master
 [packagist]: https://packagist.org/packages/chillerlan/php-googleauth
 [travis]: https://travis-ci.org/codemasher/php-googleauth
 [coverage]: https://codecov.io/github/codemasher/php-googleauth
 [issues]: https://github.com/codemasher/php-googleauth/issues
 [license]: https://github.com/codemasher/php-googleauth/blob/master/LICENSE
 [sensio]: https://insight.sensiolabs.com/projects/4e036bab-4c4c-4ffa-9fd9-69fc7d7effd4
+[scrutinizer]: https://scrutinizer-ci.com/g/codemasher/php-googleauth
 
 Yet another Google Authenticator implementation! Well, it's mostly a fork of [PHPGangsta](https://github.com/PHPGangsta/GoogleAuthenticator/), cleaned up and with new features.
 
