@@ -175,7 +175,6 @@ class Authenticator{
 		$values = [
 			'secret' => $secret,
 			'issuer' => $issuer,
-#			'algorithm' => 'SHA1',
 		];
 
 		if(self::$digits !== 6){
