@@ -91,12 +91,8 @@ class Authenticator{
 			throw new AuthenticatorException('Invalid secret length: '.$secretLength);
 		}
 
-		// https://github.com/paragonie/random_compat/blob/7cf3fdb7797f40d4480d0f2e6e128f4c8b25600b/ERRATA.md
-		$random = function_exists('random_bytes')
-			? random_bytes($secretLength) // PHP 7
-			: mcrypt_create_iv($secretLength, MCRYPT_DEV_URANDOM); // PHP 5.6+
-
-		$chars = str_split(Base32::RFC3548);
+		$random = self::getRandomBytes($secretLength);
+		$chars  = str_split(Base32::RFC3548);
 		$secret = '';
 
 		for($i = 0; $i < $secretLength; $i++){
@@ -119,11 +115,15 @@ class Authenticator{
 		self::checkSecret($secret);
 
 		// Pack time into binary string
-		$time = str_repeat(chr(0), 4).pack('N*', self::checkTimeslice($timeslice));
+		$time  = str_repeat(chr(0), 4);
+		$time .= pack('N*', self::checkTimeslice($timeslice));
+
 		// Hash it with users secret key
 		$hmac = hash_hmac('SHA1', $time, Base32::toString($secret), true);
+
 		// Use last nibble of result as index/offset
 		$offset = ord(substr($hmac, -1))&0x0F;
+
 		// Unpack binary value, only 32 bits
 		$value = unpack('N', substr($hmac, $offset, 4))[1]&0x7FFFFFFF;
 
@@ -227,7 +227,7 @@ class Authenticator{
 	}
 
 	/**
-	 * @param mixed $timeslice
+	 * @param float $timeslice
 	 *
 	 * @return float
 	 */
@@ -238,6 +238,21 @@ class Authenticator{
 		}
 
 		return $timeslice;
+	}
+
+	/**
+	 * @param $length
+	 *
+	 * @return string
+	 * @see https://github.com/paragonie/random_compat/blob/7cf3fdb7797f40d4480d0f2e6e128f4c8b25600b/ERRATA.md
+	 */
+	protected static function getRandomBytes($length){
+
+		if(function_exists('random_bytes')){
+			return random_bytes($length); // PHP 7
+		}
+
+		return mcrypt_create_iv($length, MCRYPT_DEV_URANDOM); // PHP 5.6+
 	}
 
 }
