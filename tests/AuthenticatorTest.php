@@ -8,8 +8,8 @@
  * @license      MIT
  */
 
+use chillerlan\Base32\Base32Characters;
 use chillerlan\GoogleAuth\Authenticator;
-use chillerlan\Base32\Base32;
 
 class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 
@@ -28,10 +28,6 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 		Authenticator::setPeriod();
 	}
 
-	/*
-	 * Authenticator::setDigits()
-	 */
-
 	public function testSetDigits(){
 		foreach([6, 8] as $digits){
 			Authenticator::setDigits($digits);
@@ -45,10 +41,6 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 	public function testSetDigitsException(){
 		Authenticator::setDigits(7);
 	}
-
-	/*
-	 * Authenticator::setPeriod()
-	 */
 
 	public function testSetPeriod(){
 		for($period = 15; $period <= 60; $period++){
@@ -64,10 +56,6 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 		Authenticator::setPeriod(1);
 	}
 
-	/*
-	 * Authenticator::createSecret()
-	 */
-
 	public function testCreateSecretDefaultLength(){
 		$this->assertEquals(16, strlen(Authenticator::createSecret()));
 	}
@@ -79,7 +67,7 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 	}
 
 	public function testCreateSecretCheckCharacterSet(){
-		$this->assertRegExp('/^['.Base32::RFC3548.']+$/', $this->secret);
+		$this->assertRegExp('/^['.Base32Characters::RFC3548.']+$/', $this->secret);
 	}
 
 	/**
@@ -89,10 +77,6 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 		Authenticator::createSecret(10);
 	}
 
-
-	/*
-	 * Authenticator::getCode()
-	 */
 
 	public function codeProvider(){
 		// secret, time, code
@@ -117,10 +101,6 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 	public function testGetCodeException(){
 		Authenticator::getCode($this->invalidSecret);
 	}
-
-	/*
-	 * Authenticator::verifyCode()
-	 */
 
 	public function testVerifyCode(){
 		$this->assertEquals(true, Authenticator::verifyCode(Authenticator::getCode($this->secret), $this->secret));
@@ -173,10 +153,6 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 	}
 
 
-	/*
-	 * Authenticator::getUri()
-	 */
-
 	public function testGetUri(){
 		$values = [
 			'secret' => $this->secret,
@@ -203,9 +179,6 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 		Authenticator::getUri($this->invalidSecret, $this->label, $this->issuer);
 	}
 
-	/*
-	 * Authenticator::getGoogleQr()
-	 */
 	public function testGetGoogleQr(){
 		$label = 'test';
 		$issuer = 'chillerlan.net';

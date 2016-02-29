@@ -15,6 +15,7 @@
 namespace chillerlan\GoogleAuth;
 
 use chillerlan\Base32\Base32;
+use chillerlan\Base32\Base32Characters;
 
 /**
  * Yet another Google authenticator implemetation!
@@ -92,7 +93,7 @@ class Authenticator{
 		}
 
 		$random = self::getRandomBytes($secretLength);
-		$chars  = str_split(Base32::RFC3548);
+		$chars  = str_split(Base32Characters::RFC3548);
 		$secret = '';
 
 		for($i = 0; $i < $secretLength; $i++){
@@ -220,7 +221,7 @@ class Authenticator{
 	 */
 	protected static function checkSecret($secret){
 
-		if(!(bool)preg_match('/^['.Base32::RFC3548.']+$/', $secret)){
+		if(!(bool)preg_match('/^['.Base32Characters::RFC3548.']+$/', $secret)){
 			throw new AuthenticatorException('Invalid secret phrase!');
 		}
 
