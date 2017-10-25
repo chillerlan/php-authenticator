@@ -82,6 +82,7 @@ class Base32{
 	 *
 	 * @param string $charset The character set you want to use
 	 *
+	 * @return void
 	 * @throws \chillerlan\GoogleAuth\Base32Exception
 	 */
 	protected function setCharset(string $charset){
@@ -92,6 +93,7 @@ class Base32{
 		else{
 			throw new Base32Exception('Length must be exactly 32');
 		}
+
 	}
 
 	/**
@@ -103,7 +105,7 @@ class Base32{
 	 *
 	 * @return string String of 0's and 1's
 	 */
-	public function str2bin($str){
+	public function str2bin(string $str):string {
 		$chrs = unpack('C*', $str);
 
 		return vsprintf(str_repeat('%08b', count($chrs)), $chrs);
@@ -119,7 +121,7 @@ class Base32{
 	 * @return string The ascii output
 	 * @throws \chillerlan\GoogleAuth\Base32Exception
 	 */
-	public function bin2str($str){
+	public function bin2str(string $str):string {
 		$this->checkLength($str);
 		$this->checkBin($str);
 
@@ -142,7 +144,7 @@ class Base32{
 	 * @return string String encoded as base32
 	 * @throws \chillerlan\GoogleAuth\Base32Exception
 	 */
-	public function fromBin($str){
+	public function fromBin(string $str):string {
 		$this->checkLength($str);
 		$this->checkBin($str);
 
@@ -178,7 +180,7 @@ class Base32{
 	 * @return string Ascii binary string
 	 * @throws \chillerlan\GoogleAuth\Base32Exception
 	 */
-	public function toBin($str){
+	public function toBin(string $str):string {
 		$this->checkCharacterSet($str);
 
 		// Convert the base32 string back to a binary string
@@ -211,7 +213,7 @@ class Base32{
 	 * @return string The converted base32 string
 	 * @throws \chillerlan\GoogleAuth\Base32Exception
 	 */
-	public function fromString($str){
+	public function fromString(string $str):string {
 		return $this->fromBin($this->str2bin($str));
 	}
 
@@ -226,7 +228,7 @@ class Base32{
 	 * @return string The normal string
 	 * @throws \chillerlan\GoogleAuth\Base32Exception
 	 */
-	public function toString($str){
+	public function toString(string $str):string {
 		$str = strtoupper($str);
 
 		// csSave actually has to be able to consider extra characters
@@ -241,9 +243,10 @@ class Base32{
 	/**
 	 * @param string $str
 	 *
+	 * @return void
 	 * @throws \chillerlan\GoogleAuth\Base32Exception
 	 */
-	protected function checkLength($str){
+	protected function checkLength(string $str){
 
 		if(strlen($str)%8 > 0){
 			throw new Base32Exception('Length must be divisible by 8');
@@ -254,9 +257,10 @@ class Base32{
 	/**
 	 * @param string $str
 	 *
+	 * @return void
 	 * @throws \chillerlan\GoogleAuth\Base32Exception
 	 */
-	protected function checkBin($str){
+	protected function checkBin(string $str){
 
 		if(!preg_match('/^[01]+$/', $str)){
 			throw new Base32Exception('Only 0 and 1 are permitted');
@@ -267,9 +271,10 @@ class Base32{
 	/**
 	 * @param string $str
 	 *
+	 * @return void
 	 * @throws \chillerlan\GoogleAuth\Base32Exception
 	 */
-	protected function checkCharacterSet($str){
+	protected function checkCharacterSet(string $str){
 
 		if(!preg_match('/^['.$this->charset.']+$/', $str)){
 			throw new Base32Exception('Must match character set');
