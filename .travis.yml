@@ -5,8 +5,10 @@ php:
   - 7.1
   - 7.2
 
+before_install: pip install --user codecov
+
 install: travis_retry composer install --no-interaction --prefer-source
 
 script: vendor/bin/phpunit tests --coverage-clover clover.xml --whitelist src
 
-after_script: bash <(curl -s https://codecov.io/bash)
+after_success: codecov
