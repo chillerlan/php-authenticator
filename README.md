@@ -80,17 +80,6 @@ ask them for a one time code to check it against the secret from your user datab
 if($authenticator->verifyCode($code, $secret)){
 	// that's it - 2FA has never been easier! :D
 }
-
-// or just the strict method...
-if(hash_equals($authenticator->getCode($secret), $_POST['code'])){
-	// verified
-}
-
-// ...which is equivalent to
-if($authenticator->verifyCode($code, $secret, null, 0)){
-	// verified
-}
-
 ```
 
 ### Advanced settings
@@ -116,10 +105,10 @@ There are 2 other methods which are not (yet) supported by Google Authenticator 
 // see https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters
 
 // code length, currently 6 or 8
-$authenticator->setDigits(8);
+$authenticator->digits = 8;
 
 // valid period between 10 and 60 seconds
-$authenticator->setPeriod(45);
+$authenticator->period = 45;
 
 // set these values via the constructor
 $authenticator = new Authenticator(20, 8); // $period, $digits
