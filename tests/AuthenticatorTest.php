@@ -8,10 +8,12 @@
  * @license      MIT
  */
 
-use chillerlan\Base32\Base32Characters;
-use chillerlan\GoogleAuth\Authenticator;
+namespace chillerlan\GoogleAuthTest;
 
-class AuthenticatorTest extends PHPUnit_Framework_TestCase{
+use chillerlan\GoogleAuth\{Authenticator, Base32};
+use PHPUnit\Framework\TestCase;
+
+class AuthenticatorTest extends TestCase{
 
 	protected $secret;
 	protected $falseSecret = 'SECRETTEST234567';
@@ -19,19 +21,21 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 	protected $label = 'test';
 	protected $issuer = 'chillerlan.net';
 
-	protected function setUp(){
-		$this->secret = Authenticator::createSecret();
-	}
+	/**
+	 * @var \chillerlan\GoogleAuth\Authenticator
+	 */
+	protected $authenticator;
 
-	protected function tearDown(){
-		Authenticator::setDigits();
-		Authenticator::setPeriod();
+	protected function setUp(){
+		$this->authenticator = new Authenticator(30, 6);
+
+		$this->secret = $this->authenticator->createSecret(16);
 	}
 
 	public function testSetDigits(){
 		foreach([6, 8] as $digits){
-			Authenticator::setDigits($digits);
-			$this->assertEquals($digits, Authenticator::$digits);
+			$this->authenticator->digits = $digits;
+			$this->assertEquals($digits, $this->authenticator->digits);
 		}
 	}
 
@@ -39,13 +43,13 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 	 * @expectedException \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public function testSetDigitsException(){
-		Authenticator::setDigits(7);
+		$this->authenticator->digits = 7;
 	}
 
 	public function testSetPeriod(){
 		for($period = 15; $period <= 60; $period++){
-			Authenticator::setPeriod($period);
-			$this->assertEquals($period, Authenticator::$period);
+			$this->authenticator->period = $period;
+			$this->assertEquals($period, $this->authenticator->period);
 		}
 	}
 
@@ -53,28 +57,28 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 	 * @expectedException \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public function testSetPeriodException(){
-		Authenticator::setPeriod(1);
+		$this->authenticator->period = 1;
 	}
 
 	public function testCreateSecretDefaultLength(){
-		$this->assertEquals(16, strlen(Authenticator::createSecret()));
+		$this->assertEquals(16, strlen($this->authenticator->createSecret()));
 	}
 
 	public function testCreateSecretWithLength(){
 		for($secretLength = 16; $secretLength <= 128; $secretLength++){
-			$this->assertEquals($secretLength, strlen(Authenticator::createSecret($secretLength)));
+			$this->assertEquals($secretLength, strlen($this->authenticator->createSecret($secretLength)));
 		}
 	}
 
 	public function testCreateSecretCheckCharacterSet(){
-		$this->assertRegExp('/^['.Base32Characters::RFC3548.']+$/', $this->secret);
+		$this->assertRegExp('/^['.Base32::RFC3548.']+$/', $this->secret);
 	}
 
 	/**
 	 * @expectedException \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public function testCreateSecretException(){
-		Authenticator::createSecret(10);
+		$this->authenticator->createSecret(10);
 	}
 
 
@@ -92,44 +96,44 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 	 * @dataProvider codeProvider
 	 */
 	public function testGetCode($secret, $timestamp, $code){
-		$this->assertEquals($code, Authenticator::getCode($secret, floor($timestamp / Authenticator::$period)));
+		$this->assertEquals($code, $this->authenticator->getCode($secret, floor($timestamp / $this->authenticator->period)));
 	}
 
 	/**
 	 * @expectedException \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public function testGetCodeException(){
-		Authenticator::getCode($this->invalidSecret);
+		$this->authenticator->getCode($this->invalidSecret);
 	}
 
 	public function testVerifyCode(){
-		$this->assertEquals(true, Authenticator::verifyCode(Authenticator::getCode($this->secret), $this->secret));
-		$this->assertEquals(false, Authenticator::verifyCode(Authenticator::getCode($this->secret), $this->falseSecret));
-		$this->assertEquals(false, Authenticator::verifyCode('123456', $this->secret));
+		$this->assertEquals(true, $this->authenticator->verifyCode($this->authenticator->getCode($this->secret), $this->secret));
+		$this->assertEquals(false, $this->authenticator->verifyCode($this->authenticator->getCode($this->secret), $this->falseSecret));
+		$this->assertEquals(false, $this->authenticator->verifyCode('123456', $this->secret));
 	}
 
 	public function testVerifyCodeWithTimeslice(){
-		$code = Authenticator::getCode($this->secret);
+		$code = $this->authenticator->getCode($this->secret);
 		$timestamp = time();
-		$p = Authenticator::$period;
+		$p = $this->authenticator->period;
 
 		// first adjacent code (default value)
 		$timeslice = floor(($timestamp - (1 * $p)) / $p);
-		$this->assertEquals(true, Authenticator::verifyCode($code, $this->secret, $timeslice));
+		$this->assertEquals(true, $this->authenticator->verifyCode($code, $this->secret, $timeslice));
 
 		$timeslice = floor(($timestamp - (2 * $p)) / $p);
-		$this->assertEquals(false, Authenticator::verifyCode($code, $this->secret, $timeslice));
+		$this->assertEquals(false, $this->authenticator->verifyCode($code, $this->secret, $timeslice));
 	}
 
 	public function testVerifyCodeWithTimesliceAndAdjacent(){
-		$code = Authenticator::getCode($this->secret);
+		$code = $this->authenticator->getCode($this->secret);
 		$timestamp = time();
 		$adjacent = 100;
-		$p = Authenticator::$period;
+		$p = $this->authenticator->period;
 
 		for($i = 0; $i <= $adjacent + 1; $i++){
 			$timeslice = floor(($timestamp - ($i * $p)) / $p);
-			$verify = Authenticator::verifyCode($code, $this->secret, $timeslice, $adjacent);
+			$verify = $this->authenticator->verifyCode($code, $this->secret, $timeslice, $adjacent);
 
 			$this->assertEquals($i <= $adjacent, $verify);
 		}
@@ -138,18 +142,18 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 
 	// https://github.com/PHPGangsta/GoogleAuthenticator/pull/25
 	public function testVerifyCodeWithLeadingZero(){
-		$code = Authenticator::getCode($this->secret);
-		$this->assertEquals(true, Authenticator::verifyCode($code, $this->secret));
+		$code = $this->authenticator->getCode($this->secret);
+		$this->assertEquals(true, $this->authenticator->verifyCode($code, $this->secret));
 
 		$code = '0'.$code;
-		$this->assertEquals(false, Authenticator::verifyCode($code, $this->secret));
+		$this->assertEquals(false, $this->authenticator->verifyCode($code, $this->secret));
 	}
 
 	/**
 	 * @expectedException \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public function testVerifyCodeException(){
-		Authenticator::verifyCode($this->invalidSecret, Authenticator::getCode($this->secret));
+		$this->authenticator->verifyCode($this->invalidSecret, $this->authenticator->getCode($this->secret));
 	}
 
 
@@ -160,15 +164,15 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 		];
 
 		$expected = 'otpauth://totp/'.$this->label.'?';
-		$this->assertEquals($expected.http_build_query($values), Authenticator::getUri($this->secret, $this->label, $this->issuer));
+		$this->assertEquals($expected.http_build_query($values), $this->authenticator->getUri($this->secret, $this->label, $this->issuer));
 
-		Authenticator::setDigits(8);
-		$values['digits'] = Authenticator::$digits;
-		$this->assertEquals($expected.http_build_query($values), Authenticator::getUri($this->secret, $this->label, $this->issuer));
+		$this->authenticator->digits = 8;
+		$values['digits'] = $this->authenticator->digits;
+		$this->assertEquals($expected.http_build_query($values), $this->authenticator->getUri($this->secret, $this->label, $this->issuer));
 
-		Authenticator::setPeriod(45);
-		$values['period'] = Authenticator::$period;
-		$this->assertEquals($expected.http_build_query($values), Authenticator::getUri($this->secret, $this->label, $this->issuer));
+		$this->authenticator->period = 45;
+		$values['period'] = $this->authenticator->period;
+		$this->assertEquals($expected.http_build_query($values), $this->authenticator->getUri($this->secret, $this->label, $this->issuer));
 
 	}
 
@@ -176,23 +180,7 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase{
 	 * @expectedException \chillerlan\GoogleAuth\AuthenticatorException
 	 */
 	public function testGetUriException(){
-		Authenticator::getUri($this->invalidSecret, $this->label, $this->issuer);
-	}
-
-	public function testGetGoogleQr(){
-		$label = 'test';
-		$issuer = 'chillerlan.net';
-
-		$query = [
-			'chs'  => '200x200',
-			'chld' => 'M|0',
-			'cht'  => 'qr',
-			'chl'  => Authenticator::getUri($this->secret, $label, $issuer),
-		];
-
-		$expected = 'https://chart.googleapis.com/chart?'.http_build_query($query);
-
-		$this->assertEquals($expected, Authenticator::getGoogleQr($this->secret, $label, $issuer));
+		$this->authenticator->getUri($this->invalidSecret, $this->label, $this->issuer);
 	}
 
 }

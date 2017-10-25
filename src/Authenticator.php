@@ -14,8 +14,7 @@
 
 namespace chillerlan\GoogleAuth;
 
-use chillerlan\Base32\Base32;
-use chillerlan\Base32\Base32Characters;
+use foo\bar;
 
 /**
  * Yet another Google authenticator implemetation!
@@ -23,37 +22,73 @@ use chillerlan\Base32\Base32Characters;
  * @link http://jacob.jkrall.net/totp/
  * @link https://github.com/PHPGangsta/GoogleAuthenticator
  * @link https://github.com/devicenull/PHP-Google-Authenticator
+ *
+ * @property int $digits
+ * @property int $period
  */
 class Authenticator{
+	use Magic;
+
+	const SECRET_DEFAULT_LENGTH = 16;
 
 	/**
 	 * @link https://github.com/google/google-authenticator/wiki/Key-Uri-Format#digits
 	 *
 	 * @var int
 	 */
-	public static $digits = 6;
+	protected $digits = 6;
 
 	/**
 	 * @link https://github.com/google/google-authenticator/wiki/Key-Uri-Format#period
 	 *
 	 * @var int
 	 */
-	public static $period = 30;
+	protected $period = 30;
+
+	/**
+	 * @var \chillerlan\GoogleAuth\Base32
+	 */
+	protected $base32;
+
+	/**
+	 * Authenticator constructor.
+	 *
+	 * @param int|null $period
+	 * @param int|null $digits
+	 *
+	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
+	 */
+	public function __construct(int $period = null, int $digits = null){
+
+		if(!is_null($period)){
+			$this->setPeriod($period);
+		}
+
+		if(!is_null($digits)){
+			$this->setDigits($digits);
+		}
+
+		$this->base32 = new Base32;
+
+	}
 
 	/**
 	 * Sets the code length to either 6 or 8
 	 *
 	 * @param int $digits
 	 *
+	 * @return \chillerlan\GoogleAuth\Authenticator
 	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
-	public static function setDigits($digits = 6){
+	public function setDigits(int $digits):Authenticator {
 
 		if(!in_array(intval($digits), [6, 8], true)){
 			throw new AuthenticatorException('Invalid code length: '.$digits);
 		}
 
-		self::$digits = $digits;
+		$this->digits = $digits;
+
+		return $this;
 	}
 
 	/**
@@ -61,16 +96,19 @@ class Authenticator{
 	 *
 	 * @param int $period
 	 *
+	 * @return \chillerlan\GoogleAuth\Authenticator
 	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
-	public static function setPeriod($period = 30){
+	public function setPeriod(int $period):Authenticator {
 		$period = intval($period);
 
-		if($period < 15 || $period > 60){ // for cereal?
+		if($period < 15 || $period > 60){
 			throw new AuthenticatorException('Invalid period: '.$period);
 		}
 
-		self::$period = $period;
+		$this->period = $period;
+
+		return $this;
 	}
 
 	/**
@@ -79,24 +117,26 @@ class Authenticator{
 	 *
 	 * @link https://github.com/PHPGangsta/GoogleAuthenticator/pull/10
 	 *
-	 * @param int $secretLength
+	 * @param int $length
 	 *
 	 * @return string
 	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
-	public static function createSecret($secretLength = 16){
-		$secretLength = intval($secretLength);
+	public function createSecret(int $length = null):string {
+		$length = !is_null($length)
+			? intval($length)
+			: self::SECRET_DEFAULT_LENGTH;
 
 		// ~ 80 to 640 bits
-		if($secretLength < 16 || $secretLength > 128){
-			throw new AuthenticatorException('Invalid secret length: '.$secretLength);
+		if($length < 16 || $length > 128){
+			throw new AuthenticatorException('Invalid secret length: '.$length);
 		}
 
-		$random = self::getRandomBytes($secretLength);
-		$chars  = str_split(Base32Characters::RFC3548);
+		$random = random_bytes($length);
+		$chars  = str_split(Base32::RFC3548);
 		$secret = '';
 
-		for($i = 0; $i < $secretLength; $i++){
+		for($i = 0; $i < $length; $i++){
 			$secret .= $chars[ord($random[$i])&31];
 		}
 
@@ -112,15 +152,13 @@ class Authenticator{
 	 * @return string
 	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
-	public static function getCode($secret, $timeslice = null){
-		self::checkSecret($secret);
-
+	public function getCode(string $secret, float $timeslice = null):string {
 		// Pack time into binary string
 		$time  = str_repeat(chr(0), 4);
-		$time .= pack('N*', self::checkTimeslice($timeslice));
+		$time .= pack('N*', $this->checkTimeslice($timeslice));
 
 		// Hash it with users secret key
-		$hmac = hash_hmac('SHA1', $time, Base32::toString($secret), true);
+		$hmac = hash_hmac('SHA1', $time, $this->base32->toString($this->checkSecret($secret)), true);
 
 		// Use last nibble of result as index/offset
 		$offset = ord(substr($hmac, -1))&0x0F;
@@ -128,7 +166,7 @@ class Authenticator{
 		// Unpack binary value, only 32 bits
 		$value = unpack('N', substr($hmac, $offset, 4))[1]&0x7FFFFFFF;
 
-		return str_pad($value % pow(10, self::$digits), self::$digits, '0', STR_PAD_LEFT);
+		return str_pad($value % pow(10, $this->digits), $this->digits, '0', STR_PAD_LEFT);
 	}
 
 	/**
@@ -142,16 +180,14 @@ class Authenticator{
 	 * @return bool
 	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
-	public static function verifyCode($code, $secret, $timeslice = null, $adjacent = 1){
-		self::checkSecret($secret);
-		$timeslice = self::checkTimeslice($timeslice);
+	public function verifyCode(string $code, string $secret, float $timeslice = null, int $adjacent = 1):bool {
 
 		for($i = -$adjacent; $i <= $adjacent; $i++){
 			/**
 			 * A timing safe equals comparison
 			 * more info here: http://blog.ircmaxell.com/2014/11/its-all-about-time.html
 			 */
-			if(hash_equals(self::getCode($secret, $timeslice + $i), $code)){
+			if(hash_equals($this->getCode($this->checkSecret($secret), $this->checkTimeslice($timeslice) + $i), $code)){
 				return true;
 			}
 		}
@@ -169,62 +205,40 @@ class Authenticator{
 	 * @return string
 	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
-	public static function getUri($secret, $label, $issuer){
-		self::checkSecret($secret);
+	public function getUri(string $secret, string $label, string $issuer):string {
 
 		// https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters
 		$values = [
-			'secret' => $secret,
+			'secret' => $this->checkSecret($secret),
 			'issuer' => $issuer,
 		];
 
-		if(self::$digits !== 6){
-			$values['digits'] = self::$digits;
+		if($this->digits !== 6){
+			$values['digits'] = $this->digits;
 		}
 
-		if(self::$period !== 30){
-			$values['period'] = self::$period;
+		if($this->period !== 30){
+			$values['period'] = $this->period;
 		}
 
 		return 'otpauth://totp/'.$label.'?'.http_build_query($values);
 	}
 
 	/**
-	 * Generates an URL to the Google (deprecated) charts QR code API.
-	 *
-	 * @link       https://github.com/codemasher/php-qrcode/
-	 * @deprecated https://developers.google.com/chart/infographics/docs/qr_codes
+	 * Checks if the secret phrase matches the character set
 	 *
 	 * @param string $secret
-	 * @param string $label
-	 * @param string $issuer
 	 *
 	 * @return string
-	 */
-	public static function getGoogleQr($secret, $label, $issuer) {
-
-		$query = [
-			'chs'  => '200x200',
-			'chld' => 'M|0',
-			'cht'  => 'qr',
-			'chl'  => self::getUri($secret, $label, $issuer),
-		];
-
-		return 'https://chart.googleapis.com/chart?'.http_build_query($query);
-	}
-
-	/**
-	 * Checks if the secret phrase matches the character set
-	 * @param mixed $secret
-	 *
 	 * @throws \chillerlan\GoogleAuth\AuthenticatorException
 	 */
-	protected static function checkSecret($secret){
+	protected function checkSecret(string $secret):string {
 
-		if(!(bool)preg_match('/^['.Base32Characters::RFC3548.']+$/', $secret)){
+		if(!(bool)preg_match('/^['.Base32::RFC3548.']+$/', $secret)){
 			throw new AuthenticatorException('Invalid secret phrase!');
 		}
 
+		return $secret;
 	}
 
 	/**
@@ -232,28 +246,13 @@ class Authenticator{
 	 *
 	 * @return float
 	 */
-	protected static function checkTimeslice($timeslice){
+	protected function checkTimeslice(float $timeslice = null):float {
 
-		if($timeslice === null || !is_float($timeslice)){
-			$timeslice = floor(time() / self::$period);
+		if(is_null($timeslice)){
+			$timeslice = floor(time() / $this->period);
 		}
 
 		return $timeslice;
-	}
-
-	/**
-	 * @param $length
-	 *
-	 * @return string
-	 * @see https://github.com/paragonie/random_compat/blob/7cf3fdb7797f40d4480d0f2e6e128f4c8b25600b/ERRATA.md
-	 */
-	protected static function getRandomBytes($length){
-
-		if(function_exists('random_bytes')){
-			return random_bytes($length); // PHP 7
-		}
-
-		return mcrypt_create_iv($length, MCRYPT_DEV_URANDOM); // PHP 5.6+
 	}
 
 }
