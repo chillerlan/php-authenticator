@@ -3,19 +3,19 @@
  * @filesource   Base32Test.php
  * @created      29.02.2016
  * @author       Smiley <smiley@chillerlan.net>
- * @copyright    2015 Smiley
+ * @copyright    2016 Smiley
  * @license      MIT
  */
 
-namespace chillerlan\GoogleAuthTest;
+namespace chillerlan\AuthenticatorTest;
 
-use chillerlan\GoogleAuth\Base32;
+use chillerlan\Authenticator\Base32;
 use PHPUnit\Framework\TestCase;
 
 class Base32Test extends TestCase{
 
 	/**
-	 * @var \chillerlan\GoogleAuth\Base32
+	 * @var \chillerlan\Authenticator\Base32
 	 */
 	protected $base32;
 
@@ -24,13 +24,11 @@ class Base32Test extends TestCase{
 	}
 
 	public function testSetCharset(){
-		$this->base32->charset = Base32::CROCKFORD;
-		$this->assertEquals(Base32::CROCKFORD, $this->base32->charset);
+		$this->assertSame(Base32::CROCKFORD, $this->base32->setCharset(Base32::CROCKFORD)->getCharset());
 	}
 
 	public function testToStringCrockfordCoverage(){
-		$this->base32->charset = Base32::CROCKFORD;
-		$this->assertEquals('0123456789ABCDEFGHJKMNPQRSTVWXYZ', $this->base32->toString('6ORK4CSM6MV3EEIS85L46H258S3MGJJB9N750MAJADA5CNTRB5D0'));
+		$this->assertSame('0123456789ABCDEFGHJKMNPQRSTVWXYZ', $this->base32->setCharset(Base32::CROCKFORD)->toString('6ORK4CSM6MV3EEIS85L46H258S3MGJJB9N750MAJADA5CNTRB5D0'));
 	}
 
 	public function base32DataProvider(){
@@ -49,54 +47,54 @@ class Base32Test extends TestCase{
 	 * @dataProvider base32DataProvider
 	 */
 	public function testStr2Bin($str, $bin){
-		$this->assertEquals($bin, $this->base32->str2bin($str));
+		$this->assertSame($bin, $this->base32->str2bin($str));
 	}
 
 	/**
 	 * @dataProvider base32DataProvider
 	 */
 	public function testBin2Str($str, $bin){
-		$this->assertEquals($str, $this->base32->bin2str($bin));
+		$this->assertSame($str, $this->base32->bin2str($bin));
 	}
 
 	/**
 	 * @dataProvider base32DataProvider
 	 */
 	public function testFromBin($str, $bin, $base32){
-		$this->assertEquals($base32, $this->base32->fromBin($bin));
+		$this->assertSame($base32, $this->base32->fromBin($bin));
 	}
 
 	/**
 	 * @dataProvider base32DataProvider
 	 */
 	public function testToBin($str, $bin, $base32){
-		$this->assertEquals($bin, $this->base32->toBin($base32));
+		$this->assertSame($bin, $this->base32->toBin($base32));
 	}
 
 	/**
 	 * @dataProvider base32DataProvider
 	 */
 	public function testFromString($str, $bin, $base32){
-		$this->assertEquals($base32, $this->base32->fromString($str));
+		$this->assertSame($base32, $this->base32->fromString($str));
 	}
 
 	/**
 	 * @dataProvider base32DataProvider
 	 */
 	public function testToString($str, $bin, $base32){
-		$this->assertEquals($str, $this->base32->toString($base32));
+		$this->assertSame($str, $this->base32->toString($base32));
 	}
 
 	/**
-	 * @expectedException \chillerlan\GoogleAuth\Base32Exception
+	 * @expectedException \chillerlan\Authenticator\Base32Exception
 	 * @expectedExceptionMessage Length must be exactly 32
 	 */
 	public function testSetCharsetException(){
-		$this->base32->charset = 'florps';
+		$this->base32->setCharset('florps');
 	}
 
 	/**
-	 * @expectedException \chillerlan\GoogleAuth\Base32Exception
+	 * @expectedException \chillerlan\Authenticator\Base32Exception
 	 * @expectedExceptionMessage Length must be divisible by 8
 	 */
 	public function testCheckBinLengthException(){
@@ -104,7 +102,7 @@ class Base32Test extends TestCase{
 	}
 
 	/**
-	 * @expectedException \chillerlan\GoogleAuth\Base32Exception
+	 * @expectedException \chillerlan\Authenticator\Base32Exception
 	 * @expectedExceptionMessage Only 0 and 1 are permitted
 	 */
 	public function testCheckBinException(){
@@ -112,7 +110,7 @@ class Base32Test extends TestCase{
 	}
 
 	/**
-	 * @expectedException \chillerlan\GoogleAuth\Base32Exception
+	 * @expectedException \chillerlan\Authenticator\Base32Exception
 	 * @expectedExceptionMessage Must match character set
 	 */
 	public function testToBinCharsetException(){

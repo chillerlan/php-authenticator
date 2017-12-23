@@ -3,12 +3,13 @@
  * Class Base32
  *
  * @filesource   Base32.php
+ * @package      chillerlan\Authenticator
  * @author       Shannon Wynter {@link http://fremnet.net/contact}
  * @author       Smiley <smiley@chillerlan.net>
  * @copyright    Copyright (c) 2006 Shannon Wynter
  */
 
-namespace chillerlan\GoogleAuth;
+namespace chillerlan\Authenticator;
 
 /**
  * Class to provide base32 encoding/decoding of strings
@@ -16,7 +17,6 @@ namespace chillerlan\GoogleAuth;
  * @property string $charset
  */
 class Base32{
-	use Magic;
 
 	/**
 	 * RFC3548
@@ -67,8 +67,8 @@ class Base32{
 	 */
 	public function __construct(string $charset = null){
 
-		if(!is_null($charset)){
-			$this->charset =$charset;
+		if($charset !== null){
+			$this->setCharset($charset);
 		}
 
 	}
@@ -76,24 +76,31 @@ class Base32{
 	/**
 	 * setCharset
 	 *
-	 * Used to set the internal _charset variable
+	 * Used to set the internal $charset variable
 	 * I've left it so that people can arbirtrarily set their
 	 * own charset
 	 *
 	 * @param string $charset The character set you want to use
 	 *
-	 * @return void
-	 * @throws \chillerlan\GoogleAuth\Base32Exception
+	 * @return \chillerlan\Authenticator\Base32
+	 * @throws \chillerlan\Authenticator\Base32Exception
 	 */
-	protected function setCharset(string $charset){
+	public function setCharset(string $charset):Base32 {
 
-		if(strlen($charset) === 32){
-			$this->charset = strtoupper($charset);
-		}
-		else{
+		if(strlen($charset) !== 32){
 			throw new Base32Exception('Length must be exactly 32');
 		}
 
+		$this->charset = strtoupper($charset);
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getCharset():string {
+		return $this->charset;
 	}
 
 	/**
@@ -119,7 +126,6 @@ class Base32{
 	 * @param string $str The string of 0's and 1's you want to convert
 	 *
 	 * @return string The ascii output
-	 * @throws \chillerlan\GoogleAuth\Base32Exception
 	 */
 	public function bin2str(string $str):string {
 		$this->checkLength($str);
@@ -142,7 +148,6 @@ class Base32{
 	 * @param string $str The string of 0's and 1's you want to convert
 	 *
 	 * @return string String encoded as base32
-	 * @throws \chillerlan\GoogleAuth\Base32Exception
 	 */
 	public function fromBin(string $str):string {
 		$this->checkLength($str);
@@ -163,7 +168,7 @@ class Base32{
 
 		preg_match_all('/.{8}/', $str, $chrs);
 
-		$chrs = array_map(function ($str){
+		$chrs = array_map(function($str){
 			return $this->charset[bindec($str)];
 		}, $chrs[0]);
 
@@ -178,13 +183,12 @@ class Base32{
 	 * @param string $str The base32 string to convert
 	 *
 	 * @return string Ascii binary string
-	 * @throws \chillerlan\GoogleAuth\Base32Exception
 	 */
 	public function toBin(string $str):string {
 		$this->checkCharacterSet($str);
 
 		// Convert the base32 string back to a binary string
-		$str = array_map(function ($chr){
+		$str = array_map(function($chr){
 			return sprintf('%08b', strpos($this->charset, $chr));
 		}, str_split($str));
 
@@ -211,7 +215,6 @@ class Base32{
 	 * @param string $str The string to convert
 	 *
 	 * @return string The converted base32 string
-	 * @throws \chillerlan\GoogleAuth\Base32Exception
 	 */
 	public function fromString(string $str):string {
 		return $this->fromBin($this->str2bin($str));
@@ -226,13 +229,12 @@ class Base32{
 	 * @param string $str The base32 string to convert
 	 *
 	 * @return string The normal string
-	 * @throws \chillerlan\GoogleAuth\Base32Exception
 	 */
 	public function toString(string $str):string {
 		$str = strtoupper($str);
 
 		// csSave actually has to be able to consider extra characters
-		if($this->charset === self::CROCKFORD){
+		if($this->charset === $this::CROCKFORD){
 			$str = str_replace('O', '0', $str);
 			$str = str_replace(['I', 'L'], '1', $str);
 		}
@@ -244,7 +246,7 @@ class Base32{
 	 * @param string $str
 	 *
 	 * @return void
-	 * @throws \chillerlan\GoogleAuth\Base32Exception
+	 * @throws \chillerlan\Authenticator\Base32Exception
 	 */
 	protected function checkLength(string $str){
 
@@ -258,7 +260,7 @@ class Base32{
 	 * @param string $str
 	 *
 	 * @return void
-	 * @throws \chillerlan\GoogleAuth\Base32Exception
+	 * @throws \chillerlan\Authenticator\Base32Exception
 	 */
 	protected function checkBin(string $str){
 
@@ -272,7 +274,7 @@ class Base32{
 	 * @param string $str
 	 *
 	 * @return void
-	 * @throws \chillerlan\GoogleAuth\Base32Exception
+	 * @throws \chillerlan\Authenticator\Base32Exception
 	 */
 	protected function checkCharacterSet(string $str){
 

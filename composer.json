@@ -1,11 +1,11 @@
 {
-	"name": "chillerlan/php-googleauth",
-	"description": "Time based authentication codes. PHP 7+",
-	"homepage": "https://github.com/codemasher/php-googleauth",
+	"name": "chillerlan/php-authenticator",
+	"description": "A generator for counter- and time based authentication codes. PHP 7+",
+	"homepage": "https://github.com/codemasher/php-authenticator",
 	"license": "MIT",
 	"type": "library",
 	"keywords": [
-		"authenticator", "totp", "2fa"
+		"authenticator", "totp", "hotp", "2fa", "rfc4226", "rfc6238"
 	],
 	"authors": [
 		{
@@ -17,20 +17,19 @@
 		"php": ">=7.0.3"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "6.4.*"
+		"phpunit/phpunit": "6.5.*"
 	},
 	"suggest": {
-		"chillerlan/php-qrcode": "*"
+		"chillerlan/php-qrcode": ">=2.0.0"
 	},
 	"autoload": {
 		"psr-4": {
-			"chillerlan\\GoogleAuth\\": "src/"
+			"chillerlan\\Authenticator\\": "src/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"chillerlan\\GoogleAuthTest\\": "tests/"
+			"chillerlan\\AuthenticatorTest\\": "tests/"
 		}
 	}
-
 }

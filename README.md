@@ -1,121 +1,159 @@
-# php-googleauth
+# php-authenticator
+
+A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) and time based ([RFC 6238](https://tools.ietf.org/html/rfc6238)) authentication codes. (a.k.a. Yet Another Google Authenticator Implementation!)
 
 [![version][packagist-badge]][packagist]
 [![license][license-badge]][license]
 [![Travis][travis-badge]][travis]
 [![Coverage][coverage-badge]][coverage]
 [![Scrunitizer][scrutinizer-badge]][scrutinizer]
-[![Code Climate][codeclimate-badge]][codeclimate]
 [![Downloads][downloads-badge]][downloads]
 
-[packagist-badge]: https://img.shields.io/packagist/v/chillerlan/php-googleauth.svg?style=flat-square
-[packagist]: https://packagist.org/packages/chillerlan/php-googleauth
-[license-badge]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
-[license]: https://github.com/codemasher/php-googleauth/blob/master/LICENSE
-[travis-badge]: https://img.shields.io/travis/codemasher/php-googleauth.svg?style=flat-square
-[travis]: https://travis-ci.org/codemasher/php-googleauth
-[coverage-badge]: https://img.shields.io/codecov/c/github/codemasher/php-googleauth.svg?style=flat-square
-[coverage]: https://codecov.io/github/codemasher/php-googleauth
-[scrutinizer-badge]: https://scrutinizer-ci.com/g/codemasher/php-googleauth/badges/quality-score.png?b=master
-[scrutinizer]: https://scrutinizer-ci.com/g/codemasher/php-googleauth
-[codeclimate-badge]: https://img.shields.io/codeclimate/github/codemasher/php-googleauth.svg
-[codeclimate]: https://codeclimate.com/github/codemasher/php-googleauth
-[downloads-badge]: https://img.shields.io/packagist/dt/chillerlan/php-googleauth.svg
-[downloads]: https://packagist.org/packages/chillerlan/php-googleauth/stats
-
-Yet another Google Authenticator implementation!
+[packagist-badge]: https://img.shields.io/packagist/v/chillerlan/php-authenticator.svg
+[packagist]: https://packagist.org/packages/chillerlan/php-authenticator
+[license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
+[license]: https://github.com/codemasher/php-authenticator/blob/master/LICENSE
+[travis-badge]: https://img.shields.io/travis/codemasher/php-authenticator.svg
+[travis]: https://travis-ci.org/codemasher/php-authenticator
+[coverage-badge]: https://img.shields.io/codecov/c/github/codemasher/php-authenticator.svg
+[coverage]: https://codecov.io/github/codemasher/php-authenticator
+[scrutinizer-badge]: https://img.shields.io/scrutinizer/g/codemasher/php-authenticator.svg
+[scrutinizer]: https://scrutinizer-ci.com/g/codemasher/php-authenticator
+[downloads-badge]: https://img.shields.io/packagist/dt/chillerlan/php-authenticator.svg
+[downloads]: https://packagist.org/packages/chillerlan/php-authenticator/stats
 
 # Documentation
 ## Requirements
 - PHP 7+
+  - 64bit
 
 ## Installation
-### Using [composer](https://getcomposer.org)
+**requires [composer](https://getcomposer.org)**
 
-*Terminal*
-```sh
-composer require chillerlan/php-googleauth:dev-master
-```
-
-*composer.json*
+*composer.json* (note: replace `dev-master` with a version boundary)
 ```json
 {
 	"require": {
 		"php": ">=7.0.3",
-		"chillerlan/php-googleauth": "dev-master"
+		"chillerlan/php-qrcode": "dev-master"
 	}
 }
 ```
 
+### Manual installation
+Download the desired version of the package from [master](https://github.com/codemasher/php-authenticator/archive/master.zip) or 
+[release](https://github.com/codemasher/php-authenticator/releases) and extract the contents to your project folder.  After that:
+- run `composer install` to install the required dependencies and generate `/vendor/autoload.php`.
+- if you use a custom autoloader, point the namespace `chillerlan\Authenticator` to the folder `src` of the package 
+
 Profit!
+
 
 ## Usage
 
-### Creating a secret 
+### Create a secret 
 The secret is usually being created once during the activation process in a user control panel. 
-So all you need to do there is to create a secret and display it to the user in a convenient way, as text string and QR code for example.
+So all you need to do there is to display it to the user in a convenient way - 
+as a text string and QR code for example - and save it somewhere with the user data.
 ```php
-$authenticator = new Authenticator;
+$authenticator = new \chillerlan\Authenticator\Authenticator;
 
-// create a secret (stored somewhere in a safe place on the server *coughs*)
+// create a secret (stored somewhere in a *safe* place on the server. safe... hahaha)
 $secret = $authenticator->createSecret();
 
 // you can also specify the length of the secret key
 $secret = $authenticator->createSecret(20);
+
+// set an existing secret
+$authenticator->setSecret($secret);
 ```
 
-In order to display a QR code, you can use one of the following methods.
-- `$label` should be something that identifies the account to which the secret belongs
-- `$issuer` is the name of your website or company for example, so that the user is able to identify multiple accounts.
-```php
-// -> otpauth://totp/test?secret=NKSOQG7UKKID4IXW&issuer=chillerlan.net
-$uri = $authenticator->getUri($secret, $label, $issuer);
-```
+A secret created with `Authenticator::createSecret()` will also be stored internally, so that you don't need to provide the one you just created on follow-up operations for the same secret.
 
 ### Verify a one time code
 Now during the login process - after the user has successfully entered their credentials - you would 
 ask them for a one time code to check it against the secret from your user database.
+
 ```php
 // verify the code
-if($authenticator->verifyCode($code, $secret)){
+if($authenticator->verify($code)){
 	// that's it - 2FA has never been easier! :D
 }
 ```
 
-### Advanced settings
-If your authenticator produces wrong one time codes, you may want to check your timezone settings.
-In case you can't adjust them server side, you can do it in the script like so:
+#### time based (TOTP)
+Verify adjacent codes
 ```php
-// let's say, your server's timezone is an hour off
-$timestamp = time() - 3600;
-$timeslice = floor($timestamp / $authenticator->$period);
+$p = $authenticator->getPeriod();
 
-if($authenticator->verifyCode($code, $secret, $timeslice)){
-	//  verified
-}
+// try the first adjacent
+$authenticator->verify($code, time() - $p); // -> true
 
-if(hash_equals($authenticator->getCode($secret, $timeslice), $_POST['code'])){
-	// verified
-}
+// try the second adjacent, default is 1
+$authenticator->verify($code, time() + 2 * $p); // -> false
 
+// allow 2 adjacent codes
+$authenticator->verify($code, time() + 2 * $p, 2); // -> true
 ```
 
-There are 2 other methods which are not (yet) supported by Google Authenticator but mabe useful in other implementations:
+Create a code for a UNIX timestamp
 ```php
-// see https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters
+// let's assume your server's timezone is an hour off and beyond your control
+$timeslice = $authenticator->timeslice(time() - 3600);
 
-// code length, currently 6 or 8
-$authenticator->digits = 8;
+// current code
+$code = $authenticator->code($timeslice);
+
+// adjacent codes
+$prev = $authenticator->code($timeslice - 1);
+$next = $authenticator->code($timeslice + 1);
+```
+
+#### counter based (HOTP)
+```php
+// switch mode to HOTP
+$authenticator->setMode('hotp');
+
+// user sends code #42, equivalent to
+$code = $authenticator->code(42);
+
+// try the first adjacent
+$authenticator->verify($code, $counterValueFromUserDatabase + 1) // -> true
+	
+// the internal counter will be increased by 1 on a successful verify
+$authenticator->getCounter(); // -> 43, save
+
+// user sends following code (#43)
+$authenticator->verify($nextCode, $counterValueFromUserDatabase); // -> true
+$authenticator->getCounter(); // -> 44, save...
+```
+
+### URI creation
+In order to display a QR code for a mobile authenticator you'll need an `otpauth://` URI, which can be created using the following method.
+- `$label` should be something that identifies the account to which the secret belongs
+- `$issuer` is the name of your website or company for example, so that the user is able to identify multiple accounts.
+```php
+$uri = $authenticator->getUri($label, $issuer);
+
+// -> otpauth://totp/my%20label?secret=NKSOQG7UKKID4IXW&issuer=chillerlan.net&digits=6&period=30&algorithm=SHA1
+```
+
+#### Notes
+Keep in mind that several URI settings are not (yet) recognized by all authenticators. Check [the Google Authenticator wiki](https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters) for more info.
+
+```php
+// code length, currently 6 through 8
+$authenticator->setDigits(8);
 
 // valid period between 10 and 60 seconds
-$authenticator->period = 45;
+$authenticator->setPeriod(45);
 
-// set these values via the constructor
-$authenticator = new Authenticator(20, 8); // $period, $digits
+// set the HMAC hash algorithm
+$authenticator->setAlgorithm('SHA512');
 ```
 
 <p align="center">
   <a href="https://www.turnon2fa.com">
-    <img alt="2FA ALL THE THINGS!" src="https://raw.githubusercontent.com/codemasher/php-googleauth/master/stuff/2fa-all-the-things.jpg">
+    <img alt="2FA ALL THE THINGS!" src="https://raw.githubusercontent.com/codemasher/php-authenticator/master/stuff/2fa-all-the-things.jpg">
   </a>
 </p>
