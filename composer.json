@@ -1,7 +1,7 @@
 {
 	"name": "chillerlan/php-authenticator",
 	"description": "A generator for counter- and time based authentication codes. PHP 7+",
-	"homepage": "https://github.com/codemasher/php-authenticator",
+	"homepage": "https://github.com/chillerlan/php-authenticator",
 	"license": "MIT",
 	"type": "library",
 	"keywords": [
@@ -10,9 +10,15 @@
 	"authors": [
 		{
 			"name": "Smiley",
-			"email": "smiley@chillerlan.net"
+			"email": "smiley@chillerlan.net",
+			"homepage": "https://github.com/codemasher"
 		}
 	],
+	"support": {
+		"issues": "https://github.com/chillerlan/php-authenticator/issues",
+		"source": "https://github.com/chillerlan/php-authenticator"
+	},
+	"minimum-stability": "stable",
 	"require": {
 		"php": ">=7.0.3"
 	},
