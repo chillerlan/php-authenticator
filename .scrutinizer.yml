@@ -1,4 +1,5 @@
 filter:
   excluded_paths:
     - examples/*
+    - stuff/*
     - tests/*
