@@ -1,4 +1,4 @@
-# php-authenticator
+# chillerlan/php-authenticator
 
 A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) and time based ([RFC 6238](https://tools.ietf.org/html/rfc6238)) authentication codes. (a.k.a. Yet Another Google Authenticator Implementation!)
 
@@ -8,19 +8,22 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 [![Coverage][coverage-badge]][coverage]
 [![Scrunitizer][scrutinizer-badge]][scrutinizer]
 [![Downloads][downloads-badge]][downloads]
+[![PayPal donate][donate-badge]][donate]
 
-[packagist-badge]: https://img.shields.io/packagist/v/chillerlan/php-authenticator.svg
+[packagist-badge]: https://img.shields.io/packagist/v/chillerlan/php-authenticator.svg?style=flat-square
 [packagist]: https://packagist.org/packages/chillerlan/php-authenticator
-[license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
-[license]: https://github.com/codemasher/php-authenticator/blob/master/LICENSE
-[travis-badge]: https://img.shields.io/travis/codemasher/php-authenticator.svg
-[travis]: https://travis-ci.org/codemasher/php-authenticator
-[coverage-badge]: https://img.shields.io/codecov/c/github/codemasher/php-authenticator.svg
-[coverage]: https://codecov.io/github/codemasher/php-authenticator
-[scrutinizer-badge]: https://img.shields.io/scrutinizer/g/codemasher/php-authenticator.svg
-[scrutinizer]: https://scrutinizer-ci.com/g/codemasher/php-authenticator
-[downloads-badge]: https://img.shields.io/packagist/dt/chillerlan/php-authenticator.svg
+[license-badge]: https://img.shields.io/github/license/chillerlan/php-authenticator.svg?style=flat-square
+[license]: https://github.com/chillerlan/php-authenticator/blob/master/LICENSE
+[travis-badge]: https://img.shields.io/travis/chillerlan/php-authenticator.svg?style=flat-square
+[travis]: https://travis-ci.org/chillerlan/php-authenticator
+[coverage-badge]: https://img.shields.io/codecov/c/github/chillerlan/php-authenticator.svg?style=flat-square
+[coverage]: https://codecov.io/github/chillerlan/php-authenticator
+[scrutinizer-badge]: https://img.shields.io/scrutinizer/g/chillerlan/php-authenticator.svg?style=flat-square
+[scrutinizer]: https://scrutinizer-ci.com/g/chillerlan/php-authenticator
+[downloads-badge]: https://img.shields.io/packagist/dt/chillerlan/php-authenticator.svg?style=flat-square
 [downloads]: https://packagist.org/packages/chillerlan/php-authenticator/stats
+[donate-badge]: https://img.shields.io/badge/donate-paypal-ff33aa.svg?style=flat-square
+[donate]: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WLYUNAT9ZTJZ4
 
 # Documentation
 ## Requirements
@@ -41,16 +44,14 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 ```
 
 ### Manual installation
-Download the desired version of the package from [master](https://github.com/codemasher/php-authenticator/archive/master.zip) or 
-[release](https://github.com/codemasher/php-authenticator/releases) and extract the contents to your project folder.  After that:
+Download the desired version of the package from [master](https://github.com/chillerlan/php-authenticator/archive/master.zip) or 
+[release](https://github.com/chillerlan/php-authenticator/releases) and extract the contents to your project folder.  After that:
 - run `composer install` to install the required dependencies and generate `/vendor/autoload.php`.
 - if you use a custom autoloader, point the namespace `chillerlan\Authenticator` to the folder `src` of the package 
 
 Profit!
 
-
 ## Usage
-
 ### Create a secret 
 The secret is usually being created once during the activation process in a user control panel. 
 So all you need to do there is to display it to the user in a convenient way - 
@@ -154,6 +155,6 @@ $authenticator->setAlgorithm('SHA512');
 
 <p align="center">
   <a href="https://www.turnon2fa.com">
-    <img alt="2FA ALL THE THINGS!" src="https://raw.githubusercontent.com/codemasher/php-authenticator/master/stuff/2fa-all-the-things.jpg">
+    <img alt="2FA ALL THE THINGS!" src="https://raw.githubusercontent.com/chillerlan/php-authenticator/master/stuff/2fa-all-the-things.jpg">
   </a>
 </p>
