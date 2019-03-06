@@ -14,6 +14,8 @@ namespace chillerlan\Authenticator;
 /**
  * Class to provide base32 encoding/decoding of strings
  *
+ * @link https://fremnet.net/article/215/class-base32
+ *
  * @property string $charset
  */
 class Base32{
@@ -25,7 +27,7 @@ class Base32{
 	 *
 	 * @link http://www.ietf.org/rfc/rfc3548.txt
 	 */
-	const RFC3548 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+	public const RFC3548 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 
 	/**
 	 * csSafe
@@ -37,7 +39,7 @@ class Base32{
 	 * @link http://www.crockford.com/wrmg/base32.html
 	 *
 	 */
-	const CROCKFORD = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+	public const CROCKFORD = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
 
 	/**
 	 * cs09AV
@@ -49,7 +51,7 @@ class Base32{
 	 * @link http://search.cpan.org/~danpeder/MIME-Base32-1.01/Base32.pm
 	 *
 	 */
-	const MIME_09AV = '0123456789ABCDEFGHIJKLMNOPQRSTUV';
+	public const MIME_09AV = '0123456789ABCDEFGHIJKLMNOPQRSTUV';
 
 	/**
 	 * charset
