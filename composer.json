@@ -1,9 +1,10 @@
 {
 	"name": "chillerlan/php-authenticator",
-	"description": "A generator for counter- and time based authentication codes. PHP 7+",
+	"description": "A generator for counter- and time based authentication codes. PHP 7.2+",
 	"homepage": "https://github.com/chillerlan/php-authenticator",
 	"license": "MIT",
 	"type": "library",
+	"minimum-stability": "stable",
 	"keywords": [
 		"authenticator", "totp", "hotp", "2fa", "rfc4226", "rfc6238"
 	],
@@ -18,15 +19,15 @@
 		"issues": "https://github.com/chillerlan/php-authenticator/issues",
 		"source": "https://github.com/chillerlan/php-authenticator"
 	},
-	"minimum-stability": "stable",
 	"require": {
-		"php": ">=7.0.3"
+		"php": "^7.2",
+		"chillerlan/php-settings-container": "^1.0"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "6.5.*"
+		"phpunit/phpunit": "^8.0"
 	},
 	"suggest": {
-		"chillerlan/php-qrcode": ">=2.0.0"
+		"chillerlan/php-qrcode": "^3.0"
 	},
 	"autoload": {
 		"psr-4": {
