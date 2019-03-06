@@ -32,7 +32,7 @@ class Base32{
 	 *
 	 * This character set is designed to be more human friendly
 	 * For example: i, I, L, l and 1 all map to 1
-	 * Also: there is no U - to help prevent offencive output
+	 * Also: there is no U - to help prevent offensive output
 	 *
 	 * @link http://www.crockford.com/wrmg/base32.html
 	 *
