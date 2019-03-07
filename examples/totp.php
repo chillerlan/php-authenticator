@@ -42,7 +42,7 @@ var_dump($auth->verify($code, time() - $options->period)); // -> true
 var_dump($auth->verify($code, time() + 2 * $options->period)); // -> false
 // allow 2 adjacent codes
 $options->adjacent = 2;
-var_dump($auth->setOptions($options)->verify($code, time() + 2 * $options->period, 2)); // -> true
+var_dump($auth->setOptions($options)->verify($code, time() + 2 * $options->period)); // -> true
 
 // create an URI for use in e.g. QR codes
 // -> otpauth://totp/test?secret=TPJNDLHMPOFXBWPSXYBUZBIHUI&issuer=example.com&digits=8&period=60&algorithm=SHA512

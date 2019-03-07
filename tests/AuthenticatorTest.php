@@ -137,7 +137,12 @@ class AuthenticatorTest extends TestCase{
 		$adjacent = 100;
 
 		for($i = 0; $i <= $adjacent + 1; $i++){
-			$verify = $this->authenticator->verify($code, $timestamp - $i * $this->options->period, $adjacent);
+			$this->options->adjacent = $adjacent;
+
+			$verify = $this->authenticator
+				->setOptions($this->options)
+				->verify($code, $timestamp - $i * $this->options->period)
+			;
 
 			$i <= $adjacent
 				? $this->assertTrue($verify)

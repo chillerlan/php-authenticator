@@ -169,11 +169,10 @@ class Authenticator{
 	 *
 	 * @param string $code
 	 * @param int    $data
-	 * @param int    $adjacent
 	 *
 	 * @return bool
 	 */
-	public function verify(string $code, int $data = null, int $adjacent = null):bool{
+	public function verify(string $code, int $data = null):bool{
 
 		if($this->options->mode === 'hotp'){
 			if(hash_equals($this->code($data ?? 0), $code)){
@@ -181,10 +180,9 @@ class Authenticator{
 			}
 		}
 		else{
-			$adjacent  = $adjacent ?? 1;
 			$timeslice = $this->timeslice($data);
 
-			for($i = -$adjacent; $i <= $adjacent; $i++){
+			for($i = -$this->options->adjacent; $i <= $this->options->adjacent; $i++){
 				if(hash_equals($this->code($timeslice + $i), $code)){
 					return true;
 				}
