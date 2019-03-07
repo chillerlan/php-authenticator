@@ -10,6 +10,7 @@
 namespace chillerlan\AuthenticatorTest;
 
 use chillerlan\Authenticator\Base32;
+use chillerlan\Authenticator\Base32Exception;
 use PHPUnit\Framework\TestCase;
 
 class Base32Test extends TestCase{
@@ -19,7 +20,7 @@ class Base32Test extends TestCase{
 	 */
 	protected $base32;
 
-	protected function setUp(){
+	protected function setUp():void{
 		$this->base32 = new Base32(Base32::RFC3548);
 	}
 
@@ -85,35 +86,31 @@ class Base32Test extends TestCase{
 		$this->assertSame($str, $this->base32->toString($base32));
 	}
 
-	/**
-	 * @expectedException \chillerlan\Authenticator\Base32Exception
-	 * @expectedExceptionMessage Length must be exactly 32
-	 */
 	public function testSetCharsetException(){
+		$this->expectException(Base32Exception::class);
+		$this->expectExceptionMessage('Length must be exactly 32');
+
 		$this->base32->setCharset('florps');
 	}
 
-	/**
-	 * @expectedException \chillerlan\Authenticator\Base32Exception
-	 * @expectedExceptionMessage Length must be divisible by 8
-	 */
 	public function testCheckBinLengthException(){
+		$this->expectException(Base32Exception::class);
+		$this->expectExceptionMessage('Length must be divisible by 8');
+
 		$this->base32->fromBin('0100110');
 	}
 
-	/**
-	 * @expectedException \chillerlan\Authenticator\Base32Exception
-	 * @expectedExceptionMessage Only 0 and 1 are permitted
-	 */
 	public function testCheckBinException(){
+		$this->expectException(Base32Exception::class);
+		$this->expectExceptionMessage('Only 0 and 1 are permitted');
+
 		$this->base32->fromBin('01001102');
 	}
 
-	/**
-	 * @expectedException \chillerlan\Authenticator\Base32Exception
-	 * @expectedExceptionMessage Must match character set
-	 */
 	public function testToBinCharsetException(){
+		$this->expectException(Base32Exception::class);
+		$this->expectExceptionMessage('Must match character set');
+
 		$this->base32->toBin('MFRGGZDFMZTÖ');
 	}
 

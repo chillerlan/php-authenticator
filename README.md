@@ -27,7 +27,7 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 
 # Documentation
 ## Requirements
-- PHP 7+
+- PHP 7.2+
   - 64bit
 
 ## Installation
@@ -37,8 +37,8 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 ```json
 {
 	"require": {
-		"php": ">=7.0.3",
-		"chillerlan/php-qrcode": "dev-master"
+		"php": "^7.2",
+		"chillerlan/php-authenticator": "dev-master"
 	}
 }
 ```
@@ -57,16 +57,24 @@ The secret is usually being created once during the activation process in a user
 So all you need to do there is to display it to the user in a convenient way - 
 as a text string and QR code for example - and save it somewhere with the user data.
 ```php
-$authenticator = new \chillerlan\Authenticator\Authenticator;
+use chillerlan\Authenticator\{Authenticator, AuthenticatorOptions};
+
+$options       = new AuthenticatorOptions;
+$authenticator = new Authenticator($options);
 
 // create a secret (stored somewhere in a *safe* place on the server. safe... hahaha)
+$options->secret_length = 32;
+$authenticator->setOptions($options);
 $secret = $authenticator->createSecret();
 
-// you can also specify the length of the secret key
+// you can also specify the length of the secret key, which overrides the options setting
 $secret = $authenticator->createSecret(20);
 
 // set an existing secret
 $authenticator->setSecret($secret);
+
+// via the constructor:
+$authenticator = new Authenticator($options, $secret);
 ```
 
 A secret created with `Authenticator::createSecret()` will also be stored internally, so that you don't need to provide the one you just created on follow-up operations for the same secret.
@@ -85,16 +93,14 @@ if($authenticator->verify($code)){
 #### time based (TOTP)
 Verify adjacent codes
 ```php
-$p = $authenticator->getPeriod();
-
 // try the first adjacent
-$authenticator->verify($code, time() - $p); // -> true
+$authenticator->verify($code, time() - $options->period); // -> true
 
 // try the second adjacent, default is 1
-$authenticator->verify($code, time() + 2 * $p); // -> false
+$authenticator->verify($code, time() + 2 * $options->period); // -> false
 
 // allow 2 adjacent codes
-$authenticator->verify($code, time() + 2 * $p, 2); // -> true
+$authenticator->verify($code, time() + 2 * $options->period, 2); // -> true
 ```
 
 Create a code for a UNIX timestamp
@@ -113,20 +119,14 @@ $next = $authenticator->code($timeslice + 1);
 #### counter based (HOTP)
 ```php
 // switch mode to HOTP
-$authenticator->setMode('hotp');
+$options->mode = 'hotp';
+$authenticator->setOptions($options);
 
 // user sends code #42, equivalent to
-$code = $authenticator->code(42);
+$code = $authenticator->code(42); // -> 123456
 
-// try the first adjacent
-$authenticator->verify($code, $counterValueFromUserDatabase + 1) // -> true
-	
-// the internal counter will be increased by 1 on a successful verify
-$authenticator->getCounter(); // -> 43, save
-
-// user sends following code (#43)
-$authenticator->verify($nextCode, $counterValueFromUserDatabase); // -> true
-$authenticator->getCounter(); // -> 44, save...
+// verify [123456, 42]
+$authenticator->verify($code, $counterValueFromUserDatabase) // -> true
 ```
 
 ### URI creation
@@ -136,22 +136,34 @@ In order to display a QR code for a mobile authenticator you'll need an `otpauth
 ```php
 $uri = $authenticator->getUri($label, $issuer);
 
-// -> otpauth://totp/my%20label?secret=NKSOQG7UKKID4IXW&issuer=chillerlan.net&digits=6&period=30&algorithm=SHA1
+// -> otpauth://totp/my%20label?secret=NKSOQG7UKKID4IXW&issuer=chillerlan.net&digits=6&algorithm=SHA1&period=30
 ```
 
+### API
+#### `Authenticator`
+method | return | description
+------ | ------ | -----------
+`__construct(SettingsContainerInterface $options = null, string $secret = null)` | - | 
+`setOptions(SettingsContainerInterface $options)` | `Authenticator` | called internally by `__construct()`
+`setSecret(string $secret)` | `Authenticator` | called internally by `__construct()`
+`getSecret()` | string | 
+`createSecret(int $length = null)` | string | `$length` overrides `AuthenticatorOptions` setting
+`timeslice(int $timestamp = null)` | int | 
+`code(int $data = null)` | string | `$data` may be a UNIX timestamp (TOTP) or a counter value (HOTP)
+`verify(string $code, int $data = null)` | bool | see `Authenticator::code()`, `$data` will override the current counter value in HOTP mode
+`getUri(string $label, string $issuer, int $hotpCounter = null)` | string | 
+
+#### `AuthenticatorOptions` properties
+property | type | default | allowed | description
+-------- | ---- | ------- | ------- | -----------
+`$digits` | int | 6 | 6 or 8  | auth code length
+`$period` | int | 30 | 15 - 60 | validation period (seconds)
+`$secret_length` | int | 20 | &gt;= 16 | length of the secret phrase (bytes, unencoded binary)
+`$algorithm` | string | `SHA1` | `SHA1`, `SHA256` or `SHA512` | HMAC hash algorithm
+`$mode` | string | `totp` | `totp` or `hotp` | Authenticator mode: time- or counter based, respectively
+`$adjacent` | int | 1 | &gt;= 0 | number of allowed adjacent codes
 #### Notes
 Keep in mind that several URI settings are not (yet) recognized by all authenticators. Check [the Google Authenticator wiki](https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters) for more info.
-
-```php
-// code length, currently 6 through 8
-$authenticator->setDigits(8);
-
-// valid period between 10 and 60 seconds
-$authenticator->setPeriod(45);
-
-// set the HMAC hash algorithm
-$authenticator->setAlgorithm('SHA512');
-```
 
 <p align="center">
   <a href="https://www.turnon2fa.com">
