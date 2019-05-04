@@ -62,25 +62,6 @@ trait AuthenticatorOptionsTrait{
 	protected $adjacent = 1;
 
 	/**
-	 * set/clamp some special values, call the parent setter otherwise
-	 *
-	 * @param string $property
-	 * @param mixed  $value
-	 *
-	 * @return void
-	 */
-	public function __set(string $property, $value):void{
-
-		if(in_array($property, ['digits', 'period', 'algorithm', 'mode', 'adjacent'], true)){
-			$this->{'set_'.$property}($value);
-
-			return;
-		}
-
-		parent::__set($property, $value);
-	}
-
-	/**
 	 * Sets the code length to either 6 or 8
 	 *
 	 * @param int $digits
