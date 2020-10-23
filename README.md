@@ -10,6 +10,8 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 [![Downloads][downloads-badge]][downloads]
 [![PayPal donate][donate-badge]][donate]
 
+[![Continuous Integration][gh-action-badge]][gh-action]
+
 [packagist-badge]: https://img.shields.io/packagist/v/chillerlan/php-authenticator.svg?style=flat-square
 [packagist]: https://packagist.org/packages/chillerlan/php-authenticator
 [license-badge]: https://img.shields.io/github/license/chillerlan/php-authenticator.svg?style=flat-square
@@ -24,30 +26,30 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 [downloads]: https://packagist.org/packages/chillerlan/php-authenticator/stats
 [donate-badge]: https://img.shields.io/badge/donate-paypal-ff33aa.svg?style=flat-square
 [donate]: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WLYUNAT9ZTJZ4
+[gh-action-badge]: https://github.com/chillerlan/php-authenticator/workflows/Continuous%20Integration/badge.svg
+[gh-action]: https://github.com/chillerlan/php-authenticator/actions?query=workflow%3A%22Continuous+Integration%22
 
 # Documentation
 ## Requirements
-- PHP 7.2+
+- PHP 7.4+
   - 64bit
 
 ## Installation
 **requires [composer](https://getcomposer.org)**
 
+via terminal: `composer require chillerlan/php-authenticator`
+
 *composer.json* (note: replace `dev-master` with a version boundary)
 ```json
 {
 	"require": {
-		"php": "^7.2",
-		"chillerlan/php-authenticator": "dev-master"
+		"php": "^7.4",
+		"chillerlan/php-authenticator": "dev-main"
 	}
 }
 ```
 
-### Manual installation
-Download the desired version of the package from [master](https://github.com/chillerlan/php-authenticator/archive/master.zip) or 
-[release](https://github.com/chillerlan/php-authenticator/releases) and extract the contents to your project folder.  After that:
-- run `composer install` to install the required dependencies and generate `/vendor/autoload.php`.
-- if you use a custom autoloader, point the namespace `chillerlan\Authenticator` to the folder `src` of the package 
+Note: replace `dev-main` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^3.1` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions.
 
 Profit!
 
@@ -59,12 +61,12 @@ as a text string and QR code for example - and save it somewhere with the user d
 ```php
 use chillerlan\Authenticator\{Authenticator, AuthenticatorOptions};
 
-$options       = new AuthenticatorOptions;
+$options = new AuthenticatorOptions;
+$options->secret_length = 32;
+
 $authenticator = new Authenticator($options);
 
-// create a secret (stored somewhere in a *safe* place on the server. safe... hahaha)
-$options->secret_length = 32;
-$authenticator->setOptions($options);
+// create a secret (stored somewhere in a *safe* place on the server. safe... hahaha jk)
 $secret = $authenticator->createSecret();
 
 // you can also specify the length of the secret key, which overrides the options setting
@@ -77,7 +79,8 @@ $authenticator->setSecret($secret);
 $authenticator = new Authenticator($options, $secret);
 ```
 
-A secret created with `Authenticator::createSecret()` will also be stored internally, so that you don't need to provide the one you just created on follow-up operations for the same secret.
+A secret created with `Authenticator::createSecret()` will also be stored internally, 
+so that you don't need to provide the secret you just created on follow-up operations with the current instance.
 
 ### Verify a one time code
 Now during the login process - after the user has successfully entered their credentials - you would 
@@ -166,7 +169,7 @@ property | type | default | allowed | description
 Keep in mind that several URI settings are not (yet) recognized by all authenticators. Check [the Google Authenticator wiki](https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters) for more info.
 
 <p align="center">
-  <a href="https://www.turnon2fa.com">
+  <a href="https://twofactorauth.org">
     <img alt="2FA ALL THE THINGS!" src="https://raw.githubusercontent.com/chillerlan/php-authenticator/master/stuff/2fa-all-the-things.jpg">
   </a>
 </p>
