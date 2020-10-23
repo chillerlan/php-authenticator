@@ -13,56 +13,67 @@ namespace chillerlan\AuthenticatorTest;
 use chillerlan\Authenticator\{Authenticator, AuthenticatorException, AuthenticatorOptions, Base32};
 use PHPUnit\Framework\TestCase;
 
+use function sprintf, str_pad, strlen, time;
+
+use const STR_PAD_RIGHT;
+
 class AuthenticatorTest extends TestCase{
 
-	protected $falseSecret = 'SECRETTEST234567';
-	protected $invalidSecret = 'This-is-an-invalid-secret-phrase!';
-	protected $label = 'some test-label';
-	protected $issuer = 'chillerlan.net';
-
-	/**
-	 * @var \chillerlan\Authenticator\Authenticator
-	 */
-	protected $authenticator;
-
-	/**
-	 * @var \chillerlan\Authenticator\AuthenticatorOptions
-	 */
-	protected $options;
+	protected Authenticator        $authenticator;
+	protected AuthenticatorOptions $options;
+	protected string               $secret = 'SECRETTEST234567';
 
 	protected function setUp():void{
 		$this->options       = new AuthenticatorOptions;
 		$this->authenticator = new Authenticator($this->options);
 	}
 
-	public function testCreateSecretDefaultLength(){
-		$this->assertSame(
-			$this->options->secret_length,
-			strlen((new Base32)->toString($this->authenticator->createSecret()))
-		);
+	public function testCreateSecretDefaultLength():void{
+		$secret = (new Base32)->toString($this->authenticator->createSecret());
+
+		$this->assertSame($this->options->secret_length, strlen($secret));
 	}
 
-	public function testCreateSecretWithLength(){
-		for($secretLength = 16; $secretLength <= 512; $secretLength+=8){
-			$this->assertSame($secretLength, strlen((new Base32)->toString($this->authenticator->createSecret($secretLength))));
+	public function testCreateSecretWithLength():void{
+
+		for($secretLength = 16; $secretLength <= 512; $secretLength += 8){
+			$secret = (new Base32)->toString($this->authenticator->createSecret($secretLength));
+
+			$this->assertSame($secretLength, strlen($secret));
 		}
+
 	}
 
-	public function testCreateSecretCheckCharacterSet(){
+	public function testCreateSecretCheckCharacterSet():void{
 		$this->options->secret_length = 32; // coverage
 
-		$this->assertRegExp('/^['.Base32::RFC3548.']+$/', $this->authenticator->setOptions($this->options)->createSecret());
+		$secret = $this->authenticator->setOptions($this->options)->createSecret();
+
+		$this->assertMatchesRegularExpression('/^['.Base32::RFC3548.']+$/', $secret);
 	}
 
-	public function testCreateSecretException(){
+	public function testCreateSecretException():void{
 		$this->expectException(AuthenticatorException::class);
 		$this->expectExceptionMessage('Invalid secret length');
 
 		$this->authenticator->createSecret(10);
 	}
 
-	public function totpCodeProvider(){
-		// time, code (unverified values)
+	public function testSetGetSecret():void{
+		$this->authenticator = new Authenticator($this->options, $this->secret);
+
+		$this->assertSame($this->secret, $this->authenticator->getSecret());
+	}
+
+	public function testGetSecretException():void{
+		$this->expectException(AuthenticatorException::class);
+		$this->expectExceptionMessage('No secret set');
+
+		$this->authenticator->getSecret();
+	}
+
+	public function totpCodeProvider():array{
+		// time, code (unverified values for $this->secret)
 		return [
 			[         0, '730741'],
 			[1385909245, '040137'],
@@ -76,12 +87,12 @@ class AuthenticatorTest extends TestCase{
 	 *
 	 * @dataProvider totpCodeProvider
 	 */
-	public function testGetCodeTOTP($timestamp, $code){
-		$this->assertTrue($this->authenticator->setSecret($this->falseSecret)->verify($code, $timestamp));
+	public function testGetCodeTOTP(int $timestamp, string $code):void{
+		$this->assertTrue($this->authenticator->setSecret($this->secret)->verify($code, $timestamp));
 	}
 
-	public function hotpCodeProvider(){
-		// counter, code (unverified values)
+	public function hotpCodeProvider():array{
+		// counter, code (unverified values for $this->secret)
 		return [
 			[  0, '730741'],
 			[  1, '219808'],
@@ -98,32 +109,32 @@ class AuthenticatorTest extends TestCase{
 	 *
 	 * @dataProvider hotpCodeProvider
 	 */
-	public function testGetCodeHOTP($counter, $code){
+	public function testGetCodeHOTP(int $counter, string $code):void{
 		$this->options->mode = 'hotp';
 		$this->authenticator->setOptions($this->options);
 
-		$this->assertTrue($this->authenticator->setSecret($this->falseSecret)->verify($code, $counter));
+		$this->assertTrue($this->authenticator->setSecret($this->secret)->verify($code, $counter));
 	}
 
-	public function testGetCodeException(){
+	public function testGetCodeException():void{
 		$this->expectException(AuthenticatorException::class);
 		$this->expectExceptionMessage('Invalid secret phrase');
 
-		(new Authenticator($this->options, $this->invalidSecret));
+		$this->authenticator = (new Authenticator($this->options, 'This-is-an-invalid-secret-phrase!'));
 	}
 
-	public function testVerifyCode(){
+	public function testVerifyCode():void{
 		$this->assertTrue($this->authenticator->verify($this->authenticator->code()));
 		$this->assertFalse($this->authenticator->verify('123456'));
 
 		$a2 = clone $this->authenticator;
-		$a2->setSecret($this->falseSecret);
+		$a2->setSecret($this->secret);
 
 		$this->assertFalse($this->authenticator->verify($a2->code()));
 	}
 
-	public function testVerifyCodeWithTimeslice(){
-		$code = $this->authenticator->code();
+	public function testVerifyCodeWithTimeslice():void{
+		$code      = $this->authenticator->code();
 		$timestamp = time();
 
 		// first adjacent code (default value)
@@ -131,10 +142,10 @@ class AuthenticatorTest extends TestCase{
 		$this->assertFalse($this->authenticator->verify($code, $timestamp - 2 * $this->options->period));
 	}
 
-	public function testVerifyCodeWithTimesliceAndAdjacent(){
-		$code = $this->authenticator->code();
+	public function testVerifyCodeWithTimesliceAndAdjacent():void{
+		$code      = $this->authenticator->code();
 		$timestamp = time();
-		$adjacent = 100;
+		$adjacent  = 100;
 
 		for($i = 0; $i <= $adjacent + 1; $i++){
 			$this->options->adjacent = $adjacent;
@@ -152,35 +163,44 @@ class AuthenticatorTest extends TestCase{
 	}
 
 	// https://github.com/PHPGangsta/GoogleAuthenticator/pull/25
-	public function testVerifyCodeWithLeadingZero(){
+	public function testVerifyCodeWithLeadingZero():void{
 		$code = $this->authenticator->code();
+
 		$this->assertTrue($this->authenticator->verify($code));
 		$this->assertFalse($this->authenticator->verify('0'.$code));
 	}
 
-	public function testGetUri(){
-		$expected = '/'.rawurlencode($this->label).'?secret='.$this->authenticator->createSecret(16).'&issuer='.$this->issuer;
+	public function testGetUri():void{
+		$label  = 'some test-label';
+		$issuer = 'example.com';
 
-		$this->assertSame('otpauth://'.$this->options->mode.$expected.'&digits=6&algorithm=SHA1&period=30', $this->authenticator->getUri($this->label, $this->issuer));
+		$expected = sprintf(
+			'otpauth://%%s/%s?secret=%s&issuer=%s&digits=%%s&algorithm=%%s',
+			'some%%20test-label', // rawurlencoded & sprintf-escaped
+			$this->authenticator->createSecret(16),
+			$issuer
+		);
+
+		$this->assertSame(sprintf($expected.'&period=%s', 'totp', 6, 'SHA1', 30), $this->authenticator->getUri($label, $issuer));
 
 		$this->options->digits = 8;
 		$this->authenticator->setOptions($this->options);
-		$this->assertSame('otpauth://'.$this->options->mode.$expected.'&digits=8&algorithm=SHA1&period=30', $this->authenticator->getUri($this->label, $this->issuer));
+		$this->assertSame(sprintf($expected.'&period=%s', 'totp', 8, 'SHA1', 30), $this->authenticator->getUri($label, $issuer));
 
 		$this->options->period = 45;
 		$this->authenticator->setOptions($this->options);
-		$this->assertSame('otpauth://'.$this->options->mode.$expected.'&digits=8&algorithm=SHA1&period=45', $this->authenticator->getUri($this->label, $this->issuer));
+		$this->assertSame(sprintf($expected.'&period=%s', 'totp', 8, 'SHA1', 45), $this->authenticator->getUri($label, $issuer));
 
 		$this->options->mode = 'hotp';
 		$this->authenticator->setOptions($this->options);
-		$this->assertSame('otpauth://'.$this->options->mode.$expected.'&digits=8&algorithm=SHA1&counter=42', $this->authenticator->getUri($this->label, $this->issuer, 42));
+		$this->assertSame(sprintf($expected.'&counter=%s', 'hotp', 8, 'SHA1', 42), $this->authenticator->getUri($label, $issuer, 42));
 
 		$this->options->algorithm = 'SHA512';
 		$this->authenticator->setOptions($this->options);
-		$this->assertSame('otpauth://'.$this->options->mode.$expected.'&digits=8&algorithm=SHA512', $this->authenticator->getUri($this->label, $this->issuer));
+		$this->assertSame(sprintf($expected, 'hotp', 8, 'SHA512'), $this->authenticator->getUri($label, $issuer));
 	}
 
-	public function hotpVectors(){
+	public function hotpVectors():array{
 		return [
 			// https://tools.ietf.org/html/rfc4226#page-32
 			[0, '755224'],
@@ -198,23 +218,24 @@ class AuthenticatorTest extends TestCase{
 
 	/**
 	 * @dataProvider hotpVectors
-	 * @link https://github.com/winauth/winauth/issues/449#issuecomment-353670105
-	 *
-	 * @param int    $counter
-	 * @param string $code
+	 * @link         https://github.com/winauth/winauth/issues/449#issuecomment-353670105
 	 */
-	public function testHOTP(int $counter, string $code){
+	public function testHOTP(int $counter, string $code):void{
 		$this->options->mode = 'hotp';
+
+		$secret = (new Base32)->fromString('12345678901234567890');
+
+		$this->assertSame('GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ', $secret);
 
 		$this->authenticator
 			->setOptions($this->options)
-			->setSecret((new Base32)->fromString('12345678901234567890')) // -> GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ
+			->setSecret($secret)
 		;
 
-		$this->assertTrue($this->authenticator->verify($code, $counter)); // Authenticator::setCounter() coverage
+		$this->assertTrue($this->authenticator->verify($code, $counter));
 	}
 
-	public function totpVectors(){
+	public function totpVectors():array{
 		return [
 			// https://tools.ietf.org/html/rfc6238#page-14
 			[         59, '94287082', 'sha1'  ],
@@ -238,15 +259,10 @@ class AuthenticatorTest extends TestCase{
 		];
 	}
 
-
 	/**
 	 * @dataProvider totpVectors
-	 *
-	 * @param int    $timestamp
-	 * @param string $code
-	 * @param string $algorithm
 	 */
-	public function testTOTP(int $timestamp, string $code, string $algorithm){
+	public function testTOTP(int $timestamp, string $code, string $algorithm):void{
 		$s = '12345678901234567890';
 
 		$secret = [

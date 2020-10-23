@@ -1,6 +1,6 @@
 {
 	"name": "chillerlan/php-authenticator",
-	"description": "A generator for counter- and time based authentication codes. PHP 7.2+",
+	"description": "A generator for counter- and time based authentication codes. PHP 7.4+",
 	"homepage": "https://github.com/chillerlan/php-authenticator",
 	"license": "MIT",
 	"type": "library",
@@ -20,15 +20,16 @@
 		"source": "https://github.com/chillerlan/php-authenticator"
 	},
 	"require": {
-		"php": "^7.2",
-		"chillerlan/php-settings-container": "^1.1"
+		"php": "^7.4 || ^8.0",
+		"chillerlan/php-settings-container": "^2.1"
 	},
 	"require-dev": {
-		"chillerlan/php-qrcode": "^3.0",
-		"phpunit/phpunit": "^8.1"
+		"chillerlan/php-qrcode": "^4.2",
+		"phan/phan": "^3.2.2",
+		"phpunit/phpunit": "^9.4"
 	},
 	"suggest": {
-		"chillerlan/php-qrcode": "^3.0"
+		"chillerlan/php-qrcode": "^4.2"
 	},
 	"autoload": {
 		"psr-4": {

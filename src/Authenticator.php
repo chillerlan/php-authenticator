@@ -14,6 +14,11 @@ namespace chillerlan\Authenticator;
 
 use chillerlan\Settings\SettingsContainerInterface;
 
+use function floor, hash_equals, hash_hmac, http_build_query, intval, ord, pack, pow, preg_match, random_bytes,
+	rawurlencode, sprintf, str_pad, substr, time, unpack;
+
+use const PHP_INT_SIZE, PHP_QUERY_RFC3986, STR_PAD_LEFT;
+
 /**
  * Yet another Google authenticator implementation!
  *
@@ -27,26 +32,21 @@ class Authenticator{
 
 	/**
 	 * the decoded secret phrase
-	 *
-	 * @var string
 	 */
-	protected $secret;
+	protected ?string $secret = null;
 
 	/**
-	 * @var \chillerlan\Authenticator\AuthenticatorOptions
+	 * @var \chillerlan\Settings\SettingsContainerInterface|\chillerlan\Authenticator\AuthenticatorOptions
 	 */
-	protected $options;
+	protected SettingsContainerInterface $options;
 
 	/**
-	 * @var \chillerlan\Authenticator\Base32
+	 * the Base32 instance
 	 */
-	protected $base32;
+	protected Base32 $base32;
 
 	/**
 	 * Authenticator constructor.
-	 *
-	 * @param \chillerlan\Settings\SettingsContainerInterface|null $options
-	 * @param string|null                                          $secret
 	 *
 	 * @throws \chillerlan\Authenticator\AuthenticatorException
 	 */
@@ -67,9 +67,7 @@ class Authenticator{
 	}
 
 	/**
-	 * @param \chillerlan\Settings\SettingsContainerInterface $options
-	 *
-	 * @return \chillerlan\Authenticator\Authenticator
+	 * Sets an options instance
 	 */
 	public function setOptions(SettingsContainerInterface $options):Authenticator{
 		$this->options = $options;
@@ -78,13 +76,13 @@ class Authenticator{
 	}
 
 	/**
-	 * @param string $secret
+	 * Sets a secret phrase from a Base32 representation
 	 *
-	 * @return \chillerlan\Authenticator\Authenticator
+	 * @throws \chillerlan\Authenticator\AuthenticatorException
 	 */
 	public function setSecret(string $secret):Authenticator{
 
-		if(!preg_match('/^['.Base32::RFC3548.']+$/', $secret)){
+		if(!preg_match('/^['.$this->base32::RFC3548.']+$/', $secret)){
 			throw new AuthenticatorException('Invalid secret phrase');
 		}
 
@@ -94,19 +92,23 @@ class Authenticator{
 	}
 
 	/**
-	 * @return string
+	 * Returns a Base32 representation of the current secret phrase
+	 *
+	 * @throws \chillerlan\Authenticator\AuthenticatorException
 	 */
 	public function getSecret():string{
+
+		if($this->secret === null){
+			throw new AuthenticatorException('No secret set');
+		}
+
 		return $this->base32->fromString($this->secret);
 	}
 
 	/**
 	 * Generates a new (secure random) secret phrase
 	 * "an arbitrary key value encoded in Base32 according to RFC 3548"
-
-	 * @param int $length
 	 *
-	 * @return string
 	 * @throws \chillerlan\Authenticator\AuthenticatorException
 	 */
 	public function createSecret(int $length = null):string{
@@ -123,9 +125,7 @@ class Authenticator{
 	}
 
 	/**
-	 * @param int|null $timestamp
-	 *
-	 * @return int
+	 * Creates a time slice for a unix timestamp
 	 */
 	public function timeslice(int $timestamp = null):int{
 		return (int)floor(($timestamp ?? time()) / $this->options->period);
@@ -135,10 +135,6 @@ class Authenticator{
 	 * $data may be
 	 *  - a UNIX timestamp (TOTP)
 	 *  - a counter value (HOTP)
-	 *
-	 * @param int|null $data
-	 *
-	 * @return string
 	 */
 	public function code(int $data = null):string{
 
@@ -153,24 +149,20 @@ class Authenticator{
 
 		$hash = hash_hmac($this->options->algorithm, $hashdata, $this->secret, true);
 		$code = unpack('N', substr($hash, ord(substr($hash, -1)) & 0xF, 4))[1] & 0x7FFFFFFF;
+		$code = $code % pow(10, $this->options->digits);
 
 		// test values
 		// HOTP: https://tools.ietf.org/html/rfc4226#page-32
 		// TOTP: https://tools.ietf.org/html/rfc6238#page-14
 #		var_dump(['data' => dechex($data), 'hash' => bin2hex($hash), 'truncated_hex' => dechex($code), 'truncated_int' => $code]);
 
-		return str_pad($code % pow(10, $this->options->digits), $this->options->digits, '0', STR_PAD_LEFT);
+		return str_pad((string)$code, $this->options->digits, '0', STR_PAD_LEFT);
 	}
 
 	/**
 	 * Checks the given $code against the secret and accepts $adjacent codes for $data
 	 *  - a UNIX timestamp (TOTP)
 	 *  - a counter value (HOTP)
-	 *
-	 * @param string $code
-	 * @param int    $data
-	 *
-	 * @return bool
 	 */
 	public function verify(string $code, int $data = null):bool{
 
@@ -196,12 +188,6 @@ class Authenticator{
 	 * Creates an URI for use in QR codes for example
 	 *
 	 * @link https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters
-	 *
-	 * @param string   $label
-	 * @param string   $issuer
-	 * @param int|null $hotpCounter
-	 *
-	 * @return string
 	 */
 	public function getUri(string $label, string $issuer, int $hotpCounter = null):string{
 
@@ -220,7 +206,12 @@ class Authenticator{
 			$values['counter'] = $hotpCounter;
 		}
 
-		return 'otpauth://'.$this->options->mode.'/'.rawurlencode($label).'?'.http_build_query($values, '', '&', PHP_QUERY_RFC3986);
+		return sprintf(
+			'otpauth://%s/%s?%s',
+			$this->options->mode,
+			rawurlencode($label),
+			http_build_query($values, '', '&', PHP_QUERY_RFC3986)
+		);
 	}
 
 }

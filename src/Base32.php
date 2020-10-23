@@ -11,6 +11,9 @@
 
 namespace chillerlan\Authenticator;
 
+use function array_map, array_unshift, bindec, call_user_func_array, count, implode, preg_match, preg_match_all, preg_replace,
+	sprintf, str_repeat, str_replace, str_split, strlen, strpos, strtoupper, substr, unpack, vsprintf;
+
 /**
  * Class to provide base32 encoding/decoding of strings
  *
@@ -60,12 +63,12 @@ class Base32{
 	 *
 	 * @var string
 	 */
-	protected $charset = self::RFC3548;
+	protected string $charset = self::RFC3548;
 
 	/**
 	 * Base32 constructor.
 	 *
-	 * @param string $charset
+	 * @param string|null $charset
 	 */
 	public function __construct(string $charset = null){
 
@@ -87,7 +90,7 @@ class Base32{
 	 * @return \chillerlan\Authenticator\Base32
 	 * @throws \chillerlan\Authenticator\Base32Exception
 	 */
-	public function setCharset(string $charset):Base32 {
+	public function setCharset(string $charset):Base32{
 
 		if(strlen($charset) !== 32){
 			throw new Base32Exception('Length must be exactly 32');
@@ -101,7 +104,7 @@ class Base32{
 	/**
 	 * @return string
 	 */
-	public function getCharset():string {
+	public function getCharset():string{
 		return $this->charset;
 	}
 
@@ -114,7 +117,7 @@ class Base32{
 	 *
 	 * @return string String of 0's and 1's
 	 */
-	public function str2bin(string $str):string {
+	public function str2bin(string $str):string{
 		$chrs = unpack('C*', $str);
 
 		return vsprintf(str_repeat('%08b', count($chrs)), $chrs);
@@ -129,7 +132,7 @@ class Base32{
 	 *
 	 * @return string The ascii output
 	 */
-	public function bin2str(string $str):string {
+	public function bin2str(string $str):string{
 		$this->checkLength($str);
 		$this->checkBin($str);
 
@@ -151,7 +154,7 @@ class Base32{
 	 *
 	 * @return string String encoded as base32
 	 */
-	public function fromBin(string $str):string {
+	public function fromBin(string $str):string{
 		$this->checkLength($str);
 		$this->checkBin($str);
 
@@ -160,19 +163,17 @@ class Base32{
 
 		// We need a string divisible by 5
 		$length = strlen($str);
-		$rbits = $length&7;
+		$rbits  = $length & 7;
 
 		if($rbits > 0){
 			// Excessive bits need to be padded
-			$ebits = substr($str, $length-$rbits);
-			$str = substr($str, 0, $length-$rbits).'000'.$ebits.str_repeat('0', 5-strlen($ebits));
+			$ebits = substr($str, $length - $rbits);
+			$str   = substr($str, 0, $length - $rbits).'000'.$ebits.str_repeat('0', 5 - strlen($ebits));
 		}
 
 		preg_match_all('/.{8}/', $str, $chrs);
 
-		$chrs = array_map(function($str){
-			return $this->charset[bindec($str)];
-		}, $chrs[0]);
+		$chrs = array_map(fn($str) => $this->charset[bindec($str)], $chrs[0]);
 
 		return implode('', $chrs);
 	}
@@ -186,23 +187,21 @@ class Base32{
 	 *
 	 * @return string Ascii binary string
 	 */
-	public function toBin(string $str):string {
+	public function toBin(string $str):string{
 		$this->checkCharacterSet($str);
 
 		// Convert the base32 string back to a binary string
-		$str = array_map(function($chr){
-			return sprintf('%08b', strpos($this->charset, $chr));
-		}, str_split($str));
+		$str = array_map(fn($chr) => sprintf('%08b', strpos($this->charset, $chr)) , str_split($str));
 
 		// Remove the extra 0's we added
 		$str = preg_replace('/000(.{5})/', '$1', implode('', $str));
 
-		// Unpad if nessicary
+		// Unpad if necessary
 		$length = strlen($str);
-		$rbits = $length&7;
+		$rbits  = $length & 7;
 
 		if($rbits > 0){
-			$str = substr($str, 0, $length-$rbits);
+			$str = substr($str, 0, $length - $rbits);
 		}
 
 		return $str;
@@ -218,7 +217,7 @@ class Base32{
 	 *
 	 * @return string The converted base32 string
 	 */
-	public function fromString(string $str):string {
+	public function fromString(string $str):string{
 		return $this->fromBin($this->str2bin($str));
 	}
 
@@ -232,7 +231,7 @@ class Base32{
 	 *
 	 * @return string The normal string
 	 */
-	public function toString(string $str):string {
+	public function toString(string $str):string{
 		$str = strtoupper($str);
 
 		// csSave actually has to be able to consider extra characters
@@ -250,9 +249,9 @@ class Base32{
 	 * @return void
 	 * @throws \chillerlan\Authenticator\Base32Exception
 	 */
-	protected function checkLength(string $str){
+	protected function checkLength(string $str):void{
 
-		if(strlen($str)%8 > 0){
+		if(strlen($str) % 8 > 0){
 			throw new Base32Exception('Length must be divisible by 8');
 		}
 
@@ -264,7 +263,7 @@ class Base32{
 	 * @return void
 	 * @throws \chillerlan\Authenticator\Base32Exception
 	 */
-	protected function checkBin(string $str){
+	protected function checkBin(string $str):void{
 
 		if(!preg_match('/^[01]+$/', $str)){
 			throw new Base32Exception('Only 0 and 1 are permitted');
@@ -278,7 +277,7 @@ class Base32{
 	 * @return void
 	 * @throws \chillerlan\Authenticator\Base32Exception
 	 */
-	protected function checkCharacterSet(string $str){
+	protected function checkCharacterSet(string $str):void{
 
 		if(!preg_match('/^['.$this->charset.']+$/', $str)){
 			throw new Base32Exception('Must match character set');

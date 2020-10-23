@@ -12,54 +12,44 @@
 
 namespace chillerlan\Authenticator;
 
+use function in_array, strtolower, strtoupper;
+
 trait AuthenticatorOptionsTrait{
 
 	/**
 	 * Code length: either 6 or 8
-	 *
-	 * @var int
 	 */
-	protected $digits = 6;
+	protected int $digits = 6;
 
 	/**
 	 * validation period (seconds): 15 - 60
-	 *
-	 * @var int
 	 */
-	protected $period = 30;
+	protected int $period = 30;
 
 	/**
 	 * length of the secret phrase (bytes, unencoded binary)
 	 *
 	 * @see \random_bytes()
-	 *
-	 * @var int
 	 */
-	protected $secret_length = 20;
+	protected int $secret_length = 20;
 
 	/**
 	 * Hash algorithm: SHA1, SHA256 or SHA512
-	 *
-	 * @var string
 	 */
-	protected $algorithm = 'SHA1';
+	protected string $algorithm = 'SHA1';
 
 	/**
 	 * Authenticator mode:
 	 *
 	 *   - totp = time based
 	 *   - hotp = counter based
-	 *
-	 * @var string
 	 */
-	protected $mode = 'totp';
+	protected string $mode = 'totp';
 
 	/**
 	 * number of allowed adjacent codes
-	 *
-	 * @var int
 	 */
-	protected $adjacent = 1;
+	protected int $adjacent = 1;
 
 	/**
 	 * Sets the code length to either 6 or 8
