@@ -58,6 +58,7 @@ class Base32Test extends TestCase{
 
 	/**
 	 * @dataProvider base32DataProvider
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testFromBin(string $str, string $bin, string $base32):void{
 		$this->assertSame($base32, $this->base32->fromBin($bin));
@@ -65,6 +66,7 @@ class Base32Test extends TestCase{
 
 	/**
 	 * @dataProvider base32DataProvider
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testToBin(string $str, string $bin, string $base32):void{
 		$this->assertSame($bin, $this->base32->toBin($base32));
@@ -72,6 +74,7 @@ class Base32Test extends TestCase{
 
 	/**
 	 * @dataProvider base32DataProvider
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testFromString(string $str, string $bin, string $base32):void{
 		$this->assertSame($base32, $this->base32->fromString($str));
@@ -79,6 +82,7 @@ class Base32Test extends TestCase{
 
 	/**
 	 * @dataProvider base32DataProvider
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testToString(string $str, string $bin, string $base32){
 		$this->assertSame($str, $this->base32->toString($base32));
