@@ -9,8 +9,7 @@
  * @license      MIT
  */
 
-use chillerlan\Authenticator\Authenticator;
-use chillerlan\Authenticator\AuthenticatorOptions;
+use chillerlan\Authenticator\{Authenticator, AuthenticatorOptions};
 
 require_once '../vendor/autoload.php';
 
