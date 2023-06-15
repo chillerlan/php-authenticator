@@ -2,32 +2,28 @@
 
 A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) and time based ([RFC 6238](https://tools.ietf.org/html/rfc6238)) authentication codes. (a.k.a. Yet Another Google Authenticator Implementation!)
 
+[![PHP Version Support][php-badge]][php]
 [![version][packagist-badge]][packagist]
 [![license][license-badge]][license]
-[![Travis][travis-badge]][travis]
+[![GitHub actions workflow][gh-action-badge]][gh-action]
 [![Coverage][coverage-badge]][coverage]
 [![Scrunitizer][scrutinizer-badge]][scrutinizer]
 [![Downloads][downloads-badge]][downloads]
-[![PayPal donate][donate-badge]][donate]
 
-[![Continuous Integration][gh-action-badge]][gh-action]
-
-[packagist-badge]: https://img.shields.io/packagist/v/chillerlan/php-authenticator.svg?style=flat-square
+[php-badge]: https://img.shields.io/packagist/php-v/chillerlan/php-qrcode?logo=php&color=8892BF
+[php]: https://www.php.net/supported-versions.php
+[packagist-badge]: https://img.shields.io/packagist/v/chillerlan/php-authenticator.svg?logo=packagist
 [packagist]: https://packagist.org/packages/chillerlan/php-authenticator
-[license-badge]: https://img.shields.io/github/license/chillerlan/php-authenticator.svg?style=flat-square
+[license-badge]: https://img.shields.io/github/license/chillerlan/php-authenticator.svg
 [license]: https://github.com/chillerlan/php-authenticator/blob/master/LICENSE
-[travis-badge]: https://img.shields.io/travis/chillerlan/php-authenticator.svg?style=flat-square
-[travis]: https://travis-ci.org/chillerlan/php-authenticator
-[coverage-badge]: https://img.shields.io/codecov/c/github/chillerlan/php-authenticator.svg?style=flat-square
+[coverage-badge]: https://img.shields.io/codecov/c/github/chillerlan/php-authenticator.svg?logo=codecov
 [coverage]: https://codecov.io/github/chillerlan/php-authenticator
-[scrutinizer-badge]: https://img.shields.io/scrutinizer/g/chillerlan/php-authenticator.svg?style=flat-square
+[scrutinizer-badge]: https://img.shields.io/scrutinizer/g/chillerlan/php-authenticator.svg?logo=scrutinizer
 [scrutinizer]: https://scrutinizer-ci.com/g/chillerlan/php-authenticator
-[downloads-badge]: https://img.shields.io/packagist/dt/chillerlan/php-authenticator.svg?style=flat-square
+[downloads-badge]: https://img.shields.io/packagist/dt/chillerlan/php-authenticator.svg?logo=packagist
 [downloads]: https://packagist.org/packages/chillerlan/php-authenticator/stats
-[donate-badge]: https://img.shields.io/badge/donate-paypal-ff33aa.svg?style=flat-square
-[donate]: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WLYUNAT9ZTJZ4
-[gh-action-badge]: https://github.com/chillerlan/php-authenticator/workflows/Continuous%20Integration/badge.svg
-[gh-action]: https://github.com/chillerlan/php-authenticator/actions?query=workflow%3A%22Continuous+Integration%22
+[gh-action-badge]: https://img.shields.io/github/actions/workflow/status/chillerlan/php-authenticator/ci.yml?branch=main&logo=github
+[gh-action]: https://github.com/chillerlan/php-authenticator/actions/workflows/ci.yml?query=branch%3Amain
 
 # Documentation
 ## Requirements
@@ -39,7 +35,7 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 
 via terminal: `composer require chillerlan/php-authenticator`
 
-*composer.json* (note: replace `dev-master` with a version boundary)
+*composer.json* (note: replace `dev-main` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^3.1` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions)
 ```json
 {
 	"require": {
@@ -49,14 +45,12 @@ via terminal: `composer require chillerlan/php-authenticator`
 }
 ```
 
-Note: replace `dev-main` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^3.1` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions.
-
 Profit!
 
 ## Usage
-### Create a secret 
-The secret is usually being created once during the activation process in a user control panel. 
-So all you need to do there is to display it to the user in a convenient way - 
+### Create a secret
+The secret is usually being created once during the activation process in a user control panel.
+So all you need to do there is to display it to the user in a convenient way -
 as a text string and QR code for example - and save it somewhere with the user data.
 ```php
 use chillerlan\Authenticator\{Authenticator, AuthenticatorOptions};
@@ -79,11 +73,11 @@ $authenticator->setSecret($secret);
 $authenticator = new Authenticator($options, $secret);
 ```
 
-A secret created with `Authenticator::createSecret()` will also be stored internally, 
+A secret created with `Authenticator::createSecret()` will also be stored internally,
 so that you don't need to provide the secret you just created on follow-up operations with the current instance.
 
 ### Verify a one time code
-Now during the login process - after the user has successfully entered their credentials - you would 
+Now during the login process - after the user has successfully entered their credentials - you would
 ask them for a one time code to check it against the secret from your user database.
 
 ```php
@@ -144,27 +138,28 @@ $uri = $authenticator->getUri($label, $issuer);
 
 ### API
 #### `Authenticator`
-method | return | description
------- | ------ | -----------
-`__construct(SettingsContainerInterface $options = null, string $secret = null)` | - | 
-`setOptions(SettingsContainerInterface $options)` | `Authenticator` | called internally by `__construct()`
-`setSecret(string $secret)` | `Authenticator` | called internally by `__construct()`
-`getSecret()` | string | 
-`createSecret(int $length = null)` | string | `$length` overrides `AuthenticatorOptions` setting
-`timeslice(int $timestamp = null)` | int | 
-`code(int $data = null)` | string | `$data` may be a UNIX timestamp (TOTP) or a counter value (HOTP)
-`verify(string $code, int $data = null)` | bool | see `Authenticator::code()`, `$data` will override the current counter value in HOTP mode
-`getUri(string $label, string $issuer, int $hotpCounter = null)` | string | 
+| method                                                                           | return          | description                                                                               |
+|----------------------------------------------------------------------------------|-----------------|-------------------------------------------------------------------------------------------|
+| `__construct(SettingsContainerInterface $options = null, string $secret = null)` | -               |                                                                                           |
+| `setOptions(SettingsContainerInterface $options)`                                | `Authenticator` | called internally by `__construct()`                                                      |
+| `setSecret(string $secret)`                                                      | `Authenticator` | called internally by `__construct()`                                                      |
+| `getSecret()`                                                                    | string          |                                                                                           |
+| `createSecret(int $length = null)`                                               | string          | `$length` overrides `AuthenticatorOptions` setting                                        |
+| `timeslice(int $timestamp = null)`                                               | int             |                                                                                           |
+| `code(int $data = null)`                                                         | string          | `$data` may be a UNIX timestamp (TOTP) or a counter value (HOTP)                          |
+| `verify(string $code, int $data = null)`                                         | bool            | see `Authenticator::code()`, `$data` will override the current counter value in HOTP mode |
+| `getUri(string $label, string $issuer, int $hotpCounter = null)`                 | string          |                                                                                           |
 
 #### `AuthenticatorOptions` properties
-property | type | default | allowed | description
--------- | ---- | ------- | ------- | -----------
-`$digits` | int | 6 | 6 or 8  | auth code length
-`$period` | int | 30 | 15 - 60 | validation period (seconds)
-`$secret_length` | int | 20 | &gt;= 16 | length of the secret phrase (bytes, unencoded binary)
-`$algorithm` | string | `SHA1` | `SHA1`, `SHA256` or `SHA512` | HMAC hash algorithm
-`$mode` | string | `totp` | `totp` or `hotp` | Authenticator mode: time- or counter based, respectively
-`$adjacent` | int | 1 | &gt;= 0 | number of allowed adjacent codes
+| property         | type   | default | allowed                      | description                                              |
+|------------------|--------|---------|------------------------------|----------------------------------------------------------|
+| `$digits`        | int    | 6       | 6 or 8                       | auth code length                                         |
+| `$period`        | int    | 30      | 15 - 60                      | validation period (seconds)                              |
+| `$secret_length` | int    | 20      | &gt;= 16                     | length of the secret phrase (bytes, unencoded binary)    |
+| `$algorithm`     | string | `SHA1`  | `SHA1`, `SHA256` or `SHA512` | HMAC hash algorithm                                      |
+| `$mode`          | string | `totp`  | `totp` or `hotp`             | Authenticator mode: time- or counter based, respectively |
+| `$adjacent`      | int    | 1       | &gt;= 0                      | number of allowed adjacent codes                         |
+
 #### Notes
 Keep in mind that several URI settings are not (yet) recognized by all authenticators. Check [the Google Authenticator wiki](https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters) for more info.
 

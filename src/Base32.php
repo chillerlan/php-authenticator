@@ -17,30 +17,29 @@ use function array_map, array_unshift, bindec, call_user_func_array, count, impl
 /**
  * Class to provide base32 encoding/decoding of strings
  *
- * @link https://fremnet.net/article/215/class-base32
- *
- * @property string $charset
+ * @see https://fremnet.net/article/215/class-base32
  */
-class Base32{
+final class Base32{
 
 	/**
 	 * RFC3548
 	 *
 	 * The character set as defined by RFC3548
 	 *
-	 * @link http://www.ietf.org/rfc/rfc3548.txt
+	 * @see http://www.ietf.org/rfc/rfc3548.txt
+	 *
+	 * @var string
 	 */
 	public const RFC3548 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 
 	/**
-	 * csSafe
-	 *
 	 * This character set is designed to be more human friendly
 	 * For example: i, I, L, l and 1 all map to 1
 	 * Also: there is no U - to help prevent offensive output
 	 *
-	 * @link http://www.crockford.com/wrmg/base32.html
+	 * @see http://www.crockford.com/wrmg/base32.html
 	 *
+	 * @var string
 	 */
 	public const CROCKFORD = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
 
@@ -51,19 +50,15 @@ class Base32{
 	 * character set and is included to make this class
 	 * compatible with MIME::Base32
 	 *
-	 * @link http://search.cpan.org/~danpeder/MIME-Base32-1.01/Base32.pm
+	 * @see http://search.cpan.org/~danpeder/MIME-Base32-1.01/Base32.pm
 	 *
 	 */
 	public const MIME_09AV = '0123456789ABCDEFGHIJKLMNOPQRSTUV';
 
 	/**
-	 * charset
-	 *
 	 * Internal holder of the current character set.
-	 *
-	 * @var string
 	 */
-	protected string $charset = self::RFC3548;
+	private string $charset = self::RFC3548;
 
 	/**
 	 * Base32 constructor.
@@ -79,8 +74,6 @@ class Base32{
 	}
 
 	/**
-	 * setCharset
-	 *
 	 * Used to set the internal $charset variable
 	 * I've left it so that people can arbirtrarily set their
 	 * own charset
@@ -109,13 +102,11 @@ class Base32{
 	}
 
 	/**
-	 * str2bin
-	 *
-	 * Converts any ascii string to a binary string
+	 * Converts any ASCII string to a binary
 	 *
 	 * @param string $str The string you want to convert
 	 *
-	 * @return string String of 0's and 1's
+	 * @return string String of 0s and 1s
 	 */
 	public function str2bin(string $str):string{
 		$chrs = unpack('C*', $str);
@@ -124,13 +115,11 @@ class Base32{
 	}
 
 	/**
-	 * bin2str
+	 * Converts a binary to an ASCII string
 	 *
-	 * Converts a binary string to an ascii string
+	 * @param string $str The string of 0s and 1s you want to convert
 	 *
-	 * @param string $str The string of 0's and 1's you want to convert
-	 *
-	 * @return string The ascii output
+	 * @return string The ASCII output
 	 */
 	public function bin2str(string $str):string{
 		$this->checkLength($str);
@@ -146,8 +135,6 @@ class Base32{
 	}
 
 	/**
-	 * fromBin
-	 *
 	 * Converts a correct binary string to base32
 	 *
 	 * @param string $str The string of 0's and 1's you want to convert
@@ -179,8 +166,6 @@ class Base32{
 	}
 
 	/**
-	 * toBin
-	 *
 	 * Accepts a base32 string and returns an ascii binary string
 	 *
 	 * @param string $str The base32 string to convert
@@ -193,7 +178,7 @@ class Base32{
 		// Convert the base32 string back to a binary string
 		$str = array_map(fn($chr) => sprintf('%08b', strpos($this->charset, $chr)) , str_split($str));
 
-		// Remove the extra 0's we added
+		// Remove the extra 0s we added
 		$str = preg_replace('/000(.{5})/', '$1', implode('', $str));
 
 		// Unpad if necessary
@@ -208,8 +193,6 @@ class Base32{
 	}
 
 	/**
-	 * fromString
-	 *
 	 * Convert any string to a base32 string
 	 * This should be binary safe...
 	 *
@@ -222,8 +205,6 @@ class Base32{
 	}
 
 	/**
-	 * toString
-	 *
 	 * Convert any base32 string to a normal sctring
 	 * This should be binary safe...
 	 *
@@ -249,7 +230,7 @@ class Base32{
 	 * @return void
 	 * @throws \chillerlan\Authenticator\Base32Exception
 	 */
-	protected function checkLength(string $str):void{
+	private function checkLength(string $str):void{
 
 		if(strlen($str) % 8 > 0){
 			throw new Base32Exception('Length must be divisible by 8');
@@ -263,7 +244,7 @@ class Base32{
 	 * @return void
 	 * @throws \chillerlan\Authenticator\Base32Exception
 	 */
-	protected function checkBin(string $str):void{
+	private function checkBin(string $str):void{
 
 		if(!preg_match('/^[01]+$/', $str)){
 			throw new Base32Exception('Only 0 and 1 are permitted');
@@ -277,7 +258,7 @@ class Base32{
 	 * @return void
 	 * @throws \chillerlan\Authenticator\Base32Exception
 	 */
-	protected function checkCharacterSet(string $str):void{
+	private function checkCharacterSet(string $str):void{
 
 		if(!preg_match('/^['.$this->charset.']+$/', $str)){
 			throw new Base32Exception('Must match character set');

@@ -1,5 +1,16 @@
+build:
+  nodes:
+    analysis:
+      tests:
+        override:
+          - php-scrutinizer-run
+  environment:
+    php: 8.2.4
+
 filter:
   excluded_paths:
     - examples/*
-    - stuff/*
     - tests/*
+    - vendor/*
+    - .github/*
+    - .phan/*

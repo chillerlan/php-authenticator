@@ -4,7 +4,6 @@
 	"homepage": "https://github.com/chillerlan/php-authenticator",
 	"license": "MIT",
 	"type": "library",
-	"minimum-stability": "stable",
 	"keywords": [
 		"authenticator", "totp", "hotp", "2fa", "rfc4226", "rfc6238"
 	],
@@ -19,17 +18,19 @@
 		"issues": "https://github.com/chillerlan/php-authenticator/issues",
 		"source": "https://github.com/chillerlan/php-authenticator"
 	},
+	"minimum-stability": "stable",
+	"prefer-stable": true,
 	"require": {
 		"php": "^7.4 || ^8.0",
-		"chillerlan/php-settings-container": "^2.1"
+		"chillerlan/php-settings-container": "^2.1.4"
 	},
 	"require-dev": {
-		"chillerlan/php-qrcode": "^4.2",
-		"phan/phan": "^3.2.2",
-		"phpunit/phpunit": "^9.4"
+		"chillerlan/php-qrcode": "^4.3",
+		"phan/phan": "^5.4",
+		"phpunit/phpunit": "^9.6"
 	},
 	"suggest": {
-		"chillerlan/php-qrcode": "^4.2"
+		"chillerlan/php-qrcode": "^4.3"
 	},
 	"autoload": {
 		"psr-4": {
@@ -40,5 +41,14 @@
 		"psr-4": {
 			"chillerlan\\AuthenticatorTest\\": "tests/"
 		}
+	},
+	"scripts": {
+		"phpunit": "@php vendor/bin/phpunit",
+		"phan": "@php vendor/bin/phan"
+	},
+	"config": {
+		"lock": false,
+		"sort-packages": true,
+		"platform-check": true
 	}
 }

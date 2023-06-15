@@ -2,8 +2,12 @@
 # https://github.com/sebastianbergmann/phpunit/blob/master/.github/workflows/ci.yml
 
 on:
-  - pull_request
-  - push
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 name: "Continuous Integration"
 
@@ -14,6 +18,20 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: true
+      matrix:
+        php-version:
+          - "7.4"
+          - "8.0"
+          - "8.1"
+          - "8.2"
+          - "8.3"
+
+    env:
+      PHAN_ALLOW_XDEBUG: 0
+      PHAN_DISABLE_XDEBUG_WARN: 1
+
     steps:
       - name: "Checkout"
         uses: actions/checkout@v2
@@ -21,25 +39,21 @@ jobs:
       - name: "Install PHP"
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "7.4"
+          php-version: ${{ matrix.php-version }}
           tools: pecl
           coverage: none
           extensions: ast
 
-      - name: "Update dependencies with composer"
-        run: composer update --no-interaction --no-ansi --no-progress --no-suggest
-
-      - name: "phan env"
-        run: |
-          echo "PHAN_ALLOW_XDEBUG=0" >> $GITHUB_ENV
-          echo "PHAN_DISABLE_XDEBUG_WARN=1" >> $GITHUB_ENV
+      - name: "Install dependencies with composer"
+        uses: ramsey/composer-install@v2
 
       - name: "Run phan"
         run: php vendor/bin/phan
 
+
   tests:
     name: "Unit Tests"
-
+    needs: static-code-analysis
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -51,45 +65,27 @@ jobs:
         php-version:
           - "7.4"
           - "8.0"
+          - "8.1"
+          - "8.2"
+#          - "8.3"
 
     steps:
-      - name: "Configure git to avoid issues with line endings"
-        if: matrix.os == 'windows-latest'
-        run: git config --global core.autocrlf false
-
       - name: "Checkout"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: "Install PHP with extensions"
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
           coverage: pcov
-#          extensions:
-#          ini-values:
-
-      - name: "Determine composer cache directory on Linux"
-        if: matrix.os == 'ubuntu-latest'
-        run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
-
-      - name: "Determine composer cache directory on Windows"
-        if: matrix.os == 'windows-latest'
-        run: echo "COMPOSER_CACHE_DIR=%LOCALAPPDATA%\Composer" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-      - name: "Cache dependencies installed with composer"
-        uses: actions/cache@v2
-        with:
-          path: ${{ env.COMPOSER_CACHE_DIR }}
-          key: php${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('**/composer.json') }}
-          restore-keys: php${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-
 
       - name: "Install dependencies with composer"
-        run: composer update --no-ansi --no-interaction --no-progress --no-suggest
+        uses: ramsey/composer-install@v2
 
       - name: "Run tests with phpunit"
         run: php vendor/bin/phpunit --configuration=phpunit.xml
 
       - name: "Send code coverage report to Codecov.io"
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          files: .build/coverage/clover.xml

@@ -139,19 +139,19 @@ class Authenticator{
 	public function code(int $data = null):string{
 
 		if($this->options->mode === 'hotp'){
-			$data = $data ?? 0;
-
-			$hashdata = pack('NN', ($data & 0xFFFFFFFF00000000) >> 32, $data & 0x00000000FFFFFFFF);
+			$data ??= 0;
+			// explicit int cast here otherewise the hex notation may end up as float
+			$hashdata = pack('NN', ($data & (int)0xFFFFFFFF00000000) >> 32, $data & (int)0x00000000FFFFFFFF);
 		}
 		else{
 			$hashdata = pack('J', $data ?? $this->timeslice());
 		}
 
-		$hash = hash_hmac($this->options->algorithm, $hashdata, $this->secret, true);
+		$hash = hash_hmac($this->options->algorithm, $hashdata, $this->secret ?? '', true);
 		$code = unpack('N', substr($hash, ord(substr($hash, -1)) & 0xF, 4))[1] & 0x7FFFFFFF;
 		$code = $code % pow(10, $this->options->digits);
 
-		// test values
+		// intermediate test values
 		// HOTP: https://tools.ietf.org/html/rfc4226#page-32
 		// TOTP: https://tools.ietf.org/html/rfc6238#page-14
 #		var_dump(['data' => dechex($data), 'hash' => bin2hex($hash), 'truncated_hex' => dechex($code), 'truncated_int' => $code]);
