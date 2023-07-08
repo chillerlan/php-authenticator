@@ -29,9 +29,9 @@ var_dump($code);
 // verify the current code
 var_dump($auth->verify($code)); // -> true
 // previous code
-var_dump($auth->verify($code, time() - $options->period)); // -> true
+var_dump($auth->verify($code, (time() - $options->period))); // -> true
 // 2nd adjacent is invalid
-var_dump($auth->verify($code, time() + 2 * $options->period)); // -> false
+var_dump($auth->verify($code, (time() + 2 * $options->period))); // -> false
 // allow 2 adjacent codes
 $options->adjacent = 2;
-var_dump($auth->verify($code, time() + 2 * $options->period)); // -> true
+var_dump($auth->verify($code, (time() + 2 * $options->period))); // -> true

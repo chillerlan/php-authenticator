@@ -138,6 +138,7 @@
 
 	<rule ref="Squiz">
 		<exclude name="Squiz.Arrays.ArrayDeclaration.IndexNoNewline" />
+		<exclude name="Squiz.Arrays.ArrayDeclaration.MultiLineNotAllowed" />
 		<exclude name="Squiz.Arrays.ArrayDeclaration.SingleLineNotAllowed" />
 		<exclude name="Squiz.Arrays.ArrayDeclaration.ValueNoNewline" />
 		<exclude name="Squiz.Classes.ClassDeclaration" />
