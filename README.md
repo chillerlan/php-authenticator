@@ -8,13 +8,13 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 [![Codacy][codacy-badge]][codacy]
 
 [license-badge]: https://img.shields.io/github/license/chillerlan/php-authenticator.svg
-[license]: https://github.com/chillerlan/php-authenticator/blob/main/LICENSE
-[gh-action-badge]: https://img.shields.io/github/actions/workflow/status/chillerlan/php-authenticator/ci.yml?branch=main&logo=github
-[gh-action]: https://github.com/chillerlan/php-authenticator/actions?query=branch%3Amain
-[coverage-badge]: https://img.shields.io/codecov/c/gh/chillerlan/php-authenticator/main?logo=codecov
-[coverage]: https://app.codecov.io/github/chillerlan/php-authenticator/tree/main
-[codacy-badge]: https://img.shields.io/codacy/grade/a2793225b448495c9659f27f7f52380a/main?logo=codacy
-[codacy]: https://www.codacy.com/gh/chillerlan/php-authenticator/dashboard?branch=main
+[license]: https://github.com/chillerlan/php-authenticator/blob/v2.x/LICENSE
+[gh-action-badge]: https://img.shields.io/github/actions/workflow/status/chillerlan/php-authenticator/ci.yml?branch=v2.x&logo=github
+[gh-action]: https://github.com/chillerlan/php-authenticator/actions?query=branch%3Av2.x
+[coverage-badge]: https://img.shields.io/codecov/c/gh/chillerlan/php-authenticator/v2.x?logo=codecov
+[coverage]: https://app.codecov.io/github/chillerlan/php-authenticator/tree/v2.x
+[codacy-badge]: https://img.shields.io/codacy/grade/a2793225b448495c9659f27f7f52380a/v2.x?logo=codacy
+[codacy]: https://www.codacy.com/gh/chillerlan/php-authenticator/dashboard?branch=v2.x
 
 # Documentation
 ## Requirements
@@ -25,12 +25,12 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 
 via terminal: `composer require chillerlan/php-authenticator`
 
-*composer.json* (note: replace `dev-main` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^2.1` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions)
+*composer.json* (note: replace `dev-v2.x` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^2.1` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions)
 ```json
 {
 	"require": {
 		"php": "^7.0",
-		"chillerlan/php-authenticator": "dev-main"
+		"chillerlan/php-authenticator": "dev-v2.x"
 	}
 }
 ```
@@ -155,6 +155,6 @@ $authenticator->setOptions(['algorithm' => AuthenticatorInterface::ALGO_SHA512])
 
 <p align="center">
   <a href="https://twofactorauth.org">
-    <img alt="2FA ALL THE THINGS!" src="https://raw.githubusercontent.com/chillerlan/php-authenticator/main/.github/images/2fa-all-the-things.jpg">
+    <img alt="2FA ALL THE THINGS!" src="https://raw.githubusercontent.com/chillerlan/php-authenticator/v2.x/.github/images/2fa-all-the-things.jpg">
   </a>
 </p>
