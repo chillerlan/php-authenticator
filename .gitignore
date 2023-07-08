@@ -1,22 +1,9 @@
-#################
-## PHPStorm
-#################
-
-.idea/
-
-#################
-## Eclipse
-#################
-
-.settings/
-.buildpath
-.project
-
-#################
-## Misc
-#################
-
-pdoc.bat
 composer.lock
-docs
 vendor
+.build
+.idea
+phpcs.xml
+phpdoc.xml
+phpmd.xml
+phpunit.xml
+*.phpunit.result.cache

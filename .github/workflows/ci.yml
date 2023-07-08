@@ -1,0 +1,60 @@
+# https://help.github.com/en/categories/automating-your-workflow-with-github-actions
+# https://github.com/sebastianbergmann/phpunit/blob/master/.github/workflows/ci.yml
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+name: "Continuous Integration"
+
+jobs:
+
+  tests:
+    name: "Unit Tests"
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+        php-version:
+          - "5.6"
+          - "7.0"
+          - "7.1"
+          - "7.2"
+          - "7.3"
+          - "7.4"
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+
+      - name: "Install PHP with extensions"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: xdebug
+          extensions: ast
+
+      - name: "Install dependencies with composer"
+        uses: ramsey/composer-install@v2
+
+      - name: "Run tests with phpunit"
+        run: php vendor/bin/phpunit --colors=always --configuration=phpunit.xml.dist
+
+      - name: "Send code coverage report to Codecov.io"
+        uses: codecov/codecov-action@v3
+        with:
+          files: .build/coverage/clover.xml
+
+      - name: "Send code coverage report to Codacy"
+        uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: .build/coverage/clover.xml
