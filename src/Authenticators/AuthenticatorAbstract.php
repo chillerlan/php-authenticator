@@ -10,13 +10,13 @@
 
 namespace chillerlan\Authenticator\Authenticators;
 
+use chillerlan\Authenticator\AuthenticatorOptions;
 use chillerlan\Authenticator\Common\Base32;
+use chillerlan\Settings\SettingsContainerInterface;
 use InvalidArgumentException;
 use RuntimeException;
-use function in_array;
-use function property_exists;
 use function random_bytes;
-use function strtoupper;
+use function time;
 use function trim;
 
 /**
@@ -24,52 +24,33 @@ use function trim;
  */
 abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 
-	/** @var string */
-	protected $algorithm = AuthenticatorInterface::ALGO_SHA1;
+	protected const userAgent = 'chillerlanAuthenticator/5.0 +https://github.com/chillerlan/php-authenticator';
 
-	/** @var int */
-	protected $digits = 6;
-
-	/** @var int */
-	protected $period = 30;
-
-	/** @var int */
-	protected $secret_length = 20;
-
-	/** @var int */
-	protected $adjacent = 1;
-
-	/** @var int */
-	protected $time_offset = 0;
+	/** @var \chillerlan\Settings\SettingsContainerInterface|\chillerlan\Authenticator\AuthenticatorOptions */
+	protected $options;
 
 	/** @var string|null */
 	protected $secret = null;
 
+	/** @var int */
+	protected $serverTime = 0;
+
+	/** @var int */
+	protected $lastRequestTime = 0;
+
 	/**
 	 * AuthenticatorInterface constructor
 	 */
-	public function __construct(array $options = null){
-
-		if($options !== null){
-			$this->setOptions($options);
-		}
-
+	public function __construct(SettingsContainerInterface $options = null){
+		// phpcs:ignore
+		$this->setOptions($options ?? new AuthenticatorOptions);
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function setOptions(array $options):AuthenticatorInterface{
-
-		foreach($options as $property => $value){
-			// skip non-existing props
-			if(!property_exists($this, $property) || $property === 'secret'){
-				continue;
-			}
-
-			// call the setter
-			$this->{'set_'.$property}($value);
-		}
+	public function setOptions(SettingsContainerInterface $options):AuthenticatorInterface{
+		$this->options = $options;
 
 		return $this;
 	}
@@ -78,13 +59,7 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	 * @inheritDoc
 	 */
 	public function setSecret(string $encodedSecret):AuthenticatorInterface{
-		$encodedSecret = trim($encodedSecret);
-
-		if($encodedSecret === ''){
-			throw new InvalidArgumentException('The given secret string is empty');
-		}
-
-		$this->secret = Base32::decode($encodedSecret);
+		$this->secret = Base32::decode($this->checkEncodedSecret($encodedSecret));
 
 		return $this;
 	}
@@ -107,7 +82,7 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	public function createSecret(int $length = null):string{
 
 		if($length === null){
-			$length = $this->secret_length;
+			$length = $this->options->secret_length;
 		}
 
 		if($length < 16){
@@ -120,76 +95,34 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	}
 
 	/**
-	 * @return void
-	 * @throws \InvalidArgumentException
+	 * @inheritDoc
 	 */
-	protected function set_algorithm(string $algorithm){
-		$algorithm = strtoupper($algorithm);
-
-		if(!in_array($algorithm, self::HASH_ALGOS, true)){
-			throw new InvalidArgumentException('Invalid algorithm: '.$algorithm);
-		}
-
-		$this->algorithm = $algorithm;
+	public function getServertime():int{
+		return time();
 	}
 
 	/**
-	 * @return void
-	 * @throws \InvalidArgumentException
+	 * Get an adjusted time stamp for the given server time
 	 */
-	protected function set_digits(int $digits){
+	protected function getAdjustedTime(int $serverTime, int $lastRequestTime):int{
+		$diff = (time() - $lastRequestTime);
 
-		if(!in_array($digits, [6, 8], true)){
-			throw new InvalidArgumentException('Invalid code length: '.$digits);
-		}
-
-		$this->digits = $digits;
+		return ($serverTime + $diff);
 	}
 
 	/**
-	 * @return void
+	 * Checks if the encoded secret is non-empty, returns the trimmed string on success
+	 *
 	 * @throws \InvalidArgumentException
 	 */
-	protected function set_period(int $period){
+	protected function checkEncodedSecret(string $encodedSecret):string{
+		$encodedSecret = trim($encodedSecret);
 
-		if($period < 15 || $period > 60){
-			throw new InvalidArgumentException('Invalid period: '.$period);
+		if($encodedSecret === ''){
+			throw new InvalidArgumentException('The given secret string is empty');
 		}
 
-		$this->period = $period;
-	}
-
-	/**
-	 * @return void
-	 * @throws \InvalidArgumentException
-	 */
-	protected function set_secret_length(int $secret_length){
-		// ~ 80 to 640 bits
-		if($secret_length < 16 || $secret_length > 1024){
-			throw new InvalidArgumentException('Invalid secret length: '.$secret_length);
-		}
-
-		$this->secret_length = $secret_length;
-	}
-
-	/**
-	 * @return void
-	 * @throws \InvalidArgumentException
-	 */
-	protected function set_adjacent(int $adjacent){
-
-		if($adjacent < 0){
-			throw new InvalidArgumentException('Invalid adjacent value: '.$adjacent);
-		}
-
-		$this->adjacent = $adjacent;
-	}
-
-	/**
-	 * @return void
-	 */
-	protected function set_time_offset(int $time_offset){
-		$this->time_offset = $time_offset;
+		return $encodedSecret;
 	}
 
 }

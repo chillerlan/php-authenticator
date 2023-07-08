@@ -8,12 +8,12 @@
  * @license      MIT
  */
 
-use chillerlan\Authenticator\Authenticator;
+use chillerlan\Authenticator\{Authenticator, AuthenticatorOptions};
 use chillerlan\Authenticator\Authenticators\AuthenticatorInterface;
 
 require_once '../vendor/autoload.php';
 
-$options = [
+$options = new AuthenticatorOptions([
 	// switch mode to TOTP (default)
 	'mode'      => AuthenticatorInterface::TOTP,
 	// change the code length
@@ -22,7 +22,7 @@ $options = [
 	'period'    => 60,
 	// set the HMAC hash algo
 	'algorithm' => AuthenticatorInterface::ALGO_SHA512,
-];
+]);
 
 $auth = new Authenticator($options);
 
@@ -38,12 +38,12 @@ var_dump($code);
 // verify the code
 var_dump($auth->verify($code)); // -> true
 // verify against the previous time slice
-var_dump($auth->verify($code, (time() - $options['period']))); // -> true
-// 2 stepos ahead (1 is default)
-var_dump($auth->verify($code, (time() + 2 * $options['period']))); // -> false
+var_dump($auth->verify($code, time() - $options->period)); // -> true
+// 2 steps ahead (1 is default)
+var_dump($auth->verify($code, time() + 2 * $options->period)); // -> false
 // set adjacent codes to 2 and try again
-$auth->setOptions(['adjacent' => 2]);
-var_dump($auth->verify($code, (time() + 2 * $options['period']))); // -> true
+$options->adjacent = 2;
+var_dump($auth->verify($code, time() + 2 * $options->period)); // -> true
 
 // create an URI for use in e.g. QR codes
 // -> otpauth://totp/test?secret=JQUZJ44H6M3SATXIJRKTK64VQMIU73JN&issuer=example.com&digits=8&algorithm=SHA512&period=60

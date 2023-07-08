@@ -10,24 +10,30 @@
 
 namespace chillerlan\Authenticator\Authenticators;
 
+use chillerlan\Settings\SettingsContainerInterface;
+
 /**
  *
  */
 interface AuthenticatorInterface{
 
-	const TOTP        = 'totp';
-	const HOTP        = 'hotp';
+	public const TOTP        = 'totp';
+	public const HOTP        = 'hotp';
+	public const STEAM_GUARD = 'steam';
+	public const BATTLE_NET  = 'battlenet';
 
-	const ALGO_SHA1   = 'SHA1';
-	const ALGO_SHA256 = 'SHA256';
-	const ALGO_SHA512 = 'SHA512';
+	public const ALGO_SHA1   = 'SHA1';
+	public const ALGO_SHA256 = 'SHA256';
+	public const ALGO_SHA512 = 'SHA512';
 
-	const MODES = [
-		self::HOTP => HOTP::class,
-		self::TOTP => TOTP::class,
+	public const MODES = [
+		self::HOTP        => HOTP::class,
+		self::TOTP        => TOTP::class,
+		self::STEAM_GUARD => SteamGuard::class,
+		self::BATTLE_NET  => BattleNet::class,
 	];
 
-	const HASH_ALGOS = [
+	public const HASH_ALGOS = [
 		self::ALGO_SHA1,
 		self::ALGO_SHA256,
 		self::ALGO_SHA512,
@@ -36,7 +42,7 @@ interface AuthenticatorInterface{
 	/**
 	 * Sets the options
 	 */
-	public function setOptions(array $options):AuthenticatorInterface;
+	public function setOptions(SettingsContainerInterface $options):AuthenticatorInterface;
 
 	/**
 	 * Sets a secret phrase from an encoded representation
@@ -58,6 +64,11 @@ interface AuthenticatorInterface{
 	 * @throws \InvalidArgumentException
 	 */
 	public function createSecret(int $length = null):string;
+
+	/**
+	 * Returns the current server time as UNIX timestamp for the given application (or `time()` if not applicable)
+	 */
+	public function getServertime():int;
 
 	/**
 	 * Prepares the given $data value and returns an integer that will be passed as counter value to the hash function

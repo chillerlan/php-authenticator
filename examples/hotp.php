@@ -8,19 +8,19 @@
  * @license      MIT
  */
 
-use chillerlan\Authenticator\Authenticator;
+use chillerlan\Authenticator\{Authenticator, AuthenticatorOptions};
 use chillerlan\Authenticator\Authenticators\AuthenticatorInterface;
 
 require_once '../vendor/autoload.php';
 
-$options = [
+$options = new AuthenticatorOptions([
 	// switch mode to HOTP
 	'mode'      => AuthenticatorInterface::HOTP,
 	// change the code length
 	'digits'    => 8,
 	// set the HMAC hash algo
 	'algorithm' => AuthenticatorInterface::ALGO_SHA256,
-];
+]);
 
 $auth = new Authenticator($options);
 

@@ -10,6 +10,7 @@
 
 namespace chillerlan\AuthenticatorTest\Authenticators;
 
+use chillerlan\Authenticator\AuthenticatorOptions;
 use chillerlan\Authenticator\Authenticators\{AuthenticatorInterface, HOTP};
 use Generator;
 use function bin2hex;
@@ -23,7 +24,7 @@ class HOTPTest extends AuthenticatorInterfaceTestAbstract{
 	/**
 	 * @see https://tools.ietf.org/html/rfc4226#page-32
 	 */
-	const rfc4226Vectors = [
+	protected const rfc4226Vectors = [
 		[0, 'cc93cf18508d94934c64b65d8ba7667fb7cde4b0', 1284755224, '755224'],
 		[1, '75a48a19d4cbe100644e8ac1397eea747a2d33ab', 1094287082, '287082'],
 		[2, '0bacb7fa082fef30782211938bc1c5e70416ff44',  137359152, '359152'],
@@ -36,12 +37,12 @@ class HOTPTest extends AuthenticatorInterfaceTestAbstract{
 		[9, '1637409809a679dc698207310c8c7fc07290d9e5',  645520489, '520489'],
 	];
 
-	protected function getInstance():AuthenticatorInterface{
-		return new HOTP;
+	protected function getInstance(AuthenticatorOptions $options):AuthenticatorInterface{
+		return new HOTP($options);
 	}
 
 	public static function hotpVectors():Generator{
-		foreach(self::rfc4226Vectors as list($counter, $hmac, $code, $hotp)){
+		foreach(self::rfc4226Vectors as [$counter, $hmac, $code, $hotp]){
 			yield sprintf('value: %d', $counter) => [$counter, $hmac, $code, $hotp];
 		}
 	}
@@ -51,7 +52,7 @@ class HOTPTest extends AuthenticatorInterfaceTestAbstract{
 	 *
 	 * @dataProvider hotpVectors
 	 */
-	public function testHOTP(int $counter, string $hmac, int $code, string $hotp){
+	public function testHOTP(int $counter, string $hmac, int $code, string $hotp):void{
 		$this->authenticatorInterface->setSecret($this::secret);
 
 		$hmac_intermediate = $this->authenticatorInterface->getHMAC($counter);

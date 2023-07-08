@@ -27,7 +27,7 @@ final class Base32{
 	 *
 	 * @var string
 	 */
-	const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+	public const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 
 	/**
 	 * Encode a string to Base32
@@ -46,10 +46,9 @@ final class Base32{
 	}
 
 	/**
-	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
-	public static function checkCharacterSet(string $base32){
+	public static function checkCharacterSet(string $base32):void{
 
 		if(!preg_match('/^['.self::CHARSET.']+$/', $base32)){
 			throw new InvalidArgumentException('Base32 must match RFC3548 character set');

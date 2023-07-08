@@ -128,7 +128,6 @@
 		<exclude name="PSR12.Files.FileHeader.SpacingAfterBlock" />
 		<exclude name="PSR12.Functions.ReturnTypeDeclaration" />
 		<exclude name="PSR12.Operators.OperatorSpacing" />
-		<exclude name="PSR12.Properties.ConstantVisibility" />
 	</rule>
 
 	<rule ref="PSR12.Namespaces.CompoundNamespaceDepth">

@@ -11,13 +11,11 @@
 namespace chillerlan\Authenticator;
 
 use chillerlan\Authenticator\Authenticators\AuthenticatorInterface;
+use chillerlan\Settings\SettingsContainerInterface;
 use InvalidArgumentException;
-use function array_keys;
-use function array_replace;
 use function http_build_query;
 use function rawurlencode;
 use function sprintf;
-use function strtolower;
 use function trim;
 use const PHP_QUERY_RFC3986;
 
@@ -32,74 +30,11 @@ use const PHP_QUERY_RFC3986;
  */
 class Authenticator{
 
-	const DEFAULTS = [
-		/**
-		 * Authenticator mode:
-		 *
-		 *   - `AuthenticatorInterface::HOTP`  = counter based
-		 *   - `AuthenticatorInterface::TOTP`  = time based
-		 *   - `AuthenticatorInterface::STEAM` = time based (Steam Guard)
-		 *
-		 * @type string
-		 */
-		'mode'          => AuthenticatorInterface::TOTP,
-
-		/**
-		 * Hash algorithm:
-		 *
-		 *   - `AuthenticatorInterface::ALGO_SHA1`
-		 *   - `AuthenticatorInterface::ALGO_SHA256`
-		 *   - `AuthenticatorInterface::ALGO_SHA512`
-		 *
-		 * @type string
-		 */
-		'algorithm'     => AuthenticatorInterface::ALGO_SHA1,
-
-		/**
-		 * Code length: either 6 or 8
-		 *
-		 * @type int
-		 */
-		'digits'        => 6,
-
-		/**
-		 * Validation period (seconds): 15 - 60
-		 *
-		 * @type int
-		 */
-		'period'        => 30,
-
-		/**
-		 * Length of the secret phrase (bytes, unencoded binary)
-		 *
-		 * @see \random_bytes()
-		 *
-		 * @type int
-		 */
-		'secret_length' => 20,
-
-		/**
-		 * number of allowed adjacent codes
-		 *
-		 * @type int
-		 */
-		'adjacent'      => 1,
-
-		/**
-		 * A fixed time offset that will be added to the current time value
-		 *
-		 * @see \chillerlan\Authenticator\Authenticators\AuthenticatorInterface::getCounter()
-		 *
-		 * @type int
-		 */
-		'time_offset'   => 0,
-	];
-
 	/** @var \chillerlan\Authenticator\Authenticators\AuthenticatorInterface */
 	protected $authenticator;
 
-	/** @var array */
-	protected $options = [];
+	/** @var \chillerlan\Settings\SettingsContainerInterface|\chillerlan\Authenticator\AuthenticatorOptions */
+	protected $options;
 
 	/** @var string */
 	protected $mode = AuthenticatorInterface::TOTP;
@@ -107,9 +42,9 @@ class Authenticator{
 	/**
 	 * Authenticator constructor
 	 */
-	public function __construct(array $options = null, string $secret = null){
+	public function __construct(SettingsContainerInterface $options = null, string $secret = null){
 		// phpcs:ignore
-		$this->setOptions($options ?? []);
+		$this->setOptions($options ?? new AuthenticatorOptions);
 
 		if($secret !== null){
 			$this->setSecret($secret);
@@ -122,30 +57,14 @@ class Authenticator{
 	 *
 	 * Please note that this will reset the secret phrase stored with the authenticator instance
 	 * if a different mode than the current is given.
-	 *
-	 * @throws \InvalidArgumentException
 	 */
-	public function setOptions(array $options):self{
-		// replace settings with the current and given ones
-		$this->options = array_replace(self::DEFAULTS, $this->options, $options);
-
-		// remove unwanted keys
-		foreach(array_keys($this->options) as $key){
-			if(!isset(self::DEFAULTS[$key])){
-				unset($this->options[$key]);
-			}
-		}
+	public function setOptions(SettingsContainerInterface $options):self{
+		$this->options = $options;
 
 		// invoke a new authenticator interface if necessary
-		if(!isset($this->authenticator) || $this->options['mode'] !== $this->mode){
-			$mode = strtolower($this->options['mode']);
-
-			if(!isset(AuthenticatorInterface::MODES[$mode])){
-				throw new InvalidArgumentException('Invalid mode: '.$mode);
-			}
-
-			$class               = AuthenticatorInterface::MODES[$mode];
-			$this->mode          = $mode;
+		if(!isset($this->authenticator) || $this->options->mode !== $this->mode){
+			$class               = AuthenticatorInterface::MODES[$this->options->mode];
+			$this->mode          = $this->options->mode;
 			$this->authenticator = new $class;
 		}
 
@@ -230,11 +149,11 @@ class Authenticator{
 		];
 
 		if($omitSettings !== true){
-			$values['digits']    = $this->options['digits'];
-			$values['algorithm'] = $this->options['algorithm'];
+			$values['digits']    = $this->options->digits;
+			$values['algorithm'] = $this->options->algorithm;
 
 			if($this->mode === AuthenticatorInterface::TOTP){
-				$values['period'] = $this->options['period'];
+				$values['period'] = $this->options->period;
 			}
 
 			if($this->mode === AuthenticatorInterface::HOTP && $hotpCounter !== null){

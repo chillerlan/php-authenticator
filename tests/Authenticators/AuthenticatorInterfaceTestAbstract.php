@@ -10,74 +10,72 @@
 
 namespace chillerlan\AuthenticatorTest\Authenticators;
 
-use chillerlan\Authenticator\Authenticator;
+use chillerlan\Authenticator\AuthenticatorOptions;
 use chillerlan\Authenticator\Authenticators\AuthenticatorInterface;
 use chillerlan\Authenticator\Common\Base32;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 use RuntimeException;
 use function strlen;
-use function strtoupper;
 
 /**
  *
  */
 abstract class AuthenticatorInterfaceTestAbstract extends TestCase{
 
+	/** @var \chillerlan\Authenticator\AuthenticatorOptions */
+	protected $options;
+
 	/** @var \chillerlan\Authenticator\Authenticators\AuthenticatorInterface */
 	protected $authenticatorInterface;
 
-	const rawsecret = '12345678901234567890';
-	const secret    = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
+	protected const rawsecret = '12345678901234567890';
+	protected const secret    = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
 
-	abstract protected function getInstance():AuthenticatorInterface;
+	abstract protected function getInstance(AuthenticatorOptions $options):AuthenticatorInterface;
 
-	protected function setUp(){
-		$this->authenticatorInterface = $this->getInstance();
+	protected function setUp():void{
+		$this->options                = new AuthenticatorOptions;
+		$this->authenticatorInterface = $this->getInstance($this->options);
 	}
 
-	protected function getAuthenticatorInterfaceProperty($property){
-		$r = new ReflectionProperty($this->authenticatorInterface, $property);
-		$r->setAccessible(true);
-
-		return $r->getValue($this->authenticatorInterface);
-	}
-
-	public function testSetGetSecret(){
+	public function testSetGetSecret():void{
 		$this->authenticatorInterface->setSecret($this::secret);
 
-		$this::assertSame($this::secret, $this->authenticatorInterface->getSecret());
+		$secret = $this->authenticatorInterface->getSecret();
+
+		$this::assertSame($this::secret, $secret);
+		$this::assertSame($this::rawsecret, Base32::decode($secret));
 	}
 
-	public function testSetEmptySecretException(){
+	public function testSetEmptySecretException():void{
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('The given secret string is empty');
 
 		$this->authenticatorInterface->setSecret('');
 	}
 
-	public function testSetInvalidSecretException(){
+	public function testSetInvalidSecretException():void{
 		$this->expectException(InvalidArgumentException::class);
 
 		$this->authenticatorInterface->setSecret('This_is_an_invalid_secret_phrase!');
 	}
 
-	public function testGetSecretException(){
+	public function testGetSecretException():void{
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage('No secret set');
 
 		$this->authenticatorInterface->getSecret();
 	}
 
-	public function testCreateSecretDefaultLength(){
+	public function testCreateSecretDefaultLength():void{
 		$this::assertSame(
-			Authenticator::DEFAULTS['secret_length'],
+			$this->options->secret_length,
 			strlen(Base32::decode($this->authenticatorInterface->createSecret()))
 		);
 	}
 
-	public function testCreateSecretWithLength(){
+	public function testCreateSecretWithLength():void{
 
 		for($secretLength = 16; $secretLength <= 512; $secretLength += 8){
 			$secret = Base32::decode($this->authenticatorInterface->createSecret($secretLength));
@@ -87,20 +85,20 @@ abstract class AuthenticatorInterfaceTestAbstract extends TestCase{
 
 	}
 
-	public function testCreateSecretCheckCharacterSet(){
+	public function testCreateSecretCheckCharacterSet():void{
 		$secret = $this->authenticatorInterface->createSecret(32);
 
 		$this::assertRegExp('/^['.Base32::CHARSET.']+$/', $secret);
 	}
 
-	public function testCreateSecretException(){
+	public function testCreateSecretException():void{
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Invalid secret length');
 
 		$this->authenticatorInterface->createSecret(10);
 	}
 
-	public function testGetHMACWithoutSecretException(){
+	public function testGetHMACWithoutSecretException():void{
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage('No secret given');
 
@@ -108,7 +106,7 @@ abstract class AuthenticatorInterfaceTestAbstract extends TestCase{
 	}
 
 	// https://github.com/PHPGangsta/GoogleAuthenticator/pull/25
-	public function testVerifyCodeWithLeadingZero(){
+	public function testVerifyCodeWithLeadingZero():void{
 		$this->authenticatorInterface->setSecret($this::secret);
 
 		$code = $this->authenticatorInterface->code();
@@ -117,67 +115,17 @@ abstract class AuthenticatorInterfaceTestAbstract extends TestCase{
 		$this::assertFalse($this->authenticatorInterface->verify('0'.$code));
 	}
 
-	public function testSetAlgorithm(){
-		foreach(AuthenticatorInterface::HASH_ALGOS as $algo){
-			$this->authenticatorInterface->setOptions(['algorithm' => $algo]);
-			$this::assertSame(strtoupper($algo), $this->getAuthenticatorInterfaceProperty('algorithm'));
-		}
-	}
+	// coverage
+	public function testGetServertime():void{
+		$this->options->useLocalTime = false;
 
-	public function testSetAlgorithmException(){
-		$this->expectException(InvalidArgumentException::class);
-		$this->expectExceptionMessage('Invalid algorithm');
+		$servertime = $this->authenticatorInterface->getServerTime();
+		$this::assertRegExp('/^\d+$/', (string)$servertime);
 
-		$this->authenticatorInterface->setOptions(['algorithm' => 'florps']);
-	}
+		$this->options->forceTimeRefresh = false;
 
-	public function testSetDigits(){
-		foreach([6, 8] as $digits){
-			$this->authenticatorInterface->setOptions(['digits' => $digits]);
-			$this::assertSame($digits, $this->getAuthenticatorInterfaceProperty('digits'));
-		}
-	}
-
-	public function testSetDigitsException(){
-		$this->expectException(InvalidArgumentException::class);
-		$this->expectExceptionMessage('Invalid code length');
-
-		$this->authenticatorInterface->setOptions(['digits' => 9]);
-	}
-
-	public function testSetPeriod(){
-		for($period = 15; $period <= 60; $period++){
-			$this->authenticatorInterface->setOptions(['period' => $period]);
-			$this::assertSame($period, $this->getAuthenticatorInterfaceProperty('period'));
-		}
-	}
-
-	public function testSetPeriodException(){
-		$this->expectException(InvalidArgumentException::class);
-		$this->expectExceptionMessage('Invalid period');
-
-		$this->authenticatorInterface->setOptions(['period' => 1]);
-	}
-
-	public function testSetSecretLength(){
-		for($secret_length = 16; $secret_length <= 1024; $secret_length += 16){
-			$this->authenticatorInterface->setOptions(['secret_length' => $secret_length]);
-			$this::assertSame($secret_length, $this->getAuthenticatorInterfaceProperty('secret_length'));
-		}
-	}
-
-	public function testSetSecretLengthException(){
-		$this->expectException(InvalidArgumentException::class);
-		$this->expectExceptionMessage('Invalid secret length');
-
-		$this->authenticatorInterface->setOptions(['secret_length' => 69420]);
-	}
-
-	public function testSetAdjacentException(){
-		$this->expectException(InvalidArgumentException::class);
-		$this->expectExceptionMessage('Invalid adjacent value');
-
-		$this->authenticatorInterface->setOptions(['adjacent' => -666]);
+		$servertime = $this->authenticatorInterface->getServerTime();
+		$this::assertRegExp('/^\d+$/', (string)$servertime);
 	}
 
 }

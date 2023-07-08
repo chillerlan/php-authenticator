@@ -10,63 +10,36 @@
 
 namespace chillerlan\AuthenticatorTest;
 
-use chillerlan\Authenticator\Authenticator;
+use chillerlan\Authenticator\{Authenticator, AuthenticatorOptions};
 use chillerlan\Authenticator\Authenticators\AuthenticatorInterface;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
-use function rawurlencode;
 use function sprintf;
 
 class AuthenticatorTest extends TestCase{
 
-	const secret = 'SECRETTEST234567';
-	const label  = 'some test-label';
-	const issuer = 'chillerlan.net';
+	protected const secret = 'SECRETTEST234567';
+	protected const label  = 'some test-label';
+	protected const issuer = 'chillerlan.net';
 
 	/** @var \chillerlan\Authenticator\Authenticator */
 	protected $authenticator;
 
-	protected function setUp(){
-		$this->authenticator = new Authenticator;
+	/** @var \chillerlan\Authenticator\AuthenticatorOptions */
+	protected $options;
+
+	protected function setUp():void{
+		$this->options       = new AuthenticatorOptions;
+		$this->authenticator = new Authenticator($this->options);
 	}
 
-	protected function getAuthenticatorProperty($property){
-		$r = new ReflectionProperty($this->authenticator, $property);
-		$r->setAccessible(true);
-
-		return $r->getValue($this->authenticator);
-	}
-
-	public function testSetOptionsRemoveUnwantedKeys(){
-		$this->authenticator->setOptions(['foo' => 'bar']);
-
-		$this::assertArrayNotHasKey('foo', $this->getAuthenticatorProperty('options'));
-	}
-
-	public function testSetMode(){
-		foreach(AuthenticatorInterface::MODES as $mode => $class){
-			$this->authenticator->setOptions(['mode' => $mode]);
-
-			$this::assertSame($mode, $this->getAuthenticatorProperty('mode'));
-			$this::assertInstanceOf($class, $this->getAuthenticatorProperty('authenticator'));
-		}
-	}
-
-	public function testSetModeException(){
-		$this->expectException(InvalidArgumentException::class);
-		$this->expectExceptionMessage('Invalid mode');
-
-		$this->authenticator->setOptions(['mode' => 'florps']);
-	}
-
-	public function testSetSecretViaConstruct(){
+	public function testSetSecretViaConstruct():void{
 		$this->authenticator = new Authenticator(null, self::secret);
 
 		$this::assertSame(self::secret, $this->authenticator->getSecret());
 	}
 
-	public function testGetUri(){
+	public function testGetUri():void{
 		$this->authenticator->setSecret(self::secret);
 
 		$label  = rawurlencode(self::label);
@@ -77,21 +50,22 @@ class AuthenticatorTest extends TestCase{
 			$this->authenticator->getUri(self::label, self::issuer)
 		);
 
-		$this->authenticator->setOptions(['digits' => 8]);
+		$this->options->digits = 8;
 		$this::assertSame(
 			sprintf('otpauth://totp/%s?secret=%s&issuer=%s&digits=8&algorithm=SHA1&period=30', $label, self::secret, $issuer),
 			$this->authenticator->getUri(self::label, self::issuer)
 		);
 
-		$this->authenticator->setOptions(['period' => 45]);
+		$this->options->period = 45;
 		$this::assertSame(
 			sprintf('otpauth://totp/%s?secret=%s&issuer=%s&digits=8&algorithm=SHA1&period=45', $label, self::secret, $issuer),
 			$this->authenticator->getUri(self::label, self::issuer)
 		);
 
+		$this->options->mode = AuthenticatorInterface::HOTP;
+		// changing the mode resets the AuthenticatorInterface instance
 		$this->authenticator
-			->setOptions(['mode' => AuthenticatorInterface::HOTP])
-			// changing the mode resets the AuthenticatorInterface instance
+			->setOptions($this->options)
 			->setSecret(self::secret);
 
 		$this::assertSame(
@@ -99,7 +73,7 @@ class AuthenticatorTest extends TestCase{
 			$this->authenticator->getUri(self::label, self::issuer, 42)
 		);
 
-		$this->authenticator->setOptions(['algorithm' => AuthenticatorInterface::ALGO_SHA512]);
+		$this->options->algorithm = AuthenticatorInterface::ALGO_SHA512;
 		$this::assertSame(
 			sprintf('otpauth://hotp/%s?secret=%s&issuer=%s&digits=8&algorithm=SHA512', $label, self::secret, $issuer),
 			$this->authenticator->getUri(self::label, self::issuer)

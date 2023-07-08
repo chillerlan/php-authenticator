@@ -18,18 +18,22 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 
 # Documentation
 ## Requirements
-- PHP 7.0+
+- PHP 7.2+
+  - [`ext-curl`](https://www.php.net/manual/book.curl) for Battle.net and Steam Guard server time synchronization
+  - [`ext-gmp`](https://www.php.net/manual/book.gmp) for Battle.net authenticator secret retrieval (RSA encryption)
+  - [`ext-sodium`](https://www.php.net/manual/book.sodium) for constant time implementations of base64 encode/decode and hex2bin/bin2hex
+    ([`paragonie/constant_time_encoding`](https://github.com/paragonie/constant_time_encoding) is used as fallback)
 
 ## Installation
 **requires [composer](https://getcomposer.org)**
 
 via terminal: `composer require chillerlan/php-authenticator`
 
-*composer.json* (note: replace `dev-main` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^2.1` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions)
+*composer.json* (note: replace `dev-main` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^3.1` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions)
 ```json
 {
 	"require": {
-		"php": "^7.0",
+		"php": "^7.2 || ^8.0",
 		"chillerlan/php-authenticator": "dev-main"
 	}
 }
@@ -43,12 +47,15 @@ The secret is usually being created once during the activation process in a user
 So all you need to do there is to display it to the user in a convenient way -
 as a text string and QR code for example - and save it somewhere with the user data.
 ```php
-use chillerlan\Authenticator\Authenticator;
+use chillerlan\Authenticator\{Authenticator, AuthenticatorOptions};
 
-$authenticator = new Authenticator;
+$options = new AuthenticatorOptions;
+$options->secret_length = 32;
+
+$authenticator = new Authenticator($options);
 // create a secret (stored somewhere in a *safe* place on the server. safe... hahaha jk)
 $secret = $authenticator->createSecret();
-// you can also specify the length of the secret key
+// you can also specify the length of the secret key, which overrides the options setting
 $secret = $authenticator->createSecret(20);
 // set an existing secret
 $authenticator->setSecret($secret);
@@ -71,25 +78,23 @@ if($authenticator->verify($otp)){
 #### time based (TOTP)
 Verify adjacent codes
 ```php
- // $period value from options
-$period = 30;
 // try the first adjacent
-$authenticator->verify($otp, time() - $period); // -> true
+$authenticator->verify($otp, time() - $options->period); // -> true
 // try the second adjacent, default is 1
-$authenticator->verify($otp, time() + 2 * $period); // -> false
+$authenticator->verify($otp, time() + 2 * $options->period); // -> false
 // allow 2 adjacent codes
-$authenticator->setOptions(['adjacent' => 2]);
-$authenticator->verify($otp, time() + 2 * $period); // -> true
+$options->adjacent = 2;
+$authenticator->verify($otp, time() + 2 * $options->period); // -> true
 ```
 
 #### counter based (HOTP)
 ```php
 // switch mode to HOTP
-$authenticator->setOptions(['mode' => AuthenticatorInterface::HOTP]);
+$options->mode = AuthenticatorInterface::HOTP;
 // user sends the OTP for code #42, which is equivalent to
 $otp = $authenticator->code(42); // -> 123456
 // verify [123456, 42]
-$authenticator->verify($otp, $counterValueFromUserDatabase); // -> true
+$authenticator->verify($otp, $counterValueFromUserDatabase) // -> true
 ```
 
 ### URI creation
@@ -107,25 +112,39 @@ Keep in mind that several URI settings are not (yet) recognized by all authentic
 
 ```php
 // code length, currently 6 or 8
-$authenticator->setOptions(['digits' => 8]);
+$options->digits = 8;
 // valid period between 15 and 60 seconds
-$authenticator->setOptions(['period' => 45]);
+$options->period = 45;
 // set the HMAC hash algorithm
-$authenticator->setOptions(['algorithm' => AuthenticatorInterface::ALGO_SHA512]);
+$options->algorithm = AuthenticatorInterface::ALGO_SHA512;
 ```
 
 ## API
 ### `Authenticator`
-| method                                                                                      | return           | description                                                      |
-|---------------------------------------------------------------------------------------------|------------------|------------------------------------------------------------------|
-| `__construct(array $options = null, string $secret = null)`                                 | -                |                                                                  |
-| `setOptions(array $options)`                                                                | `Authenticator`  | called internally by `__construct()`                             |
-| `setSecret(string $secret)`                                                                 | `Authenticator`  | called internally by `__construct()`                             |
-| `getSecret()`                                                                               | `string`         |                                                                  |
-| `createSecret(int $length = null)`                                                          | `string`         | `$length` overrides `$options` setting                           |
-| `code(int $data = null)`                                                                    | `string`         | `$data` may be a UNIX timestamp (TOTP) or a counter value (HOTP) |
-| `verify(string $otp, int $data = null)`                                                     | `bool`           | for `$data` see `Authenticator::code()`                          |
-| `getUri(string $label, string $issuer, int $hotpCounter = null, bool $omitSettings = null)` | `string`         |                                                                  |
+| method                                                                                      | return          | description                                                      |
+|---------------------------------------------------------------------------------------------|-----------------|------------------------------------------------------------------|
+| `__construct(SettingsContainerInterface $options = null, string $secret = null)`            | -               |                                                                  |
+| `setOptions(SettingsContainerInterface $options)`                                           | `Authenticator` | called internally by `__construct()`                             |
+| `setSecret(string $secret)`                                                                 | `Authenticator` | called internally by `__construct()`                             |
+| `getSecret()`                                                                               | `string`        |                                                                  |
+| `createSecret(int $length = null)`                                                          | `string`        | `$length` overrides `AuthenticatorOptions` setting               |
+| `code(int $data = null)`                                                                    | `string`        | `$data` may be a UNIX timestamp (TOTP) or a counter value (HOTP) |
+| `verify(string $otp, int $data = null)`                                                     | `bool`          | for `$data` see `Authenticator::code()`                          |
+| `getUri(string $label, string $issuer, int $hotpCounter = null, bool $omitSettings = null)` | `string`        |                                                                  |
+
+### `AuthenticatorOptions`
+#### Properties
+| property            | type     | default | allowed                                | description                                                                     |
+|---------------------|----------|---------|----------------------------------------|---------------------------------------------------------------------------------|
+| `$digits`           | `int`    | 6       | 6 or 8                                 | auth code length                                                                |
+| `$period`           | `int`    | 30      | 15 - 60                                | validation period (seconds)                                                     |
+| `$secret_length`    | `int`    | 20      | &gt;= 16                               | length of the secret phrase (bytes, unencoded binary)                           |
+| `$algorithm`        | `string` | `SHA1`  | `SHA1`, `SHA256` or `SHA512`           | HMAC hash algorithm, see `AuthenticatorInterface::HASH_ALGOS`                   |
+| `$mode`             | `string` | `totp`  | `totp`, `hotp`, `battlenet` or `steam` | authenticator mode: time- or counter based, see `AuthenticatorInterface::MODES` |
+| `$adjacent`         | `int`    | 1       | &gt;= 0                                | number of allowed adjacent codes                                                |
+| `$time_offset`      | `int`    | 0       | *                                      | fixed time offset that will be added to the current time value                  |
+| `$useLocalTime`     | `bool`   | true    | *                                      | whether to use local time or request server time                                |
+| `$forceTimeRefresh` | `bool`   | false   | *                                      | whether to force refreshing server time on each call                            |
 
 ### `AuthenticatorInterface`
 #### Methods
@@ -135,6 +154,7 @@ $authenticator->setOptions(['algorithm' => AuthenticatorInterface::ALGO_SHA512])
 | `setSecret(string $encodedSecret)`                | `AuthenticatorInterface` |             |
 | `getSecret()`                                     | `string`                 |             |
 | `createSecret(int $length = null)`                | `string`                 |             |
+| `getServertime()`                                 | `int`                    |             |
 | `getCounter(int $data = null)`                    | `int`                    | internal    |
 | `getHMAC(int $counter)`                           | `string`                 | internal    |
 | `getCode(string $hmac)`                           | `int`                    | internal    |
@@ -147,6 +167,8 @@ $authenticator->setOptions(['algorithm' => AuthenticatorInterface::ALGO_SHA512])
 |---------------|----------|-----------------------------------|
 | `TOTP`        | `string` |                                   |
 | `HOTP`        | `string` |                                   |
+| `STEAM_GUARD` | `string` |                                   |
+| `BATTLE_NET`  | `string` |                                   |
 | `ALGO_SHA1`   | `string` |                                   |
 | `ALGO_SHA256` | `string` |                                   |
 | `ALGO_SHA512` | `string` |                                   |

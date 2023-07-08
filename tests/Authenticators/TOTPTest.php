@@ -10,6 +10,7 @@
 
 namespace chillerlan\AuthenticatorTest\Authenticators;
 
+use chillerlan\Authenticator\AuthenticatorOptions;
 use chillerlan\Authenticator\Authenticators\{AuthenticatorInterface, TOTP};
 use Generator;
 use function date;
@@ -26,7 +27,7 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 	/**
 	 * @see https://tools.ietf.org/html/rfc6238#page-14
 	 */
-	const rfc6238Vectors = [
+	protected const rfc6238Vectors = [
 		['sha1'  ,          59,        '1', 1094287082, '94287082'],
 		['sha256',          59,        '1',  746119246, '46119246'],
 		['sha512',          59,        '1',  490693936, '90693936'],
@@ -52,18 +53,18 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 		['sha512', 20000000000, '27bc86aa', 1047863826, '47863826'],
 	];
 
-	const secrets = [
+	protected const secrets = [
 		'sha1'   => self::secret,
 		'sha256' => 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA',
 		'sha512' => 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNA',
 	];
 
-	protected function getInstance():AuthenticatorInterface{
-		return new TOTP;
+	protected function getInstance(AuthenticatorOptions $options):AuthenticatorInterface{
+		return new TOTP($options);
 	}
 
 	public static function totpVectors():Generator{
-		foreach(self::rfc6238Vectors as list($algorithm, $timestamp, $timeslice, $code, $totp)){
+		foreach(self::rfc6238Vectors as [$algorithm, $timestamp, $timeslice, $code, $totp]){
 			// skip 64bit numbers on 32bit PHP
 			if(PHP_INT_SIZE < 8 && !is_int($timestamp)){
 				continue;
@@ -78,18 +79,12 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 	/**
 	 * @dataProvider totpVectors
 	 */
-	public function testIntermediateValues(string $algorithm, int $timestamp, string $timeslice, int $code, string $totp){
+	public function testIntermediateValues(string $algorithm, int $timestamp, string $timeslice, int $code, string $totp):void{
+		$this->options->digits    = 8;
+		$this->options->algorithm = $algorithm;
+		$this->options->adjacent  = 0;
 
-		$options = [
-			'digits'    => 8,
-			'algorithm' => $algorithm,
-			'adjacent'  => 0,
-		];
-
-		$this->authenticatorInterface
-			->setOptions($options)
-			->setSecret(self::secrets[$algorithm])
-		;
+		$this->authenticatorInterface->setSecret(self::secrets[$algorithm]);
 
 		$timeslice_intermediate = $this->authenticatorInterface->getCounter($timestamp);
 		$hmac_intermediate      = $this->authenticatorInterface->getHMAC($timeslice_intermediate);
@@ -106,24 +101,19 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 	/**
 	 * @dataProvider totpVectors
 	 */
-	public function testAdjacent(string $algorithm, int $timestamp, string $timeslice, int $code, string $totp){
+	public function testAdjacent(string $algorithm, int $timestamp, string $timeslice, int $code, string $totp):void{
 		$adjacent = 20;
 		$limit    = (2 * $adjacent);
 
-		$options = [
-			'digits'    => 8,
-			'period'    => 30, // (default) the codes were generated with a 30-second period
-			'algorithm' => $algorithm,
-			'adjacent'  => $adjacent,
-		];
+		$this->authenticatorInterface->setSecret(self::secrets[$algorithm]);
 
-		$this->authenticatorInterface
-			->setOptions($options)
-			->setSecret(self::secrets[$algorithm])
-		;
+		$this->options->digits    = 8;
+		$this->options->period    = 30; // (default) the codes were generated with a 30-second period
+		$this->options->algorithm = $algorithm;
+		$this->options->adjacent  = $adjacent;
 		// phpcs:ignore
 		for($i = -$limit; $i <= $limit; $i++){
-			$this->authenticatorInterface->setOptions(['time_offset' => ($i * $options['period'])]);
+			$this->options->time_offset = ($i * $this->options->period);
 
 			$verify = $this->authenticatorInterface->verify($totp, $timestamp);
 

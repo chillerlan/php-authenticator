@@ -28,21 +28,26 @@ class TOTP extends HOTP{
 			$data = time();
 		}
 
-		return (int)floor(($data + $this->time_offset) / $this->period);
+		if($this->options->useLocalTime === false){
+			$data = $this->getServerTime();
+		}
+
+		return (int)floor(($data + $this->options->time_offset) / $this->options->period);
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function verify(string $otp, int $data = null):bool{
+		$limit = $this->options->adjacent;
 
-		if($this->adjacent === 0){
+		if($limit === 0){
 			return parent::verify($otp, $data); // @codeCoverageIgnore
 		}
 
 		$timeslice = $this->getCounter($data);
 		// phpcs:ignore
-		for($i = -$this->adjacent; $i <= $this->adjacent; $i++){
+		for($i = -$limit; $i <= $limit; $i++){
 			$hash = $this->getHMAC($timeslice + $i);
 			$code = $this->getOTP($this->getCode($hash));
 

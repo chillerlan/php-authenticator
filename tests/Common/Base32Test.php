@@ -13,7 +13,6 @@ namespace chillerlan\AuthenticatorTest\Common;
 use chillerlan\Authenticator\Common\Base32;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Throwable;
 
 class Base32Test extends TestCase{
 
@@ -33,32 +32,27 @@ class Base32Test extends TestCase{
 	/**
 	 * @dataProvider base32DataProvider
 	 */
-	public function testEncode(string $str, string $base32){
+	public function testEncode(string $str, string $base32):void{
 		$this::assertSame($base32, Base32::encode($str));
 	}
 
 	/**
 	 * @dataProvider base32DataProvider
 	 */
-	public function testDecode(string $str, string $base32){
+	public function testDecode(string $str, string $base32):void{
 		$this::assertSame($str, Base32::decode($base32));
 	}
 
 	/**
 	 * @dataProvider base32DataProvider
 	 */
-	public function testCheckCharset(string $str, string $base32){
-		try{
-			Base32::checkCharacterSet($base32);
+	public function testCheckCharset(string $str, string $base32):void{
+		$this->expectNotToPerformAssertions();
 
-			$this::assertTrue(true);
-		}
-		catch(Throwable $e){
-			$this->fail($e->getMessage());
-		}
+		Base32::checkCharacterSet($base32);
 	}
 
-	public function testCheckCharsetException(){
+	public function testCheckCharsetException():void{
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Base32 must match RFC3548 character set');
 

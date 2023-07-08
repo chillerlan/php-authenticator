@@ -45,7 +45,7 @@ class HOTP extends AuthenticatorAbstract{
 			? "\x00\x00\x00\x00".pack('N', $counter)
 			: pack('J', $counter);
 		// @codeCoverageIgnoreEnd
-		return hash_hmac($this->algorithm, $data, $this->secret, true);
+		return hash_hmac($this->options->algorithm, $data, $this->secret, true);
 	}
 
 	/**
@@ -62,9 +62,9 @@ class HOTP extends AuthenticatorAbstract{
 	 * @inheritDoc
 	 */
 	public function getOTP(int $code):string{
-		$code %= (10 ** $this->digits);
+		$code %= (10 ** $this->options->digits);
 
-		return str_pad((string)$code, $this->digits, '0', STR_PAD_LEFT);
+		return str_pad((string)$code, $this->options->digits, '0', STR_PAD_LEFT);
 	}
 
 	/**
