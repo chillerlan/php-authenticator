@@ -11,11 +11,8 @@
 namespace chillerlan\Authenticator\Authenticators;
 
 use RuntimeException;
-use TypeError;
 use function hash_equals;
 use function hash_hmac;
-use function is_int;
-use function is_string;
 use function pack;
 use function str_pad;
 use function strlen;
@@ -31,23 +28,14 @@ class HOTP extends AuthenticatorAbstract{
 	/**
 	 * @inheritDoc
 	 */
-	public function getCounter($data = null){
-
-		if($data === null){
-			$data = 0;
-		}
-
-		if(!is_int($data)){
-			throw new TypeError('$data is expected to be int'); // @codeCoverageIgnore
-		}
-
-		return ($data);
+	public function getCounter(int $data = null):int{
+		return ($data ?? 0);
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function getHMAC($counter){
+	public function getHMAC(int $counter):string{
 
 		if($this->secret === null){
 			throw new RuntimeException('No secret given');
@@ -63,7 +51,7 @@ class HOTP extends AuthenticatorAbstract{
 	/**
 	 * @inheritDoc
 	 */
-	public function getCode($hmac){
+	public function getCode(string $hmac):int{
 		$data = unpack('C*', $hmac);
 		$b    = ($data[strlen($hmac)] & 0xF);
 		// phpcs:ignore
@@ -73,7 +61,7 @@ class HOTP extends AuthenticatorAbstract{
 	/**
 	 * @inheritDoc
 	 */
-	public function getOTP($code){
+	public function getOTP(int $code):string{
 		$code %= (10 ** $this->digits);
 
 		return str_pad((string)$code, $this->digits, '0', STR_PAD_LEFT);
@@ -82,7 +70,7 @@ class HOTP extends AuthenticatorAbstract{
 	/**
 	 * @inheritDoc
 	 */
-	public function code($data = null){
+	public function code(int $data = null):string{
 		$hmac = $this->getHMAC($this->getCounter($data));
 
 		return $this->getOTP($this->getCode($hmac));
@@ -91,12 +79,7 @@ class HOTP extends AuthenticatorAbstract{
 	/**
 	 * @inheritDoc
 	 */
-	public function verify($otp, $data = null){
-
-		if(!is_string($otp)){
-			throw new TypeError('$code is expected to be string'); // @codeCoverageIgnore
-		}
-
+	public function verify(string $otp, int $data = null):bool{
 		return hash_equals($this->code($data), $otp);
 	}
 

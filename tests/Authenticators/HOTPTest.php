@@ -10,7 +10,8 @@
 
 namespace chillerlan\AuthenticatorTest\Authenticators;
 
-use chillerlan\Authenticator\Authenticators\HOTP;
+use chillerlan\Authenticator\Authenticators\{AuthenticatorInterface, HOTP};
+use Generator;
 use function bin2hex;
 use function sprintf;
 
@@ -35,11 +36,11 @@ class HOTPTest extends AuthenticatorInterfaceTestAbstract{
 		[9, '1637409809a679dc698207310c8c7fc07290d9e5',  645520489, '520489'],
 	];
 
-	protected function getInstance(){
+	protected function getInstance():AuthenticatorInterface{
 		return new HOTP;
 	}
 
-	public static function hotpVectors(){
+	public static function hotpVectors():Generator{
 		foreach(self::rfc4226Vectors as list($counter, $hmac, $code, $hotp)){
 			yield sprintf('value: %d', $counter) => [$counter, $hmac, $code, $hotp];
 		}
@@ -48,16 +49,9 @@ class HOTPTest extends AuthenticatorInterfaceTestAbstract{
 	/**
 	 * @link https://github.com/winauth/winauth/issues/449#issuecomment-353670105
 	 *
-	 * @param int    $counter
-	 * @param string $hmac
-	 * @param int    $code
-	 * @param string $hotp
-	 *
-	 * @return void
-	 *
 	 * @dataProvider hotpVectors
 	 */
-	public function testHOTP($counter, $hmac, $code, $hotp){
+	public function testHOTP(int $counter, string $hmac, int $code, string $hotp){
 		$this->authenticatorInterface->setSecret($this::secret);
 
 		$hmac_intermediate = $this->authenticatorInterface->getHMAC($counter);

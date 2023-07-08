@@ -10,7 +10,8 @@
 
 namespace chillerlan\AuthenticatorTest\Authenticators;
 
-use chillerlan\Authenticator\Authenticators\TOTP;
+use chillerlan\Authenticator\Authenticators\{AuthenticatorInterface, TOTP};
+use Generator;
 use function date;
 use function dechex;
 use function is_int;
@@ -57,11 +58,11 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 		'sha512' => 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNA',
 	];
 
-	protected function getInstance(){
+	protected function getInstance():AuthenticatorInterface{
 		return new TOTP;
 	}
 
-	public static function totpVectors(){
+	public static function totpVectors():Generator{
 		foreach(self::rfc6238Vectors as list($algorithm, $timestamp, $timeslice, $code, $totp)){
 			// skip 64bit numbers on 32bit PHP
 			if(PHP_INT_SIZE < 8 && !is_int($timestamp)){
@@ -75,17 +76,9 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 	}
 
 	/**
-	 * @param string $algorithm
-	 * @param int    $timestamp
-	 * @param string $timeslice
-	 * @param int    $code
-	 * @param string $totp
-	 *
-	 * @return void
-	 *
 	 * @dataProvider totpVectors
 	 */
-	public function testIntermediateValues($algorithm, $timestamp, $timeslice, $code, $totp){
+	public function testIntermediateValues(string $algorithm, int $timestamp, string $timeslice, int $code, string $totp){
 
 		$options = [
 			'digits'    => 8,
@@ -111,17 +104,9 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 	}
 
 	/**
-	 * @param string $algorithm
-	 * @param int    $timestamp
-	 * @param string $timeslice
-	 * @param int    $code
-	 * @param string $totp
-	 *
-	 * @return void
-	 *
 	 * @dataProvider totpVectors
 	 */
-	public function testAdjacent($algorithm, $timestamp, $timeslice, $code, $totp){
+	public function testAdjacent(string $algorithm, int $timestamp, string $timeslice, int $code, string $totp){
 		$adjacent = 20;
 		$limit    = (2 * $adjacent);
 

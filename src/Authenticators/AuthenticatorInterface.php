@@ -35,81 +35,57 @@ interface AuthenticatorInterface{
 
 	/**
 	 * Sets the options
-	 *
-	 * @param array $options
-	 *
-	 * @return \chillerlan\Authenticator\Authenticators\AuthenticatorInterface
 	 */
-	public function setOptions(array $options);
+	public function setOptions(array $options):AuthenticatorInterface;
 
 	/**
 	 * Sets a secret phrase from an encoded representation
 	 *
-	 * @param string $encodedSecret
-	 *
-	 * @return \chillerlan\Authenticator\Authenticators\AuthenticatorInterface
 	 * @throws \RuntimeException
 	 */
-	public function setSecret($encodedSecret);
+	public function setSecret(string $encodedSecret):AuthenticatorInterface;
 
 	/**
 	 * Returns an encoded representation of the current secret phrase
 	 *
-	 * @return string
 	 * @throws \RuntimeException
 	 */
-	public function getSecret();
+	public function getSecret():string;
 
 	/**
 	 * Generates a new (secure random) secret phrase
 	 *
-	 * @param int|null $length
-	 *
-	 * @return string
 	 * @throws \InvalidArgumentException
 	 */
-	public function createSecret($length = null);
+	public function createSecret(int $length = null):string;
 
 	/**
 	 * Prepares the given $data value and returns an integer that will be passed as counter value to the hash function
 	 *
-	 * @param int|null $data
-	 *
-	 * @return int
 	 * @internal
 	 */
-	public function getCounter($data = null);
+	public function getCounter(int $data = null):int;
 
 	/**
 	 * HMAC hashes the given $data integer with the given secret
 	 *
-	 * @param int $counter
-	 *
-	 * @return string
-	 * @throws \RuntimeException
 	 * @internal
 	 */
-	public function getHMAC($counter);
+	public function getHMAC(int $counter):string;
 
 	/**
 	 * Extracts the intermediate code from the given $hmac hash
 	 *
-	 * @param string $hmac
-	 *
-	 * @return int
 	 * @internal
 	 */
-	public function getCode($hmac);
+	public function getCode(string $hmac):int;
 
 	/**
 	 * Formats the final output OTP from the given intermediate $code
 	 *
-	 * @param int $code
-	 *
-	 * @return string
 	 * @internal
 	 */
-	public function getOTP($code);
+	public function getOTP(int $code):string;
 
 	/**
 	 * Creates a new OTP code with the given secret
@@ -117,12 +93,8 @@ interface AuthenticatorInterface{
 	 * $data may be
 	 *  - a UNIX timestamp (TOTP)
 	 *  - a counter value (HOTP)
-	 *
-	 * @param int|null $data
-	 *
-	 * @return string
 	 */
-	public function code($data = null);
+	public function code(int $data = null):string;
 
 	/**
 	 * Checks the given $code against the secret
@@ -130,12 +102,7 @@ interface AuthenticatorInterface{
 	 * $data may be
 	 *  - a UNIX timestamp (TOTP)
 	 *  - a counter value (HOTP)
-	 *
-	 * @param string   $otp
-	 * @param int|null $data
-	 *
-	 * @return bool
 	 */
-	public function verify($otp, $data = null);
+	public function verify(string $otp, int $data = null):bool;
 
 }

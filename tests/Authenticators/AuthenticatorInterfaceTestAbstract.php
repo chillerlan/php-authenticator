@@ -31,7 +31,7 @@ abstract class AuthenticatorInterfaceTestAbstract extends TestCase{
 	const rawsecret = '12345678901234567890';
 	const secret    = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
 
-	abstract protected function getInstance();
+	abstract protected function getInstance():AuthenticatorInterface;
 
 	protected function setUp(){
 		$this->authenticatorInterface = $this->getInstance();

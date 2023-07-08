@@ -10,11 +10,8 @@
 
 namespace chillerlan\Authenticator\Authenticators;
 
-use TypeError;
 use function floor;
 use function hash_equals;
-use function is_int;
-use function is_string;
 use function time;
 
 /**
@@ -25,14 +22,10 @@ class TOTP extends HOTP{
 	/**
 	 * @inheritDoc
 	 */
-	public function getCounter($data = null){
+	public function getCounter(int $data = null):int{
 
 		if($data === null){
 			$data = time();
-		}
-
-		if(!is_int($data)){
-			throw new TypeError('$data is expected to be int'); // @codeCoverageIgnore
 		}
 
 		return (int)floor(($data + $this->time_offset) / $this->period);
@@ -41,14 +34,10 @@ class TOTP extends HOTP{
 	/**
 	 * @inheritDoc
 	 */
-	public function verify($otp, $data = null){
+	public function verify(string $otp, int $data = null):bool{
 
 		if($this->adjacent === 0){
 			return parent::verify($otp, $data); // @codeCoverageIgnore
-		}
-
-		if(!is_string($otp)){
-			throw new TypeError('$code is expected to be string'); // @codeCoverageIgnore
 		}
 
 		$timeslice = $this->getCounter($data);

@@ -11,13 +11,13 @@
 namespace chillerlan\AuthenticatorTest\Common;
 
 use chillerlan\Authenticator\Common\Base32;
-use Exception;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 class Base32Test extends TestCase{
 
-	public static function base32DataProvider(){
+	public static function base32DataProvider():array{
 		return [
 			['a'                   , 'ME'                              ],
 			['ab'                  , 'MFRA'                            ],
@@ -31,44 +31,29 @@ class Base32Test extends TestCase{
 	}
 
 	/**
-	 * @param string $str
-	 * @param string $base32
-	 *
-	 * @return void
-	 *
 	 * @dataProvider base32DataProvider
 	 */
-	public function testEncode($str, $base32){
+	public function testEncode(string $str, string $base32){
 		$this::assertSame($base32, Base32::encode($str));
 	}
 
 	/**
-	 * @param string $str
-	 * @param string $base32
-	 *
-	 * @return void
-	 *
 	 * @dataProvider base32DataProvider
 	 */
-	public function testDecode($str, $base32){
+	public function testDecode(string $str, string $base32){
 		$this::assertSame($str, Base32::decode($base32));
 	}
 
 	/**
-	 * @param string $str
-	 * @param string $base32
-	 *
-	 * @return void
-	 *
 	 * @dataProvider base32DataProvider
 	 */
-	public function testCheckCharset($str, $base32){
+	public function testCheckCharset(string $str, string $base32){
 		try{
 			Base32::checkCharacterSet($base32);
 
 			$this::assertTrue(true);
 		}
-		catch(Exception $e){
+		catch(Throwable $e){
 			$this->fail($e->getMessage());
 		}
 	}

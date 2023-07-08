@@ -18,18 +18,18 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 
 # Documentation
 ## Requirements
-- PHP 5.6+
+- PHP 7.0+
 
 ## Installation
 **requires [composer](https://getcomposer.org)**
 
 via terminal: `composer require chillerlan/php-authenticator`
 
-*composer.json* (note: replace `dev-main` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^1.2` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions)
+*composer.json* (note: replace `dev-main` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^2.1` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions)
 ```json
 {
 	"require": {
-		"php": "^5.6 || ^7.0",
+		"php": "^7.0",
 		"chillerlan/php-authenticator": "dev-main"
 	}
 }

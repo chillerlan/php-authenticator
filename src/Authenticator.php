@@ -12,11 +12,9 @@ namespace chillerlan\Authenticator;
 
 use chillerlan\Authenticator\Authenticators\AuthenticatorInterface;
 use InvalidArgumentException;
-use TypeError;
 use function array_keys;
 use function array_replace;
 use function http_build_query;
-use function is_string;
 use function rawurlencode;
 use function sprintf;
 use function strtolower;
@@ -108,17 +106,10 @@ class Authenticator{
 
 	/**
 	 * Authenticator constructor
-	 *
-	 * @param array|null  $options
-	 * @param string|null $secret
 	 */
-	public function __construct(array $options = null, $secret = null){
-
-		if($options === null){
-			$options = [];
-		}
-
-		$this->setOptions($options);
+	public function __construct(array $options = null, string $secret = null){
+		// phpcs:ignore
+		$this->setOptions($options ?? []);
 
 		if($secret !== null){
 			$this->setSecret($secret);
@@ -132,33 +123,28 @@ class Authenticator{
 	 * Please note that this will reset the secret phrase stored with the authenticator instance
 	 * if a different mode than the current is given.
 	 *
-	 * @param array $options
-	 *
-	 * @return \chillerlan\Authenticator\Authenticator
 	 * @throws \InvalidArgumentException
 	 */
-	public function setOptions(array $options){
-		$defaults      = self::DEFAULTS;
+	public function setOptions(array $options):self{
 		// replace settings with the current and given ones
-		$this->options = array_replace($defaults, $this->options, $options);
+		$this->options = array_replace(self::DEFAULTS, $this->options, $options);
 
 		// remove unwanted keys
 		foreach(array_keys($this->options) as $key){
-			if(!isset($defaults[$key])){
+			if(!isset(self::DEFAULTS[$key])){
 				unset($this->options[$key]);
 			}
 		}
 
 		// invoke a new authenticator interface if necessary
 		if(!isset($this->authenticator) || $this->options['mode'] !== $this->mode){
-			$mode  = strtolower($this->options['mode']);
-			$modes = AuthenticatorInterface::MODES;
+			$mode = strtolower($this->options['mode']);
 
-			if(!isset($modes[$mode])){
+			if(!isset(AuthenticatorInterface::MODES[$mode])){
 				throw new InvalidArgumentException('Invalid mode: '.$mode);
 			}
 
-			$class               = $modes[$mode];
+			$class               = AuthenticatorInterface::MODES[$mode];
 			$this->mode          = $mode;
 			$this->authenticator = new $class;
 		}
@@ -171,12 +157,9 @@ class Authenticator{
 	/**
 	 * Sets a secret phrase from a Base32 representation
 	 *
-	 * @param string $encodedSecret
-	 *
-	 * @return \chillerlan\Authenticator\Authenticator
 	 * @codeCoverageIgnore
 	 */
-	public function setSecret($encodedSecret){
+	public function setSecret(string $encodedSecret):self{
 		$this->authenticator->setSecret($encodedSecret);
 
 		return $this;
@@ -185,22 +168,18 @@ class Authenticator{
 	/**
 	 * Returns a Base32 representation of the current secret phrase
 	 *
-	 * @return string
 	 * @codeCoverageIgnore
 	 */
-	public function getSecret(){
+	public function getSecret():string{
 		return $this->authenticator->getSecret();
 	}
 
 	/**
 	 * Generates a new (secure random) secret phrase
 	 *
-	 * @param int|null $length
-	 *
-	 * @return string
 	 * @codeCoverageIgnore
 	 */
-	public function createSecret($length = null){
+	public function createSecret(int $length = null):string{
 		return $this->authenticator->createSecret($length);
 	}
 
@@ -211,12 +190,9 @@ class Authenticator{
 	 *  - a UNIX timestamp (TOTP)
 	 *  - a counter value (HOTP)
 	 *
-	 * @param int|null $data
-	 *
-	 * @return string
 	 * @codeCoverageIgnore
 	 */
-	public function code($data = null){
+	public function code(int $data = null):string{
 		return $this->authenticator->code($data);
 	}
 
@@ -227,13 +203,9 @@ class Authenticator{
 	 *  - a UNIX timestamp (TOTP)
 	 *  - a counter value (HOTP)
 	 *
-	 * @param string   $otp
-	 * @param int|null $data
-	 *
-	 * @return bool
 	 * @codeCoverageIgnore
 	 */
-	public function verify($otp, $data = null){
+	public function verify(string $otp, int $data = null):bool{
 		return $this->authenticator->verify($otp, $data);
 	}
 
@@ -242,24 +214,9 @@ class Authenticator{
 	 *
 	 * @link https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters
 	 *
-	 * @param string    $label
-	 * @param string    $issuer
-	 * @param int|null  $hotpCounter
-	 * @param bool|null $omitSettings
-	 *
-	 * @return string
 	 * @throws \InvalidArgumentException
 	 */
-	public function getUri($label, $issuer, $hotpCounter = null, $omitSettings = null){
-
-		if(!is_string($label)){
-			throw new TypeError('$label is expected to be string'); // @codeCoverageIgnore
-		}
-
-		if(!is_string($issuer)){
-			throw new TypeError('$issuer is expected to be string'); // @codeCoverageIgnore
-		}
-
+	public function getUri(string $label, string $issuer, int $hotpCounter = null, bool $omitSettings = null):string{
 		$label  = trim($label);
 		$issuer = trim($issuer);
 

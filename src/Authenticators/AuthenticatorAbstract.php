@@ -13,10 +13,7 @@ namespace chillerlan\Authenticator\Authenticators;
 use chillerlan\Authenticator\Common\Base32;
 use InvalidArgumentException;
 use RuntimeException;
-use TypeError;
 use function in_array;
-use function is_int;
-use function is_string;
 use function property_exists;
 use function random_bytes;
 use function strtoupper;
@@ -50,8 +47,6 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 
 	/**
 	 * AuthenticatorInterface constructor
-	 *
-	 * @param array|null $options
 	 */
 	public function __construct(array $options = null){
 
@@ -64,7 +59,7 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	/**
 	 * @inheritDoc
 	 */
-	public function setOptions(array $options){
+	public function setOptions(array $options):AuthenticatorInterface{
 
 		foreach($options as $property => $value){
 			// skip non-existing props
@@ -82,12 +77,7 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	/**
 	 * @inheritDoc
 	 */
-	public function setSecret($encodedSecret){
-
-		if(!is_string($encodedSecret)){
-			throw new TypeError('$encodedSecret is expected to be string'); // @codeCoverageIgnore
-		}
-
+	public function setSecret(string $encodedSecret):AuthenticatorInterface{
 		$encodedSecret = trim($encodedSecret);
 
 		if($encodedSecret === ''){
@@ -102,7 +92,7 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	/**
 	 * @inheritDoc
 	 */
-	public function getSecret(){
+	public function getSecret():string{
 
 		if($this->secret === null){
 			throw new RuntimeException('No secret set');
@@ -114,7 +104,7 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	/**
 	 * @inheritDoc
 	 */
-	public function createSecret($length = null){
+	public function createSecret(int $length = null):string{
 
 		if($length === null){
 			$length = $this->secret_length;
@@ -130,17 +120,10 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	}
 
 	/**
-	 * @param string $algorithm
-	 *
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
-	protected function set_algorithm($algorithm){
-
-		if(!is_string($algorithm)){
-			throw new TypeError('$algorithm is expected to be string'); // @codeCoverageIgnore
-		}
-
+	protected function set_algorithm(string $algorithm){
 		$algorithm = strtoupper($algorithm);
 
 		if(!in_array($algorithm, self::HASH_ALGOS, true)){
@@ -151,16 +134,10 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	}
 
 	/**
-	 * @param int $digits
-	 *
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
-	protected function set_digits($digits){
-
-		if(!is_int($digits)){
-			throw new TypeError('$digits is expected to be int'); // @codeCoverageIgnore
-		}
+	protected function set_digits(int $digits){
 
 		if(!in_array($digits, [6, 8], true)){
 			throw new InvalidArgumentException('Invalid code length: '.$digits);
@@ -170,16 +147,10 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	}
 
 	/**
-	 * @param int $period
-	 *
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
-	protected function set_period($period){
-
-		if(!is_int($period)){
-			throw new TypeError('$period is expected to be int'); // @codeCoverageIgnore
-		}
+	protected function set_period(int $period){
 
 		if($period < 15 || $period > 60){
 			throw new InvalidArgumentException('Invalid period: '.$period);
@@ -189,17 +160,10 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	}
 
 	/**
-	 * @param int $secret_length
-	 *
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
-	protected function set_secret_length($secret_length){
-
-		if(!is_int($secret_length)){
-			throw new TypeError('$secret_length is expected to be int'); // @codeCoverageIgnore
-		}
-
+	protected function set_secret_length(int $secret_length){
 		// ~ 80 to 640 bits
 		if($secret_length < 16 || $secret_length > 1024){
 			throw new InvalidArgumentException('Invalid secret length: '.$secret_length);
@@ -209,16 +173,10 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	}
 
 	/**
-	 * @param $adjacent
-	 *
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
-	protected function set_adjacent($adjacent){
-
-		if(!is_int($adjacent)){
-			throw new TypeError('$adjacent is expected to be int'); // @codeCoverageIgnore
-		}
+	protected function set_adjacent(int $adjacent){
 
 		if($adjacent < 0){
 			throw new InvalidArgumentException('Invalid adjacent value: '.$adjacent);
@@ -228,16 +186,9 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	}
 
 	/**
-	 * @param $time_offset
-	 *
 	 * @return void
 	 */
-	protected function set_time_offset($time_offset){
-
-		if(!is_int($time_offset)){
-			throw new TypeError('$time_offset is expected to be int'); // @codeCoverageIgnore
-		}
-
+	protected function set_time_offset(int $time_offset){
 		$this->time_offset = $time_offset;
 	}
 

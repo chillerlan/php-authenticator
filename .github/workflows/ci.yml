@@ -24,7 +24,6 @@ jobs:
           - ubuntu-latest
           - windows-latest
         php-version:
-          - "5.6"
           - "7.0"
           - "7.1"
           - "7.2"
