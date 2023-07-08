@@ -13,6 +13,7 @@ namespace chillerlan\AuthenticatorTest\Authenticators;
 use chillerlan\Authenticator\AuthenticatorOptions;
 use chillerlan\Authenticator\Authenticators\{AuthenticatorInterface, TOTP};
 use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use function date;
 use function dechex;
 use function is_int;
@@ -76,9 +77,7 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 		}
 	}
 
-	/**
-	 * @dataProvider totpVectors
-	 */
+	#[DataProvider('totpVectors')]
 	public function testIntermediateValues(string $algorithm, int $timestamp, string $timeslice, int $code, string $totp):void{
 		$this->options->digits    = 8;
 		$this->options->algorithm = $algorithm;
@@ -98,9 +97,7 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 		$this::assertTrue($this->authenticatorInterface->verify($totp, $timestamp));
 	}
 
-	/**
-	 * @dataProvider totpVectors
-	 */
+	#[DataProvider('totpVectors')]
 	public function testAdjacent(string $algorithm, int $timestamp, string $timeslice, int $code, string $totp):void{
 		$adjacent = 20;
 		$limit    = (2 * $adjacent);

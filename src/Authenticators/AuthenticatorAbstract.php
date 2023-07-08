@@ -15,6 +15,7 @@ use chillerlan\Authenticator\Common\Base32;
 use chillerlan\Settings\SettingsContainerInterface;
 use InvalidArgumentException;
 use RuntimeException;
+use SensitiveParameter;
 use function random_bytes;
 use function time;
 use function trim;
@@ -26,16 +27,15 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 
 	protected const userAgent = 'chillerlanAuthenticator/5.0 +https://github.com/chillerlan/php-authenticator';
 
-	/** @var \chillerlan\Settings\SettingsContainerInterface|\chillerlan\Authenticator\AuthenticatorOptions */
-	protected SettingsContainerInterface $options;
-	protected ?string                    $secret          = null;
-	protected int                        $serverTime      = 0;
-	protected int                        $lastRequestTime = 0;
+	protected SettingsContainerInterface|AuthenticatorOptions $options;
+	protected ?string                                         $secret          = null;
+	protected int                                             $serverTime      = 0;
+	protected int                                             $lastRequestTime = 0;
 
 	/**
 	 * AuthenticatorInterface constructor
 	 */
-	public function __construct(SettingsContainerInterface $options = null){
+	public function __construct(SettingsContainerInterface|AuthenticatorOptions $options = null){
 		// phpcs:ignore
 		$this->setOptions($options ?? new AuthenticatorOptions);
 	}
@@ -52,7 +52,7 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	/**
 	 * @inheritDoc
 	 */
-	public function setSecret(string $encodedSecret):AuthenticatorInterface{
+	public function setSecret(#[SensitiveParameter] string $encodedSecret):AuthenticatorInterface{
 		$this->secret = Base32::decode($this->checkEncodedSecret($encodedSecret));
 
 		return $this;

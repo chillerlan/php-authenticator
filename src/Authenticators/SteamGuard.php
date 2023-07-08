@@ -14,6 +14,7 @@ namespace chillerlan\Authenticator\Authenticators;
 
 use chillerlan\Authenticator\Common\Base64;
 use RuntimeException;
+use SensitiveParameter;
 use function curl_close;
 use function curl_exec;
 use function curl_getinfo;
@@ -43,7 +44,7 @@ final class SteamGuard extends TOTP{
 	/**
 	 * @inheritDoc
 	 */
-	public function setSecret(string $encodedSecret):AuthenticatorInterface{
+	public function setSecret(#[SensitiveParameter] string $encodedSecret):AuthenticatorInterface{
 		$this->secret = Base64::decode($this->checkEncodedSecret($encodedSecret));
 
 		return $this;
@@ -92,7 +93,7 @@ final class SteamGuard extends TOTP{
 	/**
 	 * @inheritDoc
 	 */
-	public function getOTP(int $code):string{
+	public function getOTP(#[SensitiveParameter] int $code):string{
 		$str = '';
 		$len = 26; // strlen($this::steamCodeChars)
 

@@ -15,6 +15,7 @@ namespace chillerlan\Authenticator\Authenticators;
 use chillerlan\Authenticator\Common\Hex;
 use InvalidArgumentException;
 use RuntimeException;
+use SensitiveParameter;
 use function array_reverse;
 use function array_unshift;
 use function curl_close;
@@ -155,7 +156,7 @@ final class BattleNet extends TOTP{
 	/**
 	 * @inheritDoc
 	 */
-	public function getOTP(int $code):string{
+	public function getOTP(#[SensitiveParameter] int $code):string{
 		$code %= 100000000;
 
 		// length is fixed to 8 for Battle.net
@@ -182,7 +183,11 @@ final class BattleNet extends TOTP{
 	 * Retrieves the secret from Battle.net using the given serial and restore code.
 	 * If the public key for the serial is given (from a previous retrieval), it saves a server request.
 	 */
-	public function restoreSecret(string $serial, string $restore_code, string $public_key = null):array{
+	public function restoreSecret(
+		#[SensitiveParameter] string $serial,
+		#[SensitiveParameter] string $restore_code,
+		#[SensitiveParameter] string $public_key = null
+	):array{
 		$serial = $this->cleanSerial($serial);
 		$region = $this->getRegion($serial);
 
@@ -257,7 +262,7 @@ final class BattleNet extends TOTP{
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	private function cleanSerial(string $serial):string{
+	private function cleanSerial(#[SensitiveParameter] string $serial):string{
 		$serial = str_replace('-', '', strtoupper(trim($serial)));
 
 		if(!preg_match('/^[CNEUSKR]{2}\d{12}$/', $serial)){
@@ -270,7 +275,7 @@ final class BattleNet extends TOTP{
 	/**
 	 *
 	 */
-	private function formatSerial(string $serial):string{
+	private function formatSerial(#[SensitiveParameter] string $serial):string{
 		$serial = $this->cleanSerial($serial);
 		// split the numeric part into 3x 4 numbers
 		$blocks = str_split(substr($serial, 2), 4);
@@ -318,7 +323,7 @@ final class BattleNet extends TOTP{
 	 * Convert restore code char to byte but with appropriate mapping to exclude I,L,O and S.
 	 * e.g. A=10 but J=18 not 19 (as I is missing)
 	 */
-	private function convertRestoreCodeToByte(string $restore_code):string{
+	private function convertRestoreCodeToByte(#[SensitiveParameter] string $restore_code):string{
 		$chars = unpack('C*', $restore_code);
 
 		foreach($chars as &$c){
@@ -354,7 +359,7 @@ final class BattleNet extends TOTP{
 	/**
 	 * Convert restore code byte to char but with appropriate mapping to exclude I,L,O and S.
 	 */
-	private function convertRestoreCodeToChar(string $data):string{
+	private function convertRestoreCodeToChar(#[SensitiveParameter] string $data):string{
 		$chars = unpack('C*', $data);
 
 		foreach($chars as &$c){
@@ -390,7 +395,7 @@ final class BattleNet extends TOTP{
 	/**
 	 *
 	 */
-	private function encrypt(string $data):string{
+	private function encrypt(#[SensitiveParameter] string $data):string{
 		$num  = gmp_powm(gmp_import($data), self::rsa_exp_base10, self::rsa_mod_base10); // gmp_init(self::rsa_mod_base16, 16)
 		$zero = gmp_init('0', 10);
 		$ret  = [];
@@ -406,7 +411,7 @@ final class BattleNet extends TOTP{
 	/**
 	 * @throws \RuntimeException
 	 */
-	private function decrypt(string $data, string $key):string{
+	private function decrypt(#[SensitiveParameter] string $data, #[SensitiveParameter] string $key):string{
 
 		if(strlen($data) !== strlen($key)){
 			throw new RuntimeException('The decryption key size and data size doesn\'t match');

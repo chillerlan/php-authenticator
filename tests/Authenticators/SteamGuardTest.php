@@ -14,6 +14,7 @@ use chillerlan\Authenticator\AuthenticatorOptions;
 use chillerlan\Authenticator\Authenticators\{AuthenticatorInterface, SteamGuard};
 use chillerlan\Authenticator\Common\Base64;
 use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use function date;
 use function dechex;
 use function is_int;
@@ -51,22 +52,18 @@ class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
 	}
 
 	public function testCreateSecretDefaultLength():void{
-		/** @noinspection PhpUnitTestFailedLineInspection */
 		$this::markTestSkipped('N/A');
 	}
 
 	public function testCreateSecretWithLength():void{
-		/** @noinspection PhpUnitTestFailedLineInspection */
 		$this::markTestSkipped('N/A');
 	}
 
 	public function testCreateSecretCheckCharacterSet():void{
-		/** @noinspection PhpUnitTestFailedLineInspection */
 		$this::markTestSkipped('N/A');
 	}
 
 	public function testCreateSecretException():void{
-		/** @noinspection PhpUnitTestFailedLineInspection */
 		$this::markTestSkipped('N/A');
 	}
 
@@ -86,9 +83,7 @@ class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
 		}
 	}
 
-	/**
-	 * @dataProvider steamGuardVectors
-	 */
+	#[DataProvider('steamGuardVectors')]
 	public function testIntermediateValues(int $timestamp, string $timeslice, string $totp):void{
 		$this->authenticatorInterface->setSecret($this::secret);
 
@@ -103,9 +98,7 @@ class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
 		$this::assertSame($totp, $code_formatted);
 	}
 
-	/**
-	 * @dataProvider steamGuardVectors
-	 */
+	#[DataProvider('steamGuardVectors')]
 	public function testAdjacent(int $timestamp, string $timeslice, string $totp):void{
 		$adjacent = 20;
 		$limit    = (2 * $adjacent);

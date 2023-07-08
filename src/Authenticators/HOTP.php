@@ -11,6 +11,7 @@
 namespace chillerlan\Authenticator\Authenticators;
 
 use RuntimeException;
+use SensitiveParameter;
 use function hash_equals;
 use function hash_hmac;
 use function pack;
@@ -51,7 +52,7 @@ class HOTP extends AuthenticatorAbstract{
 	/**
 	 * @inheritDoc
 	 */
-	public function getCode(string $hmac):int{
+	public function getCode(#[SensitiveParameter] string $hmac):int{
 		$data = unpack('C*', $hmac);
 		$b    = ($data[strlen($hmac)] & 0xF);
 		// phpcs:ignore
@@ -61,7 +62,7 @@ class HOTP extends AuthenticatorAbstract{
 	/**
 	 * @inheritDoc
 	 */
-	public function getOTP(int $code):string{
+	public function getOTP(#[SensitiveParameter] int $code):string{
 		$code %= (10 ** $this->options->digits);
 
 		return str_pad((string)$code, $this->options->digits, '0', STR_PAD_LEFT);
@@ -79,7 +80,7 @@ class HOTP extends AuthenticatorAbstract{
 	/**
 	 * @inheritDoc
 	 */
-	public function verify(string $otp, int $data = null):bool{
+	public function verify(#[SensitiveParameter] string $otp, int $data = null):bool{
 		return hash_equals($this->code($data), $otp);
 	}
 

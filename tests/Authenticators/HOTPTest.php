@@ -13,6 +13,7 @@ namespace chillerlan\AuthenticatorTest\Authenticators;
 use chillerlan\Authenticator\AuthenticatorOptions;
 use chillerlan\Authenticator\Authenticators\{AuthenticatorInterface, HOTP};
 use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use function bin2hex;
 use function sprintf;
 
@@ -49,9 +50,8 @@ class HOTPTest extends AuthenticatorInterfaceTestAbstract{
 
 	/**
 	 * @link https://github.com/winauth/winauth/issues/449#issuecomment-353670105
-	 *
-	 * @dataProvider hotpVectors
 	 */
+	#[DataProvider('hotpVectors')]
 	public function testHOTP(int $counter, string $hmac, int $code, string $hotp):void{
 		$this->authenticatorInterface->setSecret($this::secret);
 

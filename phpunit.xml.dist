@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.2/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          cacheResultFile=".build/phpunit.result.cache"
          colors="true"
-         verbose="true"
+         beStrictAboutOutputDuringTests="true"
 >
 	<testsuites>
 		<testsuite name="php-authenticator test suite">
-			<directory suffix=".php">./tests</directory>
+			<directory suffix=".php">./tests/</directory>
+			<exclude>tests/Authenticators/AuthenticatorInterfaceTestAbstract.php</exclude>
 		</testsuite>
 	</testsuites>
-	<coverage processUncoveredFiles="true">
-		<include>
-			<directory suffix=".php">./src</directory>
-		</include>
+	<coverage>
 		<report>
 			<clover outputFile=".build/coverage/clover.xml"/>
 			<xml outputDirectory=".build/coverage/coverage-xml"/>
 		</report>
 	</coverage>
+	<logging>
+		<junit outputFile=".build/logs/junit.xml"/>
+	</logging>
+	<source>
+		<include>
+			<directory>./src</directory>
+		</include>
+	</source>
 </phpunit>

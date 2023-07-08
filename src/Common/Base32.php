@@ -12,6 +12,7 @@ namespace chillerlan\Authenticator\Common;
 
 use InvalidArgumentException;
 use ParagonIE\ConstantTime\Base32 as ConstantTimeBase32;
+use SensitiveParameter;
 use function preg_match;
 
 /**
@@ -32,14 +33,14 @@ final class Base32{
 	/**
 	 * Encode a string to Base32
 	 */
-	public static function encode(string $str):string{
+	public static function encode(#[SensitiveParameter] string $str):string{
 		return ConstantTimeBase32::encodeUpperUnpadded($str);
 	}
 
 	/**
 	 * Decode a string from Base32
 	 */
-	public static function decode(string $base32):string{
+	public static function decode(#[SensitiveParameter] string $base32):string{
 		self::checkCharacterSet($base32);
 
 		return ConstantTimeBase32::decodeNoPadding($base32, true);
@@ -48,7 +49,7 @@ final class Base32{
 	/**
 	 * @throws \InvalidArgumentException
 	 */
-	public static function checkCharacterSet(string $base32):void{
+	public static function checkCharacterSet(#[SensitiveParameter] string $base32):void{
 
 		if(!preg_match('/^['.self::CHARSET.']+$/', $base32)){
 			throw new InvalidArgumentException('Base32 must match RFC3548 character set');

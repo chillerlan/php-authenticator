@@ -10,6 +10,7 @@
 
 namespace chillerlan\Authenticator\Authenticators;
 
+use SensitiveParameter;
 use function floor;
 use function hash_equals;
 use function time;
@@ -35,7 +36,7 @@ class TOTP extends HOTP{
 	/**
 	 * @inheritDoc
 	 */
-	public function verify(string $otp, int $data = null):bool{
+	public function verify(#[SensitiveParameter] string $otp, int $data = null):bool{
 		$limit = $this->options->adjacent;
 
 		if($limit === 0){

@@ -12,6 +12,7 @@ namespace chillerlan\AuthenticatorTest\Common;
 
 use chillerlan\Authenticator\Common\Base64;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use function base64_decode;
 use function base64_encode;
@@ -34,9 +35,7 @@ class Base64Test extends TestCase{
 		];
 	}
 
-	/**
-	 * @dataProvider base64DataProvider
-	 */
+	#[DataProvider('base64DataProvider')]
 	public function testEncode(string $str, string $base64):void{
 		$encoded = Base64::encode($str);
 		$this::assertSame($base64, $encoded);
@@ -44,10 +43,8 @@ class Base64Test extends TestCase{
 		$this::assertSame(base64_encode($str), $encoded);
 	}
 
-	/**
-	 * @dataProvider base64DataProvider
-	 */
-	public function testDecode(string $str, string $base64):void{
+	#[DataProvider('base64DataProvider')]
+	public function testDecode(string $str, string $base64){
 		$decoded = Base64::decode($base64);
 
 		$this::assertSame($str, $decoded);
@@ -55,10 +52,8 @@ class Base64Test extends TestCase{
 		$this::assertSame(base64_decode($base64), $decoded);
 	}
 
-	/**
-	 * @dataProvider base64DataProvider
-	 */
-	public function testCheckCharset(string $str, string $base64):void{
+	#[DataProvider('base64DataProvider')]
+	public function testCheckCharset(string $str, string $base64){
 		$this->expectNotToPerformAssertions();
 
 		Base64::checkCharacterSet($base64);

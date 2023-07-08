@@ -13,6 +13,7 @@ namespace chillerlan\Authenticator;
 use chillerlan\Authenticator\Authenticators\AuthenticatorInterface;
 use chillerlan\Settings\SettingsContainerInterface;
 use InvalidArgumentException;
+use SensitiveParameter;
 use function http_build_query;
 use function rawurlencode;
 use function sprintf;
@@ -30,15 +31,14 @@ use const PHP_QUERY_RFC3986;
  */
 class Authenticator{
 
-	/** @var \chillerlan\Settings\SettingsContainerInterface|\chillerlan\Authenticator\AuthenticatorOptions */
-	protected SettingsContainerInterface $options;
-	protected AuthenticatorInterface     $authenticator;
-	protected string                     $mode = AuthenticatorInterface::TOTP;
+	protected SettingsContainerInterface|AuthenticatorOptions $options;
+	protected AuthenticatorInterface                          $authenticator;
+	protected string                                          $mode = AuthenticatorInterface::TOTP;
 
 	/**
 	 * Authenticator constructor
 	 */
-	public function __construct(SettingsContainerInterface $options = null, string $secret = null){
+	public function __construct(SettingsContainerInterface|AuthenticatorOptions $options = null, string $secret = null){
 		// phpcs:ignore
 		$this->setOptions($options ?? new AuthenticatorOptions);
 
@@ -54,14 +54,13 @@ class Authenticator{
 	 * Please note that this will reset the secret phrase stored with the authenticator instance
 	 * if a different mode than the current is given.
 	 */
-	public function setOptions(SettingsContainerInterface $options):self{
+	public function setOptions(SettingsContainerInterface|AuthenticatorOptions $options):self{
 		$this->options = $options;
 
 		// invoke a new authenticator interface if necessary
 		if(!isset($this->authenticator) || $this->options->mode !== $this->mode){
-			$class               = AuthenticatorInterface::MODES[$this->options->mode];
 			$this->mode          = $this->options->mode;
-			$this->authenticator = new $class;
+			$this->authenticator = new (AuthenticatorInterface::MODES[$this->options->mode])($this->options);
 		}
 
 		$this->authenticator->setOptions($this->options);
@@ -74,7 +73,7 @@ class Authenticator{
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public function setSecret(string $encodedSecret):self{
+	public function setSecret(#[SensitiveParameter] string $encodedSecret):self{
 		$this->authenticator->setSecret($encodedSecret);
 
 		return $this;
@@ -120,7 +119,7 @@ class Authenticator{
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public function verify(string $otp, int $data = null):bool{
+	public function verify(#[SensitiveParameter] string $otp, int $data = null):bool{
 		return $this->authenticator->verify($otp, $data);
 	}
 

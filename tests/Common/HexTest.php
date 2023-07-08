@@ -12,6 +12,7 @@ namespace chillerlan\AuthenticatorTest\Common;
 
 use chillerlan\Authenticator\Common\Hex;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use function bin2hex;
 use function hex2bin;
@@ -34,9 +35,7 @@ class HexTest extends TestCase{
 		];
 	}
 
-	/**
-	 * @dataProvider hexDataProvider
-	 */
+	#[DataProvider('hexDataProvider')]
 	public function testEncode(string $str, string $hex):void{
 		$encoded = Hex::encode($str);
 		$this::assertSame($hex, $encoded);
@@ -44,9 +43,7 @@ class HexTest extends TestCase{
 		$this::assertSame(bin2hex($str), $encoded);
 	}
 
-	/**
-	 * @dataProvider hexDataProvider
-	 */
+	#[DataProvider('hexDataProvider')]
 	public function testDecode(string $str, string $hex):void{
 		$decoded = Hex::decode($hex);
 
@@ -55,9 +52,7 @@ class HexTest extends TestCase{
 		$this::assertSame(hex2bin($hex), $decoded);
 	}
 
-	/**
-	 * @dataProvider hexDataProvider
-	 */
+	#[DataProvider('hexDataProvider')]
 	public function testCheckCharset(string $str, string $hex):void{
 		$this->expectNotToPerformAssertions();
 

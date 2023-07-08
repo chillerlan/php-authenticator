@@ -12,6 +12,7 @@ namespace chillerlan\AuthenticatorTest\Common;
 
 use chillerlan\Authenticator\Common\Base32;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class Base32Test extends TestCase{
@@ -29,24 +30,18 @@ class Base32Test extends TestCase{
 		];
 	}
 
-	/**
-	 * @dataProvider base32DataProvider
-	 */
+	#[DataProvider('base32DataProvider')]
 	public function testEncode(string $str, string $base32):void{
 		$this::assertSame($base32, Base32::encode($str));
 	}
 
-	/**
-	 * @dataProvider base32DataProvider
-	 */
-	public function testDecode(string $str, string $base32):void{
+	#[DataProvider('base32DataProvider')]
+	public function testDecode(string $str, string $base32){
 		$this::assertSame($str, Base32::decode($base32));
 	}
 
-	/**
-	 * @dataProvider base32DataProvider
-	 */
-	public function testCheckCharset(string $str, string $base32):void{
+	#[DataProvider('base32DataProvider')]
+	public function testCheckCharset(string $str, string $base32){
 		$this->expectNotToPerformAssertions();
 
 		Base32::checkCharacterSet($base32);

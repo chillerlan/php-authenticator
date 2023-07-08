@@ -11,6 +11,7 @@
 namespace chillerlan\Authenticator\Authenticators;
 
 use chillerlan\Settings\SettingsContainerInterface;
+use SensitiveParameter;
 
 /**
  *
@@ -49,7 +50,7 @@ interface AuthenticatorInterface{
 	 *
 	 * @throws \RuntimeException
 	 */
-	public function setSecret(string $encodedSecret):AuthenticatorInterface;
+	public function setSecret(#[SensitiveParameter] string $encodedSecret):AuthenticatorInterface;
 
 	/**
 	 * Returns an encoded representation of the current secret phrase
@@ -89,14 +90,14 @@ interface AuthenticatorInterface{
 	 *
 	 * @internal
 	 */
-	public function getCode(string $hmac):int;
+	public function getCode(#[SensitiveParameter] string $hmac):int;
 
 	/**
 	 * Formats the final output OTP from the given intermediate $code
 	 *
 	 * @internal
 	 */
-	public function getOTP(int $code):string;
+	public function getOTP(#[SensitiveParameter] int $code):string;
 
 	/**
 	 * Creates a new OTP code with the given secret
@@ -114,6 +115,6 @@ interface AuthenticatorInterface{
 	 *  - a UNIX timestamp (TOTP)
 	 *  - a counter value (HOTP)
 	 */
-	public function verify(string $otp, int $data = null):bool;
+	public function verify(#[SensitiveParameter] string $otp, int $data = null):bool;
 
 }

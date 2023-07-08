@@ -12,6 +12,7 @@ namespace chillerlan\Authenticator\Common;
 
 use InvalidArgumentException;
 use ParagonIE\ConstantTime\Base64 as ConstantTimeBase64;
+use SensitiveParameter;
 use function function_exists;
 use function preg_match;
 
@@ -33,7 +34,7 @@ class Base64{
 	/**
 	 * Encode a string to Base64
 	 */
-	public static function encode(string $str):string{
+	public static function encode(#[SensitiveParameter] string $str):string{
 
 		if(function_exists('sodium_bin2base64')){
 			return sodium_bin2base64($str, \SODIUM_BASE64_VARIANT_ORIGINAL);
@@ -45,7 +46,7 @@ class Base64{
 	/**
 	 * Decode a string from Base64
 	 */
-	public static function decode(string $base64):string{
+	public static function decode(#[SensitiveParameter] string $base64):string{
 		self::checkCharacterSet($base64);
 
 		if(function_exists('sodium_base642bin')){
@@ -58,7 +59,7 @@ class Base64{
 	/**
 	 * @throws \InvalidArgumentException
 	 */
-	public static function checkCharacterSet(string $base64):void{
+	public static function checkCharacterSet(#[SensitiveParameter] string $base64):void{
 
 		if(!preg_match('#^[a-z\d/=+]+$#i', $base64)){
 			throw new InvalidArgumentException('Base64 must match RFC4648 character set');
