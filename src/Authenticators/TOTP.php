@@ -23,10 +23,7 @@ class TOTP extends HOTP{
 	 * @inheritDoc
 	 */
 	public function getCounter(int $data = null):int{
-
-		if($data === null){
-			$data = time();
-		}
+		$data ??= time();
 
 		if($this->options->useLocalTime === false){
 			$data = $this->getServerTime();

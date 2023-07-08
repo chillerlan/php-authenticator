@@ -17,8 +17,7 @@ use PHPUnit\Framework\TestCase;
 
 class AuthenticatorOptionsTest extends TestCase{
 
-	/** @var \chillerlan\Authenticator\AuthenticatorOptions */
-	protected $options;
+	protected AuthenticatorOptions $options;
 
 	protected function setUp():void{
 		$this->options = new AuthenticatorOptions;

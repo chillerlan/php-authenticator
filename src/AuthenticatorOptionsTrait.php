@@ -20,26 +20,20 @@ trait AuthenticatorOptionsTrait{
 
 	/**
 	 * Code length: either 6 or 8
-	 *
-	 * @var int
 	 */
-	protected $digits = 6;
+	protected int $digits = 6;
 
 	/**
 	 * Validation period (seconds): 15 - 60
-	 *
-	 * @var int
 	 */
-	protected $period = 30;
+	protected int $period = 30;
 
 	/**
 	 * Length of the secret phrase (bytes, unencoded binary)
 	 *
 	 * @see \random_bytes()
-	 *
-	 * @var int
 	 */
-	protected $secret_length = 20;
+	protected int $secret_length = 20;
 
 	/**
 	 * Hash algorithm:
@@ -47,10 +41,8 @@ trait AuthenticatorOptionsTrait{
 	 *   - `AuthenticatorInterface::ALGO_SHA1`
 	 *   - `AuthenticatorInterface::ALGO_SHA256`
 	 *   - `AuthenticatorInterface::ALGO_SHA512`
-	 *
-	 * @var string
 	 */
-	protected $algorithm = AuthenticatorInterface::ALGO_SHA1;
+	protected string $algorithm = AuthenticatorInterface::ALGO_SHA1;
 
 	/**
 	 * Authenticator mode:
@@ -58,26 +50,20 @@ trait AuthenticatorOptionsTrait{
 	 *   - `AuthenticatorInterface::HOTP`  = counter based
 	 *   - `AuthenticatorInterface::TOTP`  = time based
 	 *   - `AuthenticatorInterface::STEAM` = time based (Steam Guard)
-	 *
-	 * @var string
 	 */
-	protected $mode = AuthenticatorInterface::TOTP;
+	protected string $mode = AuthenticatorInterface::TOTP;
 
 	/**
 	 * Number of allowed adjacent codes
-	 *
-	 * @var int
 	 */
-	protected $adjacent = 1;
+	protected int $adjacent = 1;
 
 	/**
 	 * A fixed time offset that will be added to the current time value
 	 *
 	 * @see \chillerlan\Authenticator\Authenticators\AuthenticatorInterface::getCounter()
-	 *
-	 * @var int
 	 */
-	protected $time_offset = 0;
+	protected int $time_offset = 0;
 
 	/**
 	 * Whether to use local time or request server time from the API
@@ -85,17 +71,13 @@ trait AuthenticatorOptionsTrait{
 	 * This can be useful when the device time sync is unreliable.
 	 *
 	 * note: API requests needs ext-curl installed
-	 *
-	 * @var bool
 	 */
-	protected $useLocalTime = true;
+	protected bool $useLocalTime = true;
 
 	/**
 	 * Whether to force refreshing server time on each call or use the time returned from the last request
-	 *
-	 * @var bool
 	 */
-	protected $forceTimeRefresh = false;
+	protected bool $forceTimeRefresh = false;
 
 	/**
 	 * Sets the code length to either 6 or 8

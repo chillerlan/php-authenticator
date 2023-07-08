@@ -27,16 +27,10 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	protected const userAgent = 'chillerlanAuthenticator/5.0 +https://github.com/chillerlan/php-authenticator';
 
 	/** @var \chillerlan\Settings\SettingsContainerInterface|\chillerlan\Authenticator\AuthenticatorOptions */
-	protected $options;
-
-	/** @var string|null */
-	protected $secret = null;
-
-	/** @var int */
-	protected $serverTime = 0;
-
-	/** @var int */
-	protected $lastRequestTime = 0;
+	protected SettingsContainerInterface $options;
+	protected ?string                    $secret          = null;
+	protected int                        $serverTime      = 0;
+	protected int                        $lastRequestTime = 0;
 
 	/**
 	 * AuthenticatorInterface constructor
@@ -80,10 +74,7 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	 * @inheritDoc
 	 */
 	public function createSecret(int $length = null):string{
-
-		if($length === null){
-			$length = $this->options->secret_length;
-		}
+		$length ??= $this->options->secret_length;
 
 		if($length < 16){
 			throw new InvalidArgumentException('Invalid secret length: '.$length);

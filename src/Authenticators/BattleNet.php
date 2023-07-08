@@ -101,8 +101,7 @@ final class BattleNet extends TOTP{
 #	                               '19a250fa4cc1278d12855b5b25818d162c6e6ee2ab4a350d401d78f6ddb99711'.
 #	                               'e72626b48bd8b5b0b7f3acf9ea3c9e0005fee59e19136cdb7c83f2ab8b0a2a99';
 
-	/** @var array */
-	private $curlInfo = [];
+	private array $curlInfo = [];
 
 	/**
 	 * @inheritDoc

@@ -18,7 +18,7 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 
 # Documentation
 ## Requirements
-- PHP 7.2+
+- PHP 7.4+
   - [`ext-curl`](https://www.php.net/manual/book.curl) for Battle.net and Steam Guard server time synchronization
   - [`ext-gmp`](https://www.php.net/manual/book.gmp) for Battle.net authenticator secret retrieval (RSA encryption)
   - [`ext-sodium`](https://www.php.net/manual/book.sodium) for constant time implementations of base64 encode/decode and hex2bin/bin2hex
@@ -29,11 +29,11 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 
 via terminal: `composer require chillerlan/php-authenticator`
 
-*composer.json* (note: replace `dev-main` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^3.1` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions)
+*composer.json* (note: replace `dev-main` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^4.1` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions)
 ```json
 {
 	"require": {
-		"php": "^7.2 || ^8.0",
+		"php": "^7.4 || ^8.0",
 		"chillerlan/php-authenticator": "dev-main"
 	}
 }

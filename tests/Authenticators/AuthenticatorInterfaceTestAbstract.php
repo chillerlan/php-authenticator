@@ -23,11 +23,8 @@ use function strlen;
  */
 abstract class AuthenticatorInterfaceTestAbstract extends TestCase{
 
-	/** @var \chillerlan\Authenticator\AuthenticatorOptions */
-	protected $options;
-
-	/** @var \chillerlan\Authenticator\Authenticators\AuthenticatorInterface */
-	protected $authenticatorInterface;
+	protected AuthenticatorOptions   $options;
+	protected AuthenticatorInterface $authenticatorInterface;
 
 	protected const rawsecret = '12345678901234567890';
 	protected const secret    = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
@@ -88,7 +85,7 @@ abstract class AuthenticatorInterfaceTestAbstract extends TestCase{
 	public function testCreateSecretCheckCharacterSet():void{
 		$secret = $this->authenticatorInterface->createSecret(32);
 
-		$this::assertRegExp('/^['.Base32::CHARSET.']+$/', $secret);
+		$this::assertMatchesRegularExpression('/^['.Base32::CHARSET.']+$/', $secret);
 	}
 
 	public function testCreateSecretException():void{
@@ -120,12 +117,12 @@ abstract class AuthenticatorInterfaceTestAbstract extends TestCase{
 		$this->options->useLocalTime = false;
 
 		$servertime = $this->authenticatorInterface->getServerTime();
-		$this::assertRegExp('/^\d+$/', (string)$servertime);
+		$this::assertMatchesRegularExpression('/^\d+$/', (string)$servertime);
 
 		$this->options->forceTimeRefresh = false;
 
 		$servertime = $this->authenticatorInterface->getServerTime();
-		$this::assertRegExp('/^\d+$/', (string)$servertime);
+		$this::assertMatchesRegularExpression('/^\d+$/', (string)$servertime);
 	}
 
 }

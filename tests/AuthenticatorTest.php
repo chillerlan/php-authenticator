@@ -22,11 +22,8 @@ class AuthenticatorTest extends TestCase{
 	protected const label  = 'some test-label';
 	protected const issuer = 'chillerlan.net';
 
-	/** @var \chillerlan\Authenticator\Authenticator */
-	protected $authenticator;
-
-	/** @var \chillerlan\Authenticator\AuthenticatorOptions */
-	protected $options;
+	protected Authenticator        $authenticator;
+	protected AuthenticatorOptions $options;
 
 	protected function setUp():void{
 		$this->options       = new AuthenticatorOptions;

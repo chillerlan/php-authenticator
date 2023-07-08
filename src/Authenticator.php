@@ -30,14 +30,10 @@ use const PHP_QUERY_RFC3986;
  */
 class Authenticator{
 
-	/** @var \chillerlan\Authenticator\Authenticators\AuthenticatorInterface */
-	protected $authenticator;
-
 	/** @var \chillerlan\Settings\SettingsContainerInterface|\chillerlan\Authenticator\AuthenticatorOptions */
-	protected $options;
-
-	/** @var string */
-	protected $mode = AuthenticatorInterface::TOTP;
+	protected SettingsContainerInterface $options;
+	protected AuthenticatorInterface     $authenticator;
+	protected string                     $mode = AuthenticatorInterface::TOTP;
 
 	/**
 	 * Authenticator constructor
