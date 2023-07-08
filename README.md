@@ -4,16 +4,19 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 
 [![PHP Version Support][php-badge]][php]
 [![version][packagist-badge]][packagist]
+[![Downloads][downloads-badge]][downloads]
 [![License][license-badge]][license]
 [![GitHub actions workflow][gh-action-badge]][gh-action]
 [![Coverage][coverage-badge]][coverage]
 [![Codacy][codacy-badge]][codacy]
-[![Downloads][downloads-badge]][downloads]
 
 [php-badge]: https://img.shields.io/packagist/php-v/chillerlan/php-authenticator?logo=php&color=8892BF
 [php]: https://www.php.net/supported-versions.php
 [packagist-badge]: https://img.shields.io/packagist/v/chillerlan/php-authenticator.svg?logo=packagist
 [packagist]: https://packagist.org/packages/chillerlan/php-authenticator
+[downloads-badge]: https://img.shields.io/packagist/dt/chillerlan/php-authenticator.svg?logo=packagist
+[downloads]: https://packagist.org/packages/chillerlan/php-authenticator/stats
+
 [license-badge]: https://img.shields.io/github/license/chillerlan/php-authenticator.svg
 [license]: https://github.com/chillerlan/php-authenticator/blob/main/LICENSE
 [gh-action-badge]: https://img.shields.io/github/actions/workflow/status/chillerlan/php-authenticator/ci.yml?branch=main&logo=github
@@ -22,8 +25,6 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 [coverage]: https://app.codecov.io/github/chillerlan/php-authenticator/tree/main
 [codacy-badge]: https://img.shields.io/codacy/grade/a2793225b448495c9659f27f7f52380a/main?logo=codacy
 [codacy]: https://www.codacy.com/gh/chillerlan/php-authenticator/dashboard?branch=main
-[downloads-badge]: https://img.shields.io/packagist/dt/chillerlan/php-authenticator.svg?logo=packagist
-[downloads]: https://packagist.org/packages/chillerlan/php-authenticator/stats
 
 # Documentation
 ## Requirements
