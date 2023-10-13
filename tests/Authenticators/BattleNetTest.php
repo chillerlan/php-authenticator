@@ -70,10 +70,18 @@ class BattleNetTest extends AuthenticatorInterfaceTestAbstract{
 		$this::markTestSkipped('N/A');
 	}
 
+	public function testGetServertime():void{
+		/** @noinspection PhpUnitTestFailedLineInspection */
+		$this::markTestSkipped('enrollment URL changed/disabled');
+	}
+
 	/**
 	 * @see https://github.com/winauth/winauth/blob/c57132f57b8a90e5219c628deb591f4603f27cb0/Authenticator/BattleNetAuthenticator.cs#L450-L451
 	 */
 	public function testRestoreSecret():void{
+		/** @noinspection PhpUnitTestFailedLineInspection */
+		$this::markTestSkipped('enrollment URL changed/disabled');
+
 		$serial       = 'US-1306-2525-4376';
 		$restore_code = 'CR24KPKF51';
 
