@@ -9,7 +9,7 @@
  */
 
 use chillerlan\Authenticator\{Authenticator, AuthenticatorOptions};
-use chillerlan\Authenticator\Authenticators\{AuthenticatorInterface, BattleNet};
+use chillerlan\Authenticator\Authenticators\AuthenticatorInterface;
 
 require_once '../vendor/autoload.php';
 
@@ -34,13 +34,3 @@ var_dump($auth->verify($code, (time() + 2 * $options->period))); // -> false
 // allow 2 adjacent codes
 $options->adjacent = 2;
 var_dump($auth->verify($code, (time() + 2 * $options->period))); // -> true
-
-// request a new authenticator from the Battle.net API
-// this requires the BattleNet class to be invoked directly as we're using non-interface methods for this
-$auth = new BattleNet;
-$data = $auth->createAuthenticator('EU');
-// the serial can be used to attach this authenticator to an existing Battle.net account
-var_dump($data);
-// it's also possible to retreive an authenticator secret from an existing serial and restore code, e.g. from WinAuth
-$data = $auth->restoreSecret($data['serial'], $data['restore_code']);
-var_dump($data);
