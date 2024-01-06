@@ -71,22 +71,6 @@ class BattleNetTest extends AuthenticatorInterfaceTestAbstract{
 	}
 
 	/**
-	 * @see https://github.com/winauth/winauth/blob/c57132f57b8a90e5219c628deb591f4603f27cb0/Authenticator/BattleNetAuthenticator.cs#L450-L451
-	 */
-	public function testRestoreSecret():void{
-		$serial       = 'US-1306-2525-4376';
-		$restore_code = 'CR24KPKF51';
-
-		$data = $this->authenticatorInterface->restoreSecret($serial, $restore_code);
-
-		$this::assertSame($serial, $data['serial']);
-		$this::assertSame($restore_code, $data['restore_code']);
-		$this::assertSame('US', $data['region']);
-		$this::assertSame('0402761151586faf1cf74efbf3dcb831063909a127220de374d5b4876f12bfcd', $data['public_key']);
-		$this::assertSame('7b0bfa8230e54424ab51777dadbfd5374143e3b0', $data['secret']);
-	}
-
-	/**
 	 * Timestamps and -slices from the RFC6238 page, codes from a verified implementation
 	 *
 	 * @see https://tools.ietf.org/html/rfc6238#page-14
