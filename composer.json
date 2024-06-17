@@ -12,6 +12,16 @@
 			"name": "Smiley",
 			"email": "smiley@chillerlan.net",
 			"homepage": "https://github.com/codemasher"
+		},
+		{
+			"name": "Contributors",
+			"homepage":"https://github.com/chillerlan/php-authenticator/graphs/contributors"
+		}
+	],
+	"funding": [
+		{
+			"type": "Ko-Fi",
+			"url": "https://ko-fi.com/codemasher"
 		}
 	],
 	"support": {
@@ -23,7 +33,7 @@
 	"require": {
 		"php": "^8.2",
 		"chillerlan/php-settings-container": "^3.2",
-		"paragonie/constant_time_encoding": "^2.6"
+		"paragonie/constant_time_encoding": "^3.0"
 	},
 	"require-dev": {
 		"ext-curl": "*",
@@ -31,7 +41,7 @@
 		"ext-sodium": "*",
 		"phan/phan": "^5.4",
 		"phpmd/phpmd": "^2.15",
-		"phpunit/phpunit": "^11.0",
+		"phpunit/phpunit": "^11.2",
 		"squizlabs/php_codesniffer": "^3.9"
 	},
 	"suggest": {
@@ -39,17 +49,18 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"chillerlan\\Authenticator\\": "src/"
+			"chillerlan\\Authenticator\\": "src"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"chillerlan\\AuthenticatorTest\\": "tests/"
+			"chillerlan\\AuthenticatorTest\\": "tests"
 		}
 	},
 	"scripts": {
-		"phpunit": "@php vendor/bin/phpunit",
-		"phan": "@php vendor/bin/phan --allow-polyfill-parser"
+		"phan": "@php vendor/bin/phan --allow-polyfill-parser",
+		"phpcs": "@php vendor/bin/phpcs",
+		"phpunit": "@php vendor/bin/phpunit"
 	},
 	"config": {
 		"lock": false,
