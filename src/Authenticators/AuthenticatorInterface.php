@@ -21,7 +21,6 @@ interface AuthenticatorInterface{
 	public const TOTP        = 'totp';
 	public const HOTP        = 'hotp';
 	public const STEAM_GUARD = 'steam';
-	public const BATTLE_NET  = 'battlenet';
 
 	public const ALGO_SHA1   = 'SHA1';
 	public const ALGO_SHA256 = 'SHA256';
@@ -31,7 +30,6 @@ interface AuthenticatorInterface{
 		self::HOTP        => HOTP::class,
 		self::TOTP        => TOTP::class,
 		self::STEAM_GUARD => SteamGuard::class,
-		self::BATTLE_NET  => BattleNet::class,
 	];
 
 	public const HASH_ALGOS = [
