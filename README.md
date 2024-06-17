@@ -9,18 +9,17 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 
 [license-badge]: https://img.shields.io/github/license/chillerlan/php-authenticator.svg
 [license]: https://github.com/chillerlan/php-authenticator/blob/v4.x/LICENSE
-[gh-action-badge]: https://img.shields.io/github/actions/workflow/status/chillerlan/php-authenticator/ci.yml?branch=v4.x&logo=github
+[gh-action-badge]: https://img.shields.io/github/actions/workflow/status/chillerlan/php-authenticator/ci.yml?branch=v4.x&logo=github&logoColor=fff
 [gh-action]: https://github.com/chillerlan/php-authenticator/actions?query=branch%3Av4.x
-[coverage-badge]: https://img.shields.io/codecov/c/gh/chillerlan/php-authenticator/v4.x?logo=codecov
+[coverage-badge]: https://img.shields.io/codecov/c/gh/chillerlan/php-authenticator/v4.x?logo=codecov&logoColor=fff
 [coverage]: https://app.codecov.io/github/chillerlan/php-authenticator/tree/v4.x
-[codacy-badge]: https://img.shields.io/codacy/grade/a2793225b448495c9659f27f7f52380a/v4.x?logo=codacy
+[codacy-badge]: https://img.shields.io/codacy/grade/a2793225b448495c9659f27f7f52380a/v4.x?logo=codacy&logoColor=fff
 [codacy]: https://www.codacy.com/gh/chillerlan/php-authenticator/dashboard?branch=v4.x
 
 # Documentation
 ## Requirements
 - PHP 7.4+
-  - [`ext-curl`](https://www.php.net/manual/book.curl) for Battle.net and Steam Guard server time synchronization
-  - [`ext-gmp`](https://www.php.net/manual/book.gmp) for Battle.net authenticator secret retrieval (RSA encryption)
+  - [`ext-curl`](https://www.php.net/manual/book.curl) for Steam Guard server time synchronization
   - [`ext-sodium`](https://www.php.net/manual/book.sodium) for constant time implementations of base64 encode/decode and hex2bin/bin2hex
     ([`paragonie/constant_time_encoding`](https://github.com/paragonie/constant_time_encoding) is used as fallback)
 
@@ -29,7 +28,7 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 
 via terminal: `composer require chillerlan/php-authenticator`
 
-*composer.json* (note: replace `dev-v4.x` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^4.1` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions)
+**composer.json**
 ```json
 {
 	"require": {
@@ -38,6 +37,7 @@ via terminal: `composer require chillerlan/php-authenticator`
 	}
 }
 ```
+Note: replace `dev-v4.x` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^4.1` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions
 
 Profit!
 
@@ -168,7 +168,6 @@ $options->algorithm = AuthenticatorInterface::ALGO_SHA512;
 | `TOTP`        | `string` |                                   |
 | `HOTP`        | `string` |                                   |
 | `STEAM_GUARD` | `string` |                                   |
-| `BATTLE_NET`  | `string` |                                   |
 | `ALGO_SHA1`   | `string` |                                   |
 | `ALGO_SHA256` | `string` |                                   |
 | `ALGO_SHA512` | `string` |                                   |
