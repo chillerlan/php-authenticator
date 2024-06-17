@@ -27,21 +27,21 @@ class Hex{
 	public const CHARSET = '1234567890ABCDEFabcdef';
 
 	/**
-	 * Encode a raw-binary to hexadecimal
+	 * Encode a string to hexadecimal
 	 *
 	 * @codeCoverageIgnore
 	 */
 	public static function encode(string $str):string{
 
 		if(function_exists('sodium_bin2hex')){
-			return sodium_bin2hex($str);
+			return \sodium_bin2hex($str);
 		}
 
 		return ConstantTimeHex::encode($str);
 	}
 
 	/**
-	 * Decode a raw-binary string from hexadecimal
+	 * Decode a string from hexadecimal
 	 *
 	 * @codeCoverageIgnore
 	 */
@@ -49,7 +49,7 @@ class Hex{
 		self::checkCharacterSet($hex);
 
 		if(function_exists('sodium_hex2bin')){
-			return sodium_hex2bin($hex);
+			return \sodium_hex2bin($hex);
 		}
 
 		return ConstantTimeHex::decode($hex);

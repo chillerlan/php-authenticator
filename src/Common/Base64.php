@@ -36,7 +36,7 @@ class Base64{
 	public static function encode(string $str):string{
 
 		if(function_exists('sodium_bin2base64')){
-			return sodium_bin2base64($str, \SODIUM_BASE64_VARIANT_ORIGINAL);
+			return \sodium_bin2base64($str, \SODIUM_BASE64_VARIANT_ORIGINAL);
 		}
 
 		return ConstantTimeBase64::encode($str);
@@ -49,7 +49,7 @@ class Base64{
 		self::checkCharacterSet($base64);
 
 		if(function_exists('sodium_base642bin')){
-			return sodium_base642bin($base64, \SODIUM_BASE64_VARIANT_ORIGINAL);
+			return \sodium_base642bin($base64, \SODIUM_BASE64_VARIANT_ORIGINAL);
 		}
 
 		return ConstantTimeBase64::decode($base64);
