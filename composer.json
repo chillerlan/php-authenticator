@@ -27,7 +27,6 @@
 	},
 	"require-dev": {
 		"ext-curl": "*",
-		"ext-gmp": "*",
 		"ext-json": "*",
 		"ext-sodium": "*",
 		"phan/phan": "^5.4",
