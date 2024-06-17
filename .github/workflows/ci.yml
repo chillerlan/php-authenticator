@@ -11,6 +11,10 @@ on:
 
 name: "Continuous Integration"
 
+env:
+  PHP_EXTENSIONS: curl, json, sodium
+  PHP_INI_VALUES: memory_limit=-1, error_reporting=-1, display_errors=On
+
 jobs:
 
   static-code-analysis:
@@ -31,15 +35,18 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: "Install PHP"
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          tools: pecl
+          extensions: ast, ${{ env.PHP_EXTENSIONS }}
+          ini-values: ${{ env.PHP_INI_VALUES }}
           coverage: none
-          extensions: ast, curl, gmp, json, sodium
+
+      - name: "Validate composer.json"
+        run: composer validate --ansi --strict
 
       - name: "Install dependencies with composer"
         uses: ramsey/composer-install@v3
@@ -65,14 +72,15 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: "Install PHP with extensions"
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          ini-values: ${{ env.PHP_INI_VALUES }}
           coverage: pcov
-          extensions: curl, gmp, json, sodium
 
       - name: "Install dependencies with composer"
         uses: ramsey/composer-install@v3
@@ -81,8 +89,9 @@ jobs:
         run: php vendor/bin/phpunit --colors=always --configuration=phpunit.xml.dist
 
       - name: "Send code coverage report to Codecov.io"
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: .build/coverage/clover.xml
 
       - name: "Send code coverage report to Codacy"
