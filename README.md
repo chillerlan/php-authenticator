@@ -177,7 +177,6 @@ $options->algorithm = AuthenticatorInterface::ALGO_SHA512;
 | `TOTP`        | `string` |                                   |
 | `HOTP`        | `string` |                                   |
 | `STEAM_GUARD` | `string` |                                   |
-| `BATTLE_NET`  | `string` |                                   |
 | `ALGO_SHA1`   | `string` |                                   |
 | `ALGO_SHA256` | `string` |                                   |
 | `ALGO_SHA512` | `string` |                                   |
