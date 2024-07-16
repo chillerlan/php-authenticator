@@ -23,6 +23,9 @@ use function hex2bin;
  */
 class HexTest extends TestCase{
 
+	/**
+	 * @phpstan-return array<int, array<int, string>>
+	 */
 	public static function hexDataProvider():array{
 		return [
 			['a'                   , '61'                                      ],

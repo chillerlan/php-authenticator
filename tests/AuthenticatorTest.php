@@ -84,7 +84,7 @@ class AuthenticatorTest extends TestCase{
 		);
 	}
 
-	public function testGetUriEmptyLabelException(){
+	public function testGetUriEmptyLabelException():void{
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('$label and $issuer cannot be empty');
 
