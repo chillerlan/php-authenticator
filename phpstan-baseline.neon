@@ -1,0 +1,31 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Cannot access offset 'server_time' on mixed\\.$#"
+			count: 1
+			path: src/Authenticators/SteamGuard.php
+
+		-
+			message: "#^Cannot cast mixed to int\\.$#"
+			count: 1
+			path: src/Authenticators/SteamGuard.php
+
+		-   # $response is always string here because CURLOPT_RETURNTRANSFER is set to true
+			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|true given\\.$#"
+			count: 1
+			path: src/Authenticators/SteamGuard.php
+
+		-   # the value given to getHMAC() is always int - this is most likely a false positive
+			message: "#^Parameter \\#1 \\$counter of method chillerlan\\\\Authenticator\\\\Authenticators\\\\HOTP\\:\\:getHMAC\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: src/Authenticators/TOTP.php
+
+		-   # 32-bit system check
+			message: "#^Call to function is_int\\(\\) with 59\\|1111111109\\|1111111111\\|1234567890\\|2000000000\\|20000000000 will always evaluate to true\\.$#"
+			count: 1
+			path: tests/Authenticators/SteamGuardTest.php
+
+		-   # 32-bit system check
+			message: "#^Call to function is_int\\(\\) with 59\\|1111111109\\|1111111111\\|1234567890\\|2000000000\\|20000000000 will always evaluate to true\\.$#"
+			count: 1
+			path: tests/Authenticators/TOTPTest.php

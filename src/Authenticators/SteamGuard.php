@@ -23,6 +23,7 @@ use function curl_init;
 use function curl_setopt_array;
 use function floor;
 use function intdiv;
+use function is_array;
 use function json_decode;
 use function sprintf;
 use function time;
@@ -129,6 +130,11 @@ final class SteamGuard extends TOTP{
 
 		$ch = curl_init($this::steamTimeURL);
 
+		// it's almost impossible to run into this, but hey, phpstan happy
+		if($ch === false){
+			throw new RuntimeException('curl_init error'); // @codeCoverageIgnore
+		}
+
 		curl_setopt_array($ch, $options);
 
 		$response = curl_exec($ch);
@@ -136,14 +142,14 @@ final class SteamGuard extends TOTP{
 
 		curl_close($ch);
 
-		if($info['http_code'] !== 200){
+		if($info['http_code'] !== 200 || $response === false){
 			// I'm not going to investigate the error further as this shouldn't happen usually
 			throw new RuntimeException(sprintf('Steam API request error: HTTP/%s', $info['http_code'])); // @codeCoverageIgnore
 		}
 
 		$json = json_decode($response, true);
 
-		if(empty($json) || !isset($json['response']['server_time'])){
+		if(!is_array($json) || !isset($json['response']['server_time'])){
 			throw new RuntimeException('Unable to decode Steam API response'); // @codeCoverageIgnore
 		}
 

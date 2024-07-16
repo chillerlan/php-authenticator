@@ -18,6 +18,9 @@ use PHPUnit\Framework\TestCase;
 
 class Base32Test extends TestCase{
 
+	/**
+	 * @phpstan-return array<int, array<int, string>>
+	 */
 	public static function base32DataProvider():array{
 		return [
 			['a'                   , 'ME'                              ],
@@ -37,12 +40,12 @@ class Base32Test extends TestCase{
 	}
 
 	#[DataProvider('base32DataProvider')]
-	public function testDecode(string $str, string $base32){
+	public function testDecode(string $str, string $base32):void{
 		$this::assertSame($str, Base32::decode($base32));
 	}
 
 	#[DataProvider('base32DataProvider')]
-	public function testCheckCharset(string $str, string $base32){
+	public function testCheckCharset(string $str, string $base32):void{
 		$this->expectNotToPerformAssertions();
 
 		Base32::checkCharacterSet($base32);

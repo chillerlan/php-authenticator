@@ -23,6 +23,9 @@ use function base64_encode;
  */
 class Base64Test extends TestCase{
 
+	/**
+	 * @phpstan-return array<int, array<int, string>>
+	 */
 	public static function base64DataProvider():array{
 		return [
 			['a'                   , 'YQ=='                        ],
@@ -45,7 +48,7 @@ class Base64Test extends TestCase{
 	}
 
 	#[DataProvider('base64DataProvider')]
-	public function testDecode(string $str, string $base64){
+	public function testDecode(string $str, string $base64):void{
 		$decoded = Base64::decode($base64);
 
 		$this::assertSame($str, $decoded);
@@ -54,7 +57,7 @@ class Base64Test extends TestCase{
 	}
 
 	#[DataProvider('base64DataProvider')]
-	public function testCheckCharset(string $str, string $base64){
+	public function testCheckCharset(string $str, string $base64):void{
 		$this->expectNotToPerformAssertions();
 
 		Base64::checkCharacterSet($base64);

@@ -32,17 +32,18 @@
 	"prefer-stable": true,
 	"require": {
 		"php": "^8.2",
-		"chillerlan/php-settings-container": "^3.2",
+		"chillerlan/php-settings-container": "^3.2.1",
 		"paragonie/constant_time_encoding": "^3.0"
 	},
 	"require-dev": {
 		"ext-curl": "*",
 		"ext-json": "*",
 		"ext-sodium": "*",
-		"phan/phan": "^5.4",
 		"phpmd/phpmd": "^2.15",
+		"phpstan/phpstan": "^1.11",
+		"phpstan/phpstan-deprecation-rules": "^1.2",
 		"phpunit/phpunit": "^11.2",
-		"squizlabs/php_codesniffer": "^3.9"
+		"squizlabs/php_codesniffer": "^3.10"
 	},
 	"suggest": {
 		"chillerlan/php-qrcode": "Create QR Codes for use with an authenticator app."
@@ -58,9 +59,9 @@
 		}
 	},
 	"scripts": {
-		"phan": "@php vendor/bin/phan --allow-polyfill-parser",
 		"phpcs": "@php vendor/bin/phpcs",
-		"phpunit": "@php vendor/bin/phpunit"
+		"phpunit": "@php vendor/bin/phpunit",
+		"phpstan": "@php vendor/bin/phpstan"
 	},
 	"config": {
 		"lock": false,
