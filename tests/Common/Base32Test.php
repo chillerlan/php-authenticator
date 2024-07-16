@@ -17,6 +17,9 @@ use PHPUnit\Framework\TestCase;
 
 class Base32Test extends TestCase{
 
+	/**
+	 * @phpstan-return array<int, array<int, string>>
+	 */
 	public static function base32DataProvider():array{
 		return [
 			['a'                   , 'ME'                              ],

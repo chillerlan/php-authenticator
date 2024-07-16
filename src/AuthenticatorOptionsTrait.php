@@ -17,6 +17,17 @@ use function in_array;
 use function strtolower;
 use function strtoupper;
 
+/**
+ * @property int    $digits
+ * @property int    $period
+ * @property int    $secret_length
+ * @property string $algorithm
+ * @property string $mode
+ * @property int    $adjacent
+ * @property int    $time_offset
+ * @property bool   $useLocalTime
+ * @property bool   $forceTimeRefresh
+ */
 trait AuthenticatorOptionsTrait{
 
 	/**

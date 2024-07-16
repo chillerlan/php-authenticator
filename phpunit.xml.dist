@@ -8,12 +8,12 @@
 >
 	<testsuites>
 		<testsuite name="php-authenticator test suite">
-			<directory suffix=".php">./tests</directory>
+			<directory>tests</directory>
 		</testsuite>
 	</testsuites>
 	<coverage processUncoveredFiles="true">
 		<include>
-			<directory suffix=".php">./src</directory>
+			<directory suffix=".php">src</directory>
 		</include>
 		<report>
 			<clover outputFile=".build/coverage/clover.xml"/>

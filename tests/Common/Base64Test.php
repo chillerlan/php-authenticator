@@ -22,6 +22,9 @@ use function base64_encode;
  */
 class Base64Test extends TestCase{
 
+	/**
+	 * @phpstan-return array<int, array<int, string>>
+	 */
 	public static function base64DataProvider():array{
 		return [
 			['a'                   , 'YQ=='                        ],

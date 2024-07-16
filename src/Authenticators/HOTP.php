@@ -54,7 +54,12 @@ class HOTP extends AuthenticatorAbstract{
 	 */
 	public function getCode(string $hmac):int{
 		$data = unpack('C*', $hmac);
-		$b    = ($data[strlen($hmac)] & 0xF);
+
+		if($data === false){
+			throw new RuntimeException('error while unpacking HMAC'); // @codeCoverageIgnore
+		}
+
+		$b = ($data[strlen($hmac)] & 0xF);
 		// phpcs:ignore
 		return (($data[$b + 1] & 0x7F) << 24) | ($data[$b + 2] << 16) | ($data[$b + 3] << 8) | $data[$b + 4];
 	}
