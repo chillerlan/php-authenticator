@@ -39,7 +39,7 @@ class Authenticator{
 	/**
 	 * Authenticator constructor
 	 */
-	public function __construct(SettingsContainerInterface $options = null, string $secret = null){
+	public function __construct(?SettingsContainerInterface $options = null, ?string $secret = null){
 		// phpcs:ignore
 		$this->setOptions($options ?? new AuthenticatorOptions);
 
@@ -95,7 +95,7 @@ class Authenticator{
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public function createSecret(int $length = null):string{
+	public function createSecret(?int $length = null):string{
 		return $this->authenticator->createSecret($length);
 	}
 
@@ -108,7 +108,7 @@ class Authenticator{
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public function code(int $data = null):string{
+	public function code(?int $data = null):string{
 		return $this->authenticator->code($data);
 	}
 
@@ -121,7 +121,7 @@ class Authenticator{
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public function verify(string $otp, int $data = null):bool{
+	public function verify(string $otp, ?int $data = null):bool{
 		return $this->authenticator->verify($otp, $data);
 	}
 
@@ -132,7 +132,7 @@ class Authenticator{
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	public function getUri(string $label, string $issuer, int $hotpCounter = null, bool $omitSettings = null):string{
+	public function getUri(string $label, string $issuer, ?int $hotpCounter = null, ?bool $omitSettings = null):string{
 		$label  = trim($label);
 		$issuer = trim($issuer);
 

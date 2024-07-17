@@ -36,7 +36,7 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	/**
 	 * AuthenticatorInterface constructor
 	 */
-	public function __construct(SettingsContainerInterface $options = null){
+	public function __construct(?SettingsContainerInterface $options = null){
 		// phpcs:ignore
 		$this->setOptions($options ?? new AuthenticatorOptions);
 	}
@@ -74,7 +74,7 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	/**
 	 * @inheritDoc
 	 */
-	public function createSecret(int $length = null):string{
+	public function createSecret(?int $length = null):string{
 		$length ??= $this->options->secret_length;
 
 		if($length < 16){

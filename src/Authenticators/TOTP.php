@@ -23,7 +23,7 @@ class TOTP extends HOTP{
 	/**
 	 * @inheritDoc
 	 */
-	public function getCounter(int $data = null):int{
+	public function getCounter(?int $data = null):int{
 		$data ??= time();
 
 		if($this->options->useLocalTime === false){
@@ -36,7 +36,7 @@ class TOTP extends HOTP{
 	/**
 	 * @inheritDoc
 	 */
-	public function verify(string $otp, int $data = null):bool{
+	public function verify(string $otp, ?int $data = null):bool{
 		$limit = $this->options->adjacent;
 
 		if($limit === 0){

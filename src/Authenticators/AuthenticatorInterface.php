@@ -62,7 +62,7 @@ interface AuthenticatorInterface{
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	public function createSecret(int $length = null):string;
+	public function createSecret(?int $length = null):string;
 
 	/**
 	 * Returns the current server time as UNIX timestamp for the given application (or `time()` if not applicable)
@@ -74,7 +74,7 @@ interface AuthenticatorInterface{
 	 *
 	 * @internal
 	 */
-	public function getCounter(int $data = null):int;
+	public function getCounter(?int $data = null):int;
 
 	/**
 	 * HMAC hashes the given $data integer with the given secret
@@ -104,7 +104,7 @@ interface AuthenticatorInterface{
 	 *  - a UNIX timestamp (TOTP)
 	 *  - a counter value (HOTP)
 	 */
-	public function code(int $data = null):string;
+	public function code(?int $data = null):string;
 
 	/**
 	 * Checks the given $code against the secret
@@ -113,6 +113,6 @@ interface AuthenticatorInterface{
 	 *  - a UNIX timestamp (TOTP)
 	 *  - a counter value (HOTP)
 	 */
-	public function verify(string $otp, int $data = null):bool;
+	public function verify(string $otp, ?int $data = null):bool;
 
 }

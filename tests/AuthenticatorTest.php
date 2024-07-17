@@ -32,7 +32,7 @@ class AuthenticatorTest extends TestCase{
 	}
 
 	public function testSetSecretViaConstruct():void{
-		$this->authenticator = new Authenticator(null, self::secret);
+		$this->authenticator = new Authenticator($this->options, self::secret);
 
 		$this::assertSame(self::secret, $this->authenticator->getSecret());
 	}

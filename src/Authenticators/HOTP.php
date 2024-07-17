@@ -29,7 +29,7 @@ class HOTP extends AuthenticatorAbstract{
 	/**
 	 * @inheritDoc
 	 */
-	public function getCounter(int $data = null):int{
+	public function getCounter(?int $data = null):int{
 		return ($data ?? 0);
 	}
 
@@ -76,7 +76,7 @@ class HOTP extends AuthenticatorAbstract{
 	/**
 	 * @inheritDoc
 	 */
-	public function code(int $data = null):string{
+	public function code(?int $data = null):string{
 		$hmac = $this->getHMAC($this->getCounter($data));
 
 		return $this->getOTP($this->getCode($hmac));
@@ -85,7 +85,7 @@ class HOTP extends AuthenticatorAbstract{
 	/**
 	 * @inheritDoc
 	 */
-	public function verify(string $otp, int $data = null):bool{
+	public function verify(string $otp, ?int $data = null):bool{
 		return hash_equals($this->code($data), $otp);
 	}
 
