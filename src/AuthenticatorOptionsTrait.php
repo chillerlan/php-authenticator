@@ -167,7 +167,7 @@ trait AuthenticatorOptionsTrait{
 	 * @throws \InvalidArgumentException
 	 */
 	protected function set_secret_length(int $secret_length):void{
-		// ~ 80 to 640 bits
+
 		if($secret_length < 16 || $secret_length > 1024){
 			throw new InvalidArgumentException('Invalid secret length: '.$secret_length);
 		}

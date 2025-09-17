@@ -37,7 +37,7 @@ via terminal: `composer require chillerlan/php-authenticator`
 	}
 }
 ```
-Note: replace `dev-main` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^5.0` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions
+Note: replace `dev-v5.x` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^5.0` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions
 
 Profit!
 
@@ -45,7 +45,7 @@ Profit!
 ### Create a secret
 The secret is usually being created once during the activation process in a user control panel.
 So all you need to do there is to display it to the user in a convenient way -
-as a text string and QR code for example - and save it somewhere with the user data.
+as a text string and [QR code](https://github.com/chillerlan/php-qrcode/blob/9964cf8ff1ad90d17c360bd320cf18e16cd59829/examples/authenticator.php) for example - and save it somewhere with the user data.
 ```php
 use chillerlan\Authenticator\{Authenticator, AuthenticatorOptions};
 
