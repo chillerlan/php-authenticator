@@ -45,7 +45,7 @@ Profit!
 ### Create a secret
 The secret is usually being created once during the activation process in a user control panel.
 So all you need to do there is to display it to the user in a convenient way -
-as a text string and QR code for example - and save it somewhere with the user data.
+as a text string and [QR code](https://github.com/chillerlan/php-qrcode/blob/9964cf8ff1ad90d17c360bd320cf18e16cd59829/examples/authenticator.php) for example - and save it somewhere with the user data.
 ```php
 use chillerlan\Authenticator\{Authenticator, AuthenticatorOptions};
 

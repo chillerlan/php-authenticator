@@ -43,7 +43,9 @@ class HOTP extends AuthenticatorAbstract{
 		}
 		// @codeCoverageIgnoreStart
 		$data = (PHP_INT_SIZE < 8)
+			// 32-bit
 			? "\x00\x00\x00\x00".pack('N', $counter)
+			// 64-bit
 			: pack('J', $counter);
 		// @codeCoverageIgnoreEnd
 		return hash_hmac($this->options->algorithm, $data, $this->secret, true);
@@ -60,8 +62,8 @@ class HOTP extends AuthenticatorAbstract{
 		}
 
 		$b = ($data[strlen($hmac)] & 0xF);
-		// phpcs:ignore
-		return (($data[$b + 1] & 0x7F) << 24) | ($data[$b + 2] << 16) | ($data[$b + 3] << 8) | $data[$b + 4];
+
+		return (($data[$b + 1] & 0x7F) << 24) | ($data[$b + 2] << 16) | ($data[$b + 3] << 8) | $data[$b + 4]; // phpcs:ignore
 	}
 
 	/**
