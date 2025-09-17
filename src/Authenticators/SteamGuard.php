@@ -46,7 +46,7 @@ final class SteamGuard extends TOTP{
 	/**
 	 * @inheritDoc
 	 */
-	public function setSecret(#[SensitiveParameter] string $encodedSecret):AuthenticatorInterface{
+	public function setSecret(#[SensitiveParameter] string $encodedSecret):static{
 		$this->secret = Base64::decode($this->checkEncodedSecret($encodedSecret));
 
 		return $this;

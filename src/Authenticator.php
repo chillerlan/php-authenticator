@@ -58,7 +58,7 @@ class Authenticator{
 	 * Please note that this will reset the secret phrase stored with the authenticator instance
 	 * if a different mode than the current is given.
 	 */
-	public function setOptions(SettingsContainerInterface|AuthenticatorOptions $options):self{
+	public function setOptions(SettingsContainerInterface|AuthenticatorOptions $options):static{
 		$this->options = $options;
 
 		// invoke a new authenticator interface if necessary
@@ -77,7 +77,7 @@ class Authenticator{
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public function setSecret(#[SensitiveParameter] string $encodedSecret):self{
+	public function setSecret(#[SensitiveParameter] string $encodedSecret):static{
 		$this->authenticator->setSecret($encodedSecret);
 
 		return $this;

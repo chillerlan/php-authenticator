@@ -42,14 +42,14 @@ interface AuthenticatorInterface{
 	/**
 	 * Sets the options
 	 */
-	public function setOptions(SettingsContainerInterface $options):AuthenticatorInterface;
+	public function setOptions(SettingsContainerInterface $options):static;
 
 	/**
 	 * Sets a secret phrase from an encoded representation
 	 *
 	 * @throws \RuntimeException
 	 */
-	public function setSecret(#[SensitiveParameter] string $encodedSecret):AuthenticatorInterface;
+	public function setSecret(#[SensitiveParameter] string $encodedSecret):static;
 
 	/**
 	 * Returns an encoded representation of the current secret phrase
