@@ -43,7 +43,7 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	/**
 	 * @inheritDoc
 	 */
-	public function setOptions(SettingsContainerInterface $options):AuthenticatorInterface{
+	public function setOptions(SettingsContainerInterface $options):static{
 		$this->options = $options;
 
 		return $this;
@@ -52,7 +52,7 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	/**
 	 * @inheritDoc
 	 */
-	public function setSecret(#[SensitiveParameter] string $encodedSecret):AuthenticatorInterface{
+	public function setSecret(#[SensitiveParameter] string $encodedSecret):static{
 		$this->secret = Base32::decode($this->checkEncodedSecret($encodedSecret));
 
 		return $this;
