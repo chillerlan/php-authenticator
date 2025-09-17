@@ -28,6 +28,8 @@ jobs:
         php-version:
           - "8.2"
           - "8.3"
+          - "8.4"
+          - "8.5"
 
     env:
       PHAN_ALLOW_XDEBUG: 0
@@ -69,6 +71,8 @@ jobs:
         php-version:
           - "8.2"
           - "8.3"
+          - "8.4"
+          - "8.5"
 
     steps:
       - name: "Checkout"
