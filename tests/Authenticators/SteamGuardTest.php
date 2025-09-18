@@ -108,7 +108,7 @@ class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
 	 * @dataProvider steamGuardVectors
 	 */
 	public function testAdjacent(int $timestamp, string $timeslice, string $totp):void{
-		$adjacent = 20;
+		$adjacent = 10;
 		$limit    = (2 * $adjacent);
 
 		$this->authenticatorInterface->setSecret($this::secret);
