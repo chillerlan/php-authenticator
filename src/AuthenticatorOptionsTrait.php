@@ -27,6 +27,7 @@ use function strtoupper;
  * @property int    $time_offset
  * @property bool   $useLocalTime
  * @property bool   $forceTimeRefresh
+ * @property bool   $omitUriSettings
  */
 trait AuthenticatorOptionsTrait{
 
@@ -90,6 +91,13 @@ trait AuthenticatorOptionsTrait{
 	 * Whether to force refreshing server time on each call or use the time returned from the last request
 	 */
 	protected bool $forceTimeRefresh = false;
+
+	/**
+	 * Whether to omit the additional settings in the URI for an authenticator app (algo, digits, period)
+	 *
+	 * @link https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters
+	 */
+	protected bool $omitUriSettings = false;
 
 	/**
 	 * Sets the code length to either 6 or 8
