@@ -20,6 +20,8 @@ use function time;
  */
 class TOTP extends HOTP{
 
+	public const MODE = self::TOTP;
+
 	/**
 	 * @inheritDoc
 	 */

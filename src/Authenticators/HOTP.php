@@ -26,6 +26,8 @@ use const STR_PAD_LEFT;
  */
 class HOTP extends AuthenticatorAbstract{
 
+	public const MODE = self::HOTP;
+
 	/**
 	 * @inheritDoc
 	 */
