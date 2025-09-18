@@ -17,7 +17,7 @@ use SensitiveParameter;
 use function preg_match;
 
 /**
- *
+ * Class to provide hexadecimal encoding/decoding of strings using constant time functions
  */
 class Hex{
 

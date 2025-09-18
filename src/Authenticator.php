@@ -34,7 +34,7 @@ class Authenticator{
 	 */
 	public function __construct(
 		SettingsContainerInterface|AuthenticatorOptions $options = new AuthenticatorOptions,
-		string|null $secret = null
+		string|null $secret = null,
 	){
 		// phpcs:ignore
 		$this->setOptions($options);

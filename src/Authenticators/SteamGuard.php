@@ -45,18 +45,12 @@ final class SteamGuard extends TOTP{
 	private const steamCodeChars = '23456789BCDFGHJKMNPQRTVWXY';
 	private const steamTimeURL   = 'https://api.steampowered.com/ITwoFactorService/QueryTime/v0001';
 
-	/**
-	 * @inheritDoc
-	 */
 	public function setSecret(#[SensitiveParameter] string $encodedSecret):static{
 		$this->secret = Base64::decode($this->checkEncodedSecret($encodedSecret));
 
 		return $this;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getSecret():string{
 
 		if($this->secret === null){
@@ -66,9 +60,6 @@ final class SteamGuard extends TOTP{
 		return Base64::encode($this->secret);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getCounter(int|null $data = null):int{
 		// the period is fixed to 30 seconds for Steam Guard
 		$this->options->period = 30;
@@ -76,9 +67,6 @@ final class SteamGuard extends TOTP{
 		return parent::getCounter($data);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getHMAC(int $counter):string{
 		// algorithm is fixed to sha1 for Steam Guard
 		$this->options->algorithm = self::ALGO_SHA1;
@@ -86,9 +74,6 @@ final class SteamGuard extends TOTP{
 		return parent::getHMAC($counter);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getOTP(#[SensitiveParameter] int $code):string{
 		$str = '';
 		$len = 26; // strlen($this::steamCodeChars)
@@ -107,7 +92,6 @@ final class SteamGuard extends TOTP{
 	}
 
 	/**
-	 * @inheritDoc
 	 * @throws \RuntimeException
 	 */
 	public function getServerTime():int{

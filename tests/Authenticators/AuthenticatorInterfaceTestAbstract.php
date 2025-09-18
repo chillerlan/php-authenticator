@@ -19,9 +19,6 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use function strlen;
 
-/**
- *
- */
 abstract class AuthenticatorInterfaceTestAbstract extends TestCase{
 
 	protected AuthenticatorOptions   $options;
@@ -69,7 +66,7 @@ abstract class AuthenticatorInterfaceTestAbstract extends TestCase{
 	public function testCreateSecretDefaultLength():void{
 		$this::assertSame(
 			$this->options->secret_length,
-			strlen(Base32::decode($this->authenticatorInterface->createSecret()))
+			strlen(Base32::decode($this->authenticatorInterface->createSecret())),
 		);
 	}
 

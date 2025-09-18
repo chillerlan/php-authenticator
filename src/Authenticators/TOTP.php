@@ -24,9 +24,6 @@ class TOTP extends HOTP{
 
 	public const MODE = self::TOTP;
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getCounter(int|null $data = null):int{
 		$data ??= time();
 
@@ -37,9 +34,6 @@ class TOTP extends HOTP{
 		return (int)floor(($data + $this->options->time_offset) / $this->options->period);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function verify(#[SensitiveParameter] string $otp, int|null $data = null):bool{
 		$limit = $this->options->adjacent;
 
@@ -61,9 +55,6 @@ class TOTP extends HOTP{
 		return false;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	protected function getUriParams(string $issuer, int|null $counter = null):array{
 
 		$params = [

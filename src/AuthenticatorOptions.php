@@ -13,9 +13,6 @@ namespace chillerlan\Authenticator;
 
 use chillerlan\Settings\SettingsContainerAbstract;
 
-/**
- *
- */
 class AuthenticatorOptions extends SettingsContainerAbstract{
 	use AuthenticatorOptionsTrait;
 }
