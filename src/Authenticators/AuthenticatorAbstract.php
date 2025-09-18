@@ -17,9 +17,13 @@ use chillerlan\Settings\SettingsContainerInterface;
 use InvalidArgumentException;
 use RuntimeException;
 use SensitiveParameter;
+use function http_build_query;
 use function random_bytes;
+use function rawurlencode;
+use function sprintf;
 use function time;
 use function trim;
+use const PHP_QUERY_RFC3986;
 
 /**
  *
@@ -114,6 +118,30 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 		}
 
 		return $encodedSecret;
+	}
+
+	/**
+	 * Returns an array with settings for a mobile authenticator URI for the current authenticator mode/instance
+	 */
+	abstract protected function getUriParams(string $issuer, int|null $counter = null):array;
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getUri(string $label, string $issuer, int|null $counter = null):string{
+		$label  = trim($label);
+		$issuer = trim($issuer);
+
+		if($label === '' || $issuer === ''){
+			throw new InvalidArgumentException('$label and $issuer cannot be empty');
+		}
+
+		return sprintf(
+			'otpauth://%s/%s?%s',
+			$this::MODE,
+			rawurlencode($label),
+			http_build_query($this->getUriParams($issuer, $counter), '', '&', PHP_QUERY_RFC3986),
+		);
 	}
 
 }

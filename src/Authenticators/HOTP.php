@@ -13,6 +13,7 @@ namespace chillerlan\Authenticator\Authenticators;
 
 use RuntimeException;
 use SensitiveParameter;
+use function array_merge;
 use function hash_equals;
 use function hash_hmac;
 use function pack;
@@ -92,6 +93,27 @@ class HOTP extends AuthenticatorAbstract{
 	 */
 	public function verify(#[SensitiveParameter] string $otp, int|null $data = null):bool{
 		return hash_equals($this->code($data), $otp);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function getUriParams(string $issuer, int|null $counter = null):array{
+
+		$params = [
+			'secret'  => $this->getSecret(),
+			'issuer'  => $issuer,
+			'counter' => $this->getCounter($counter),
+		];
+
+		if(!$this->options->omitUriSettings){
+			$params = array_merge($params, [
+				'digits'    => $this->options->digits,
+				'algorithm' => $this->options->algorithm,
+			]);
+		}
+
+		return $params;
 	}
 
 }

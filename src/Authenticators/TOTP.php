@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace chillerlan\Authenticator\Authenticators;
 
 use SensitiveParameter;
+use function array_merge;
 use function floor;
 use function hash_equals;
 use function time;
@@ -58,6 +59,27 @@ class TOTP extends HOTP{
 		}
 
 		return false;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function getUriParams(string $issuer, int|null $counter = null):array{
+
+		$params = [
+			'secret'  => $this->getSecret(),
+			'issuer'  => $issuer,
+		];
+
+		if(!$this->options->omitUriSettings){
+			$params = array_merge($params, [
+				'digits'    => $this->options->digits,
+				'algorithm' => $this->options->algorithm,
+				'period'    => $this->options->period,
+			]);
+		}
+
+		return $params;
 	}
 
 }
