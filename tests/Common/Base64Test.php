@@ -17,9 +17,6 @@ use PHPUnit\Framework\TestCase;
 use function base64_decode;
 use function base64_encode;
 
-/**
- *
- */
 class Base64Test extends TestCase{
 
 	/**
@@ -56,7 +53,7 @@ class Base64Test extends TestCase{
 
 		$this::assertSame($str, $decoded);
 		// test against native PHP
-		$this::assertSame(base64_decode($base64), $decoded);
+		$this::assertSame(base64_decode($base64, true), $decoded);
 	}
 
 	/**

@@ -55,7 +55,7 @@ class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
 	public function testCreateSecretDefaultLength():void{
 		$this::assertSame(
 			$this->options->secret_length,
-			strlen(Base64::decode($this->authenticatorInterface->createSecret()))
+			strlen(Base64::decode($this->authenticatorInterface->createSecret())),
 		);
 	}
 

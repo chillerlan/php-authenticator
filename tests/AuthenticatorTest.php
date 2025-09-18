@@ -45,19 +45,19 @@ class AuthenticatorTest extends TestCase{
 
 		$this::assertSame(
 			sprintf('otpauth://totp/%s?secret=%s&issuer=%s&digits=6&algorithm=SHA1&period=30', $label, self::secret, $issuer),
-			$this->authenticator->getUri(self::label, self::issuer)
+			$this->authenticator->getUri(self::label, self::issuer),
 		);
 
 		$this->options->digits = 8;
 		$this::assertSame(
 			sprintf('otpauth://totp/%s?secret=%s&issuer=%s&digits=8&algorithm=SHA1&period=30', $label, self::secret, $issuer),
-			$this->authenticator->getUri(self::label, self::issuer)
+			$this->authenticator->getUri(self::label, self::issuer),
 		);
 
 		$this->options->period = 45;
 		$this::assertSame(
 			sprintf('otpauth://totp/%s?secret=%s&issuer=%s&digits=8&algorithm=SHA1&period=45', $label, self::secret, $issuer),
-			$this->authenticator->getUri(self::label, self::issuer)
+			$this->authenticator->getUri(self::label, self::issuer),
 		);
 
 		$this->options->mode = AuthenticatorInterface::HOTP;
@@ -68,19 +68,19 @@ class AuthenticatorTest extends TestCase{
 
 		$this::assertSame(
 			sprintf('otpauth://hotp/%s?secret=%s&issuer=%s&counter=42&digits=8&algorithm=SHA1', $label, self::secret, $issuer),
-			$this->authenticator->getUri(self::label, self::issuer, 42)
+			$this->authenticator->getUri(self::label, self::issuer, 42),
 		);
 
 		$this->options->algorithm = AuthenticatorInterface::ALGO_SHA512;
 		$this::assertSame(
 			sprintf('otpauth://hotp/%s?secret=%s&issuer=%s&counter=0&digits=8&algorithm=SHA512', $label, self::secret, $issuer),
-			$this->authenticator->getUri(self::label, self::issuer, 0)
+			$this->authenticator->getUri(self::label, self::issuer, 0),
 		);
 
 		// test omit settings
 		$this::assertSame(
 			sprintf('otpauth://%s/%s?secret=%s&issuer=%s&counter=42', 'hotp', $label, self::secret, $issuer),
-			$this->authenticator->getUri(self::label, self::issuer, 42, true)
+			$this->authenticator->getUri(self::label, self::issuer, 42, true),
 		);
 	}
 

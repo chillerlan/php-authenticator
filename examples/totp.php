@@ -7,6 +7,7 @@
  * @copyright    2017 Smiley
  * @license      MIT
  */
+declare(strict_types=1);
 
 use chillerlan\Authenticator\{Authenticator, AuthenticatorOptions};
 use chillerlan\Authenticator\Authenticators\AuthenticatorInterface;

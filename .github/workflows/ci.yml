@@ -52,6 +52,9 @@ jobs:
       - name: "Install dependencies with composer"
         uses: ramsey/composer-install@v3
 
+      - name: "Run PHP_CodeSniffer"
+        run: php vendor/bin/phpcs -v
+
       - name: "Run PHPStan"
         run: php vendor/bin/phpstan
 
@@ -95,7 +98,7 @@ jobs:
         run: php vendor/bin/phpunit --colors=always --configuration=phpunit.xml.dist
 
       - name: "Send code coverage report to Codecov.io"
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: .build/coverage/clover.xml

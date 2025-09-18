@@ -1,31 +1,67 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Cannot access offset 'server_time' on mixed\\.$#"
+			rawMessage: '''
+				Call to deprecated method getUri() of class chillerlan\Authenticator\Authenticator:
+				5.3.0 The parameter `$omitSettings` will be removed in favor of `AuthenticatorOptions::$omitUriSettings`
+				                  in the next major version (6.x)
+			'''
+			identifier: method.deprecated
+			count: 2
+			path: examples/hotp.php
+
+		-
+			rawMessage: '''
+				Call to deprecated method getUri() of class chillerlan\Authenticator\Authenticator:
+				5.3.0 The parameter `$omitSettings` will be removed in favor of `AuthenticatorOptions::$omitUriSettings`
+				                  in the next major version (6.x)
+			'''
+			identifier: method.deprecated
+			count: 2
+			path: examples/totp.php
+
+		-
+			rawMessage: Cannot access offset 'server_time' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: src/Authenticators/SteamGuard.php
 
 		-
-			message: "#^Cannot cast mixed to int\\.$#"
+			rawMessage: Cannot cast mixed to int.
+			identifier: cast.int
 			count: 1
 			path: src/Authenticators/SteamGuard.php
 
-		-   # $response is always string here because CURLOPT_RETURNTRANSFER is set to true
-			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|true given\\.$#"
+		-
+			rawMessage: 'Parameter #1 $json of function json_decode expects string, string|true given.'
+			identifier: argument.type
 			count: 1
 			path: src/Authenticators/SteamGuard.php
 
-		-   # the value given to getHMAC() is always int - this is most likely a false positive
-			message: "#^Parameter \\#1 \\$counter of method chillerlan\\\\Authenticator\\\\Authenticators\\\\HOTP\\:\\:getHMAC\\(\\) expects int, float\\|int given\\.$#"
+		-
+			rawMessage: 'Parameter #1 $counter of method chillerlan\Authenticator\Authenticators\HOTP::getHMAC() expects int, float|int given.'
+			identifier: argument.type
 			count: 1
 			path: src/Authenticators/TOTP.php
 
-		-   # 32-bit system check
-			message: "#^Call to function is_int\\(\\) with 59\\|1111111109\\|1111111111\\|1234567890\\|2000000000\\|20000000000 will always evaluate to true\\.$#"
+		-
+			rawMessage: '''
+				Call to deprecated method getUri() of class chillerlan\Authenticator\Authenticator:
+				5.3.0 The parameter `$omitSettings` will be removed in favor of `AuthenticatorOptions::$omitUriSettings`
+				                  in the next major version (6.x)
+			'''
+			identifier: method.deprecated
+			count: 7
+			path: tests/AuthenticatorTest.php
+
+		-
+			rawMessage: 'Call to function is_int() with 59|1111111109|1111111111|1234567890|2000000000|20000000000 will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
 			count: 1
 			path: tests/Authenticators/SteamGuardTest.php
 
-		-   # 32-bit system check
-			message: "#^Call to function is_int\\(\\) with 59\\|1111111109\\|1111111111\\|1234567890\\|2000000000\\|20000000000 will always evaluate to true\\.$#"
+		-
+			rawMessage: 'Call to function is_int() with 59|1111111109|1111111111|1234567890|2000000000|20000000000 will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
 			count: 1
 			path: tests/Authenticators/TOTPTest.php

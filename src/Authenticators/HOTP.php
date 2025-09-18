@@ -29,16 +29,10 @@ class HOTP extends AuthenticatorAbstract{
 
 	public const MODE = self::HOTP;
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getCounter(?int $data = null):int{
 		return ($data ?? 0);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getHMAC(int $counter):string{
 
 		if($this->secret === null){
@@ -54,9 +48,6 @@ class HOTP extends AuthenticatorAbstract{
 		return hash_hmac($this->options->algorithm, $data, $this->secret, true);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getCode(string $hmac):int{
 		$data = unpack('C*', $hmac);
 
@@ -69,34 +60,22 @@ class HOTP extends AuthenticatorAbstract{
 		return (($data[$b + 1] & 0x7F) << 24) | ($data[$b + 2] << 16) | ($data[$b + 3] << 8) | $data[$b + 4]; // phpcs:ignore
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getOTP(int $code):string{
 		$code %= (10 ** $this->options->digits);
 
 		return str_pad((string)$code, $this->options->digits, '0', STR_PAD_LEFT);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function code(?int $data = null):string{
 		$hmac = $this->getHMAC($this->getCounter($data));
 
 		return $this->getOTP($this->getCode($hmac));
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function verify(string $otp, ?int $data = null):bool{
 		return hash_equals($this->code($data), $otp);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	protected function getUriParams(string $issuer, ?int $counter = null):array{
 
 		$params = [

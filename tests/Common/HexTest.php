@@ -17,9 +17,6 @@ use PHPUnit\Framework\TestCase;
 use function bin2hex;
 use function hex2bin;
 
-/**
- *
- */
 class HexTest extends TestCase{
 
 	/**

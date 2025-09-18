@@ -13,9 +13,6 @@ namespace chillerlan\Authenticator\Authenticators;
 
 use chillerlan\Settings\SettingsContainerInterface;
 
-/**
- *
- */
 interface AuthenticatorInterface{
 
 	public const TOTP        = 'totp';

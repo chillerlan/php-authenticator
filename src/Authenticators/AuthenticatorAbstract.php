@@ -24,9 +24,6 @@ use function time;
 use function trim;
 use const PHP_QUERY_RFC3986;
 
-/**
- *
- */
 abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 
 	protected const userAgent = 'chillerlanAuthenticator/5.0 +https://github.com/chillerlan/php-authenticator';
@@ -45,27 +42,18 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 		$this->setOptions($options ?? new AuthenticatorOptions);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function setOptions(SettingsContainerInterface $options):AuthenticatorInterface{
 		$this->options = $options;
 
 		return $this;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function setSecret(string $encodedSecret):AuthenticatorInterface{
 		$this->secret = Base32::decode($this->checkEncodedSecret($encodedSecret));
 
 		return $this;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getSecret():string{
 
 		if($this->secret === null){
@@ -75,9 +63,6 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 		return Base32::encode($this->secret);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function createSecret(?int $length = null):string{
 		$length ??= $this->options->secret_length;
 
@@ -90,9 +75,6 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 		return $this->getSecret();
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getServertime():int{
 		return time();
 	}
@@ -123,12 +105,11 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 
 	/**
 	 * Returns an array with settings for a mobile authenticator URI for the current authenticator mode/instance
+	 *
+	 * @return array<string, mixed>
 	 */
 	abstract protected function getUriParams(string $issuer, ?int $counter = null):array;
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getUri(string $label, string $issuer, ?int $counter = null):string{
 		$label  = trim($label);
 		$issuer = trim($issuer);

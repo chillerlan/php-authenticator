@@ -20,9 +20,6 @@ use function is_int;
 use function sprintf;
 use const PHP_INT_SIZE;
 
-/**
- *
- */
 class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 
 	/**

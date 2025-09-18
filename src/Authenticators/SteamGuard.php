@@ -15,7 +15,6 @@ namespace chillerlan\Authenticator\Authenticators;
 
 use chillerlan\Authenticator\Common\Base64;
 use RuntimeException;
-use function curl_close;
 use function curl_exec;
 use function curl_getinfo;
 use function curl_init;
@@ -44,18 +43,12 @@ final class SteamGuard extends TOTP{
 	private const steamCodeChars = '23456789BCDFGHJKMNPQRTVWXY';
 	private const steamTimeURL   = 'https://api.steampowered.com/ITwoFactorService/QueryTime/v0001';
 
-	/**
-	 * @inheritDoc
-	 */
 	public function setSecret(string $encodedSecret):AuthenticatorInterface{
 		$this->secret = Base64::decode($this->checkEncodedSecret($encodedSecret));
 
 		return $this;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getSecret():string{
 
 		if($this->secret === null){
@@ -65,9 +58,6 @@ final class SteamGuard extends TOTP{
 		return Base64::encode($this->secret);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getCounter(?int $data = null):int{
 		// the period is fixed to 30 seconds for Steam Guard
 		$this->options->period = 30;
@@ -75,9 +65,6 @@ final class SteamGuard extends TOTP{
 		return parent::getCounter($data);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getHMAC(int $counter):string{
 		// algorithm is fixed to sha1 for Steam Guard
 		$this->options->algorithm = self::ALGO_SHA1;
@@ -85,9 +72,6 @@ final class SteamGuard extends TOTP{
 		return parent::getHMAC($counter);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getOTP(int $code):string{
 		$str = '';
 		$len = 26; // strlen($this::steamCodeChars)
@@ -106,7 +90,6 @@ final class SteamGuard extends TOTP{
 	}
 
 	/**
-	 * @inheritDoc
 	 * @throws \RuntimeException
 	 */
 	public function getServerTime():int{
@@ -136,8 +119,6 @@ final class SteamGuard extends TOTP{
 
 		$response = curl_exec($ch);
 		$info     = curl_getinfo($ch);
-
-		curl_close($ch);
 
 		if($info['http_code'] !== 200 || $response === false){
 			// I'm not going to investigate the error further as this shouldn't happen usually
