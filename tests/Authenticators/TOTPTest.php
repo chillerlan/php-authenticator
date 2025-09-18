@@ -100,7 +100,7 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 
 	#[DataProvider('totpVectors')]
 	public function testAdjacent(string $algorithm, int $timestamp, string $timeslice, int $code, string $totp):void{
-		$adjacent = 20;
+		$adjacent = 10;
 		$limit    = (2 * $adjacent);
 
 		$this->authenticatorInterface->setSecret(self::secrets[$algorithm]);
