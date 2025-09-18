@@ -89,7 +89,7 @@ class AuthenticatorOptionsTest extends TestCase{
 
 	public function testSetAdjacentException():void{
 		$this->expectException(InvalidArgumentException::class);
-		$this->expectExceptionMessage('Invalid adjacent');
+		$this->expectExceptionMessage('Invalid number of adjacent codes');
 
 		$this->options->adjacent = -1;
 	}
