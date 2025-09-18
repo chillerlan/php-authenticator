@@ -14,9 +14,6 @@ namespace chillerlan\Authenticator\Authenticators;
 use chillerlan\Settings\SettingsContainerInterface;
 use SensitiveParameter;
 
-/**
- *
- */
 interface AuthenticatorInterface{
 
 	public const TOTP        = 'totp';

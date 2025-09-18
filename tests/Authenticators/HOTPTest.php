@@ -18,9 +18,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use function bin2hex;
 use function sprintf;
 
-/**
- *
- */
 class HOTPTest extends AuthenticatorInterfaceTestAbstract{
 
 	/**
