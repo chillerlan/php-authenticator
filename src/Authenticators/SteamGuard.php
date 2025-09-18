@@ -122,8 +122,6 @@ final class SteamGuard extends TOTP{
 		$response = curl_exec($ch);
 		$info     = curl_getinfo($ch);
 
-		curl_close($ch);
-
 		if($info['http_code'] !== 200 || $response === false){
 			// I'm not going to investigate the error further as this shouldn't happen usually
 			throw new RuntimeException(sprintf('Steam API request error: HTTP/%s', $info['http_code'])); // @codeCoverageIgnore
