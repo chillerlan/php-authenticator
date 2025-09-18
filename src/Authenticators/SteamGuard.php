@@ -16,7 +16,6 @@ namespace chillerlan\Authenticator\Authenticators;
 use chillerlan\Authenticator\Common\Base64;
 use RuntimeException;
 use SensitiveParameter;
-use function curl_close;
 use function curl_exec;
 use function curl_getinfo;
 use function curl_init;
