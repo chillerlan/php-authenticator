@@ -67,14 +67,14 @@ class AuthenticatorTest extends TestCase{
 			->setSecret(self::secret);
 
 		$this::assertSame(
-			sprintf('otpauth://hotp/%s?secret=%s&issuer=%s&digits=8&algorithm=SHA1&counter=42', $label, self::secret, $issuer),
+			sprintf('otpauth://hotp/%s?secret=%s&issuer=%s&counter=42&digits=8&algorithm=SHA1', $label, self::secret, $issuer),
 			$this->authenticator->getUri(self::label, self::issuer, 42)
 		);
 
 		$this->options->algorithm = AuthenticatorInterface::ALGO_SHA512;
 		$this::assertSame(
-			sprintf('otpauth://hotp/%s?secret=%s&issuer=%s&digits=8&algorithm=SHA512', $label, self::secret, $issuer),
-			$this->authenticator->getUri(self::label, self::issuer)
+			sprintf('otpauth://hotp/%s?secret=%s&issuer=%s&counter=0&digits=8&algorithm=SHA512', $label, self::secret, $issuer),
+			$this->authenticator->getUri(self::label, self::issuer, 0)
 		);
 
 		// test omit settings
