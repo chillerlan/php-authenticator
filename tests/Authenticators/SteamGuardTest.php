@@ -18,6 +18,7 @@ use Generator;
 use function date;
 use function dechex;
 use function is_int;
+use function strlen;
 use const PHP_INT_SIZE;
 
 /**
@@ -52,23 +53,26 @@ class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
 	}
 
 	public function testCreateSecretDefaultLength():void{
-		/** @noinspection PhpUnitTestFailedLineInspection */
-		$this::markTestSkipped('N/A');
+		$this::assertSame(
+			$this->options->secret_length,
+			strlen(Base64::decode($this->authenticatorInterface->createSecret()))
+		);
 	}
 
 	public function testCreateSecretWithLength():void{
-		/** @noinspection PhpUnitTestFailedLineInspection */
-		$this::markTestSkipped('N/A');
+
+		for($secretLength = 16; $secretLength <= 512; $secretLength += 8){
+			$secret = Base64::decode($this->authenticatorInterface->createSecret($secretLength));
+
+			$this::assertSame($secretLength, strlen($secret));
+		}
+
 	}
 
 	public function testCreateSecretCheckCharacterSet():void{
-		/** @noinspection PhpUnitTestFailedLineInspection */
-		$this::markTestSkipped('N/A');
-	}
+		$secret = $this->authenticatorInterface->createSecret(32);
 
-	public function testCreateSecretException():void{
-		/** @noinspection PhpUnitTestFailedLineInspection */
-		$this::markTestSkipped('N/A');
+		$this::assertMatchesRegularExpression('#^['.Base64::CHARSET.']+$#', $secret);
 	}
 
 	/**
