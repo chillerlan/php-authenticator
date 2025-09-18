@@ -79,7 +79,7 @@ class AuthenticatorTest extends TestCase{
 
 		// test omit settings
 		$this::assertSame(
-			sprintf('otpauth://%s/%s?secret=%s&issuer=%s', 'hotp', $label, self::secret, $issuer),
+			sprintf('otpauth://%s/%s?secret=%s&issuer=%s&counter=42', 'hotp', $label, self::secret, $issuer),
 			$this->authenticator->getUri(self::label, self::issuer, 42, true)
 		);
 	}
