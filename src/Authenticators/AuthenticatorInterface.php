@@ -123,4 +123,13 @@ interface AuthenticatorInterface{
 	 */
 	public function verify(#[SensitiveParameter] string $otp, int|null $data = null):bool;
 
+	/**
+	 * Creates a URI string for a mobile authenticator (otpauth://...)
+	 *
+	 * The parameter `$counter` only has effect in HOTP mode
+	 *
+	 * @link https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters
+	 */
+	public function getUri(string $label, string $issuer, int|null $counter = null):string;
+
 }
