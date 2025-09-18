@@ -66,14 +66,6 @@ final class SteamGuard extends TOTP{
 
 	/**
 	 * @inheritDoc
-	 * @codeCoverageIgnore
-	 */
-	public function createSecret(int|null $length = null):string{
-		throw new RuntimeException('Not implemented');
-	}
-
-	/**
-	 * @inheritDoc
 	 */
 	public function getCounter(int|null $data = null):int{
 		// the period is fixed to 30 seconds for Steam Guard
