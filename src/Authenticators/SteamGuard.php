@@ -40,6 +40,8 @@ use const CURLOPT_RETURNTRANSFER;
  */
 final class SteamGuard extends TOTP{
 
+	public const MODE = self::STEAM_GUARD;
+
 	private const steamCodeChars = '23456789BCDFGHJKMNPQRTVWXY';
 	private const steamTimeURL   = 'https://api.steampowered.com/ITwoFactorService/QueryTime/v0001';
 

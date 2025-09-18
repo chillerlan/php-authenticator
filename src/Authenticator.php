@@ -34,7 +34,6 @@ class Authenticator{
 
 	protected SettingsContainerInterface|AuthenticatorOptions $options;
 	protected AuthenticatorInterface                          $authenticator;
-	protected string                                          $mode = AuthenticatorInterface::TOTP;
 
 	/**
 	 * Authenticator constructor
@@ -62,8 +61,7 @@ class Authenticator{
 		$this->options = $options;
 
 		// invoke a new authenticator interface if necessary
-		if(!isset($this->authenticator) || $this->options->mode !== $this->mode){
-			$this->mode          = $this->options->mode;
+		if(!isset($this->authenticator) || $this->authenticator::MODE !== $this->options->mode){
 			$this->authenticator = new (AuthenticatorInterface::MODES[$this->options->mode])($this->options);
 		}
 
@@ -150,17 +148,7 @@ class Authenticator{
 			'issuer' => $issuer,
 		];
 
-		if(($omitSettings ?? $this->options->omitUriSettings) !== true){
-			$values['digits']    = $this->options->digits;
-			$values['algorithm'] = $this->options->algorithm;
-
-			if($this->mode === AuthenticatorInterface::TOTP){
-				$values['period'] = $this->options->period;
-			}
-
-		}
-
-		if($this->mode === AuthenticatorInterface::HOTP){
+		if($this->authenticator::MODE === AuthenticatorInterface::HOTP){
 
 			if($hotpCounter === null || $hotpCounter < 0){
 				throw new InvalidArgumentException('initial counter value must be set and greater or equal to 0');
@@ -169,9 +157,22 @@ class Authenticator{
 			$values['counter'] = $hotpCounter;
 		}
 
-		$values = http_build_query($values, '', '&', PHP_QUERY_RFC3986);
+		if(($omitSettings ?? $this->options->omitUriSettings) !== true){
+			$values['digits']    = $this->options->digits;
+			$values['algorithm'] = $this->options->algorithm;
 
-		return sprintf('otpauth://%s/%s?%s', $this->mode, rawurlencode($label), $values);
+			if($this->authenticator::MODE === AuthenticatorInterface::TOTP){
+				$values['period'] = $this->options->period;
+			}
+
+		}
+
+		return sprintf(
+			'otpauth://%s/%s?%s',
+			$this->authenticator::MODE,
+			rawurlencode($label),
+			http_build_query($values, '', '&', PHP_QUERY_RFC3986),
+		);
 	}
 
 }
