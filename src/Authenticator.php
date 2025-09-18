@@ -130,6 +130,9 @@ class Authenticator{
 	 *
 	 * @link https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters
 	 *
+	 * @deprecated 5.3.0 The parameter `$omitSettings` will be removed in favor of `AuthenticatorOptions::$omitUriSettings`
+	 *                   in the next major version (6.x)
+	 * @see \chillerlan\Authenticator\AuthenticatorOptionsTrait::$omitUriSettings
 	 * @throws \InvalidArgumentException
 	 */
 	public function getUri(string $label, string $issuer, ?int $hotpCounter = null, ?bool $omitSettings = null):string{
@@ -145,7 +148,7 @@ class Authenticator{
 			'issuer' => $issuer,
 		];
 
-		if($omitSettings !== true){
+		if(($omitSettings ?? $this->options->omitUriSettings) !== true){
 			$values['digits']    = $this->options->digits;
 			$values['algorithm'] = $this->options->algorithm;
 
