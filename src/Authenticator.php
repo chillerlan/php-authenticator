@@ -155,9 +155,15 @@ class Authenticator{
 				$values['period'] = $this->options->period;
 			}
 
-			if($this->mode === AuthenticatorInterface::HOTP && $hotpCounter !== null){
-				$values['counter'] = $hotpCounter;
+		}
+
+		if($this->mode === AuthenticatorInterface::HOTP){
+
+			if($hotpCounter === null || $hotpCounter < 0){
+				throw new InvalidArgumentException('initial counter value must be set and greater or equal to 0');
 			}
+
+			$values['counter'] = $hotpCounter;
 		}
 
 		$values = http_build_query($values, '', '&', PHP_QUERY_RFC3986);
