@@ -108,14 +108,14 @@
 	<rule ref="SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable">
 		<exclude-pattern>examples</exclude-pattern>
 	</rule>
-
+<!--
 	<rule ref="SlevomatCodingStandard.TypeHints.DNFTypeHintFormat">
 		<properties>
 			<property name="shortNullable" value="no"/>
 			<property name="nullPosition" value="last"/>
 		</properties>
 	</rule>
-
+-->
 	<rule ref="SlevomatCodingStandard.Variables.UnusedVariable">
 		<properties>
 			<property name="ignoreUnusedValuesWhenOnlyKeysAreUsedInForeach" value="true"/>
