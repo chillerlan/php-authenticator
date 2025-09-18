@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace chillerlan\Authenticator\Authenticators;
 
 use RuntimeException;
+use function array_merge;
 use function hash_equals;
 use function hash_hmac;
 use function pack;
@@ -91,6 +92,27 @@ class HOTP extends AuthenticatorAbstract{
 	 */
 	public function verify(string $otp, ?int $data = null):bool{
 		return hash_equals($this->code($data), $otp);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function getUriParams(string $issuer, ?int $counter = null):array{
+
+		$params = [
+			'secret'  => $this->getSecret(),
+			'issuer'  => $issuer,
+			'counter' => $this->getCounter($counter),
+		];
+
+		if(!$this->options->omitUriSettings){
+			$params = array_merge($params, [
+				'digits'    => $this->options->digits,
+				'algorithm' => $this->options->algorithm,
+			]);
+		}
+
+		return $params;
 	}
 
 }

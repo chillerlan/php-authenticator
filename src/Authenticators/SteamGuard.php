@@ -101,6 +101,10 @@ final class SteamGuard extends TOTP{
 		return $str;
 	}
 
+	public function getUri(string $label, string $issuer, ?int $counter = null):string{
+		throw new RuntimeException('Not supported');
+	}
+
 	/**
 	 * @inheritDoc
 	 * @throws \RuntimeException

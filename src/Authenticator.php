@@ -13,12 +13,6 @@ namespace chillerlan\Authenticator;
 
 use chillerlan\Authenticator\Authenticators\AuthenticatorInterface;
 use chillerlan\Settings\SettingsContainerInterface;
-use InvalidArgumentException;
-use function http_build_query;
-use function rawurlencode;
-use function sprintf;
-use function trim;
-use const PHP_QUERY_RFC3986;
 
 /**
  * Yet another Google authenticator implementation!
@@ -62,6 +56,8 @@ class Authenticator{
 			$class               = AuthenticatorInterface::MODES[$this->options->mode];
 			$this->authenticator = new $class($this->options);
 		}
+
+		$this->authenticator->setOptions($this->options);
 
 		return $this;
 	}
@@ -129,46 +125,16 @@ class Authenticator{
 	 * @deprecated 5.3.0 The parameter `$omitSettings` will be removed in favor of `AuthenticatorOptions::$omitUriSettings`
 	 *                   in the next major version (6.x)
 	 * @see \chillerlan\Authenticator\AuthenticatorOptionsTrait::$omitUriSettings
-	 * @throws \InvalidArgumentException
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public function getUri(string $label, string $issuer, ?int $hotpCounter = null, ?bool $omitSettings = null):string{
-		$label  = trim($label);
-		$issuer = trim($issuer);
-
-		if(empty($label) || empty($issuer)){
-			throw new InvalidArgumentException('$label and $issuer cannot be empty');
+		// a little reckless but good enough until the deprecated parameter is removed
+		if($omitSettings !== null){
+			$this->options->omitUriSettings = $omitSettings;
 		}
 
-		$values = [
-			'secret' => $this->authenticator->getSecret(),
-			'issuer' => $issuer,
-		];
-
-		if($this->authenticator::MODE === AuthenticatorInterface::HOTP){
-
-			if($hotpCounter === null || $hotpCounter < 0){
-				throw new InvalidArgumentException('initial counter value must be set and greater or equal to 0');
-			}
-
-			$values['counter'] = $hotpCounter;
-		}
-
-		if(($omitSettings ?? $this->options->omitUriSettings) !== true){
-			$values['digits']    = $this->options->digits;
-			$values['algorithm'] = $this->options->algorithm;
-
-			if($this->authenticator::MODE === AuthenticatorInterface::TOTP){
-				$values['period'] = $this->options->period;
-			}
-
-		}
-
-		return sprintf(
-			'otpauth://%s/%s?%s',
-			$this->authenticator::MODE,
-			rawurlencode($label),
-			http_build_query($values, '', '&', PHP_QUERY_RFC3986),
-		);
+		return $this->authenticator->getUri($label, $issuer, $hotpCounter);
 	}
 
 }
