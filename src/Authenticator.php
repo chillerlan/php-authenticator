@@ -55,7 +55,7 @@ class Authenticator{
 	public function setOptions(SettingsContainerInterface|AuthenticatorOptions|iterable $options):static{
 
 		if(is_iterable($options)){
-			$options = new AuthenticatorOptions($options);
+			$options = new AuthenticatorOptions($options); // @codeCoverageIgnore
 		}
 
 		$this->options = $options;

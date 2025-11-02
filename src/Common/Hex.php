@@ -34,7 +34,7 @@ class Hex implements EncoderInterface{
 			return \sodium_bin2hex($string);
 		}
 
-		return ConstantTimeHex::encode($string);
+		return ConstantTimeHex::encode($string); // @codeCoverageIgnore
 	}
 
 	/**
@@ -47,7 +47,7 @@ class Hex implements EncoderInterface{
 			return \sodium_hex2bin($encodedString);
 		}
 
-		return ConstantTimeHex::decode($encodedString);
+		return ConstantTimeHex::decode($encodedString); // @codeCoverageIgnore
 	}
 
 	public static function checkCharacterSet(#[SensitiveParameter] string $encodedString):void{

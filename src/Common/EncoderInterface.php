@@ -14,7 +14,7 @@ namespace chillerlan\Authenticator\Common;
 use SensitiveParameter;
 
 /**
- *
+ * Common interface for character encoding classes
  */
 interface EncoderInterface{
 
