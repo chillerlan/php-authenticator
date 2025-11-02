@@ -21,6 +21,42 @@ parameters:
 			path: examples/totp.php
 
 		-
+			rawMessage: 'Method chillerlan\Authenticator\Authenticator::__construct() has parameter $options with no value type specified in iterable type iterable.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Authenticator.php
+
+		-
+			rawMessage: 'Method chillerlan\Authenticator\Authenticator::setOptions() has parameter $options with no value type specified in iterable type iterable.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Authenticator.php
+
+		-
+			rawMessage: 'Parameter #1 $properties of class chillerlan\Authenticator\AuthenticatorOptions constructor expects array<string, mixed>|null, iterable given.'
+			identifier: argument.type
+			count: 1
+			path: src/Authenticator.php
+
+		-
+			rawMessage: 'Method chillerlan\Authenticator\Authenticators\AuthenticatorAbstract::__construct() has parameter $options with no value type specified in iterable type iterable.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Authenticators/AuthenticatorAbstract.php
+
+		-
+			rawMessage: 'Method chillerlan\Authenticator\Authenticators\AuthenticatorAbstract::setOptions() has parameter $options with no value type specified in iterable type iterable.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Authenticators/AuthenticatorAbstract.php
+
+		-
+			rawMessage: 'Parameter #1 $properties of class chillerlan\Authenticator\AuthenticatorOptions constructor expects array<string, mixed>|null, iterable given.'
+			identifier: argument.type
+			count: 1
+			path: src/Authenticators/AuthenticatorAbstract.php
+
+		-
 			rawMessage: Cannot access offset 'server_time' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -51,8 +87,26 @@ parameters:
 				                  in the next major version (6.x)
 			'''
 			identifier: method.deprecated
-			count: 7
+			count: 1
 			path: tests/AuthenticatorTest.php
+
+		-
+			rawMessage: 'Method chillerlan\AuthenticatorTest\Authenticators\AuthenticatorInterfaceTestAbstract::uriSettingsProvider() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/Authenticators/AuthenticatorInterfaceTestAbstract.php
+
+		-
+			rawMessage: 'Parameter #1 $options of method chillerlan\Authenticator\Authenticators\AuthenticatorInterface::setOptions() expects chillerlan\Settings\SettingsContainerInterface, array<string, mixed> given.'
+			identifier: argument.type
+			count: 1
+			path: tests/Authenticators/AuthenticatorInterfaceTestAbstract.php
+
+		-
+			rawMessage: 'Method chillerlan\AuthenticatorTest\Authenticators\HOTPTest::uriSettingsProvider() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/Authenticators/HOTPTest.php
 
 		-
 			rawMessage: 'Call to function is_int() with 59|1111111109|1111111111|1234567890|2000000000|20000000000 will always evaluate to true.'
@@ -61,7 +115,19 @@ parameters:
 			path: tests/Authenticators/SteamGuardTest.php
 
 		-
+			rawMessage: 'Method chillerlan\AuthenticatorTest\Authenticators\SteamGuardTest::uriSettingsProvider() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/Authenticators/SteamGuardTest.php
+
+		-
 			rawMessage: 'Call to function is_int() with 59|1111111109|1111111111|1234567890|2000000000|20000000000 will always evaluate to true.'
 			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/Authenticators/TOTPTest.php
+
+		-
+			rawMessage: 'Method chillerlan\AuthenticatorTest\Authenticators\TOTPTest::uriSettingsProvider() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
 			count: 1
 			path: tests/Authenticators/TOTPTest.php

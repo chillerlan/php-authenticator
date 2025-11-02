@@ -6,6 +6,8 @@
  * @author       Smiley <smiley@chillerlan.net>
  * @copyright    2017 Smiley
  * @license      MIT
+ *
+ * @phan-file-suppress PhanDeprecatedFunction
  */
 declare(strict_types=1);
 
