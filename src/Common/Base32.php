@@ -19,40 +19,35 @@ use function preg_match;
 /**
  * Class to provide base32 encoding/decoding of strings using constant time functions
  */
-final class Base32{
+final class Base32 implements EncoderInterface{
 
 	/**
 	 * The Base32 character set as defined by RFC3548
 	 *
 	 * @see https://datatracker.ietf.org/doc/html/rfc3548#section-5
 	 * @see https://datatracker.ietf.org/doc/html/rfc4648#section-6
-	 *
-	 * @var string
 	 */
 	public const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 
 	/**
 	 * Encode a string to Base32
 	 */
-	public static function encode(#[SensitiveParameter] string $str):string{
-		return ConstantTimeBase32::encodeUpperUnpadded($str);
+	public static function encode(#[SensitiveParameter] string $string):string{
+		return ConstantTimeBase32::encodeUpperUnpadded($string);
 	}
 
 	/**
 	 * Decode a string from Base32
 	 */
-	public static function decode(#[SensitiveParameter] string $base32):string{
-		self::checkCharacterSet($base32);
+	public static function decode(#[SensitiveParameter] string $encodedString):string{
+		self::checkCharacterSet($encodedString);
 
-		return ConstantTimeBase32::decodeNoPadding($base32, true);
+		return ConstantTimeBase32::decodeNoPadding($encodedString, true);
 	}
 
-	/**
-	 * @throws \InvalidArgumentException
-	 */
-	public static function checkCharacterSet(#[SensitiveParameter] string $base32):void{
+	public static function checkCharacterSet(#[SensitiveParameter] string $encodedString):void{
 
-		if(!preg_match('/^['.self::CHARSET.']+$/', $base32)){
+		if(!preg_match('/^['.self::CHARSET.']+$/', $encodedString)){
 			throw new InvalidArgumentException('Base32 must match RFC3548 character set');
 		}
 

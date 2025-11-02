@@ -14,55 +14,45 @@ namespace chillerlan\Authenticator\Common;
 use InvalidArgumentException;
 use ParagonIE\ConstantTime\Hex as ConstantTimeHex;
 use SensitiveParameter;
-use function preg_match;
+use function function_exists, preg_match;
 
 /**
  * Class to provide hexadecimal encoding/decoding of strings using constant time functions
+ *
+ * (class is currently unused)
  */
-class Hex{
+class Hex implements EncoderInterface{
 
-	/**
-	 * The allowed hex character set (either upper or lower case)
-	 *
-	 * @var string
-	 */
 	public const CHARSET = '1234567890ABCDEFabcdef';
 
 	/**
 	 * Encode a string to hexadecimal
-	 *
-	 * @codeCoverageIgnore
 	 */
-	public static function encode(#[SensitiveParameter] string $str):string{
+	public static function encode(#[SensitiveParameter] string $string):string{
 
 		if(function_exists('sodium_bin2hex')){
-			return \sodium_bin2hex($str);
+			return \sodium_bin2hex($string);
 		}
 
-		return ConstantTimeHex::encode($str);
+		return ConstantTimeHex::encode($string); // @codeCoverageIgnore
 	}
 
 	/**
 	 * Decode a string from hexadecimal
-	 *
-	 * @codeCoverageIgnore
 	 */
-	public static function decode(#[SensitiveParameter] string $hex):string{
-		self::checkCharacterSet($hex);
+	public static function decode(#[SensitiveParameter] string $encodedString):string{
+		self::checkCharacterSet($encodedString);
 
 		if(function_exists('sodium_hex2bin')){
-			return \sodium_hex2bin($hex);
+			return \sodium_hex2bin($encodedString);
 		}
 
-		return ConstantTimeHex::decode($hex);
+		return ConstantTimeHex::decode($encodedString); // @codeCoverageIgnore
 	}
 
-	/**
-	 * @throws \InvalidArgumentException
-	 */
-	public static function checkCharacterSet(#[SensitiveParameter] string $hex):void{
+	public static function checkCharacterSet(#[SensitiveParameter] string $encodedString):void{
 
-		if(!preg_match('#^[a-f\d]+$#i', $hex)){
+		if(!preg_match('#^[a-f\d]+$#i', $encodedString)){
 			throw new InvalidArgumentException('hex string must match hexadecimal character set: 0-9, A-F, a-f');
 		}
 
