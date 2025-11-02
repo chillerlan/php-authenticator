@@ -14,6 +14,7 @@ namespace chillerlan\AuthenticatorTest;
 use chillerlan\Authenticator\AuthenticatorOptions;
 use chillerlan\Authenticator\Authenticators\AuthenticatorInterface;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class AuthenticatorOptionsTest extends TestCase{
@@ -24,74 +25,100 @@ class AuthenticatorOptionsTest extends TestCase{
 		$this->options = new AuthenticatorOptions;
 	}
 
-	public function testSetDigits():void{
+	#[Test]
+	public function setDigits():void{
 		foreach([6, 8] as $digits){
 			$this->options->digits = $digits;
 			$this::assertSame($digits, $this->options->digits);
 		}
 	}
 
-	public function testSetDigitsException():void{
+	#[Test]
+	public function setDigitsException():void{
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Invalid code length');
 
 		$this->options->digits = 7;
 	}
 
-	public function testSetPeriod():void{
+	#[Test]
+	public function setPeriod():void{
 		for($period = 15; $period <= 60; $period++){
 			$this->options->period = $period;
 			$this::assertSame($period, $this->options->period);
 		}
 	}
 
-	public function testSetPeriodException():void{
+	#[Test]
+	public function setPeriodException():void{
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Invalid period');
 
 		$this->options->period = 666;
 	}
 
-	public function testSetAlgorithm():void{
+	#[Test]
+	public function setAlgorithm():void{
 		foreach(AuthenticatorInterface::HASH_ALGOS as $algo){
 			$this->options->algorithm = $algo;
 			$this::assertSame($algo, $this->options->algorithm);
 		}
 	}
 
-	public function testSetAlgorithmException():void{
+	#[Test]
+	public function setAlgorithmException():void{
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Invalid algorithm');
 
 		$this->options->algorithm = 'florps';
 	}
 
-	public function testSetMode():void{
+	#[Test]
+	public function setMode():void{
 		foreach(AuthenticatorInterface::MODES as $mode => $class){
 			$this->options->mode = $mode;
 			$this::assertSame($mode, $this->options->mode);
 		}
 	}
 
-	public function testSetModeException():void{
+	#[Test]
+	public function setModeException():void{
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Invalid mode');
 
 		$this->options->mode = 'florps';
 	}
 
-	public function testSetAdjacent():void{
+	#[Test]
+	public function setAdjacent():void{
 		for($adjacent = 0; $adjacent <= 10; $adjacent++){
 			$this->options->adjacent = $adjacent;
 			$this::assertSame($adjacent, $this->options->adjacent);
 		}
 	}
 
-	public function testSetAdjacentException():void{
+	#[Test]
+	public function setAdjacentException():void{
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Invalid number of adjacent codes');
 
 		$this->options->adjacent = -1;
+	}
+
+	#[Test]
+	public function setSecretLength():void{
+		for($secretLength = 16; $secretLength <= 1024; $secretLength += 16){
+			$this->options->secret_length = $secretLength;
+			$this::assertSame($secretLength, $this->options->secret_length);
+		}
+	}
+
+	#[Test]
+	public function setSecretLengthException():void{
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessage('Invalid secret length: 69420');
+
+		$this->options->secret_length = 69420;
 	}
 
 }

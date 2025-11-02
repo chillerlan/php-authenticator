@@ -14,12 +14,9 @@ namespace chillerlan\AuthenticatorTest\Authenticators;
 use chillerlan\Authenticator\AuthenticatorOptions;
 use chillerlan\Authenticator\Authenticators\{AuthenticatorInterface, SteamGuard};
 use chillerlan\Authenticator\Common\Base64;
+use PHPUnit\Framework\Attributes\{DataProvider, Test};
 use Generator;
-use PHPUnit\Framework\Attributes\DataProvider;
-use function date;
-use function dechex;
-use function is_int;
-use function strlen;
+use function date, dechex, is_int, strlen;
 use const PHP_INT_SIZE;
 
 /**
@@ -44,7 +41,8 @@ class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
 		return new SteamGuard($options);
 	}
 
-	public function testSetGetSecret():void{
+	#[Test]
+	public function setGetSecret():void{
 		$this->authenticatorInterface->setSecret($this::secret);
 
 		$secret = $this->authenticatorInterface->getSecret();
@@ -53,14 +51,16 @@ class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
 		$this::assertSame($this::rawsecret, Base64::decode($secret));
 	}
 
-	public function testCreateSecretDefaultLength():void{
+	#[Test]
+	public function createSecretDefaultLength():void{
 		$this::assertSame(
 			$this->options->secret_length,
 			strlen(Base64::decode($this->authenticatorInterface->createSecret())),
 		);
 	}
 
-	public function testCreateSecretWithLength():void{
+	#[Test]
+	public function createSecretWithLength():void{
 
 		for($secretLength = 16; $secretLength <= 512; $secretLength += 8){
 			$secret = Base64::decode($this->authenticatorInterface->createSecret($secretLength));
@@ -70,7 +70,8 @@ class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
 
 	}
 
-	public function testCreateSecretCheckCharacterSet():void{
+	#[Test]
+	public function createSecretCheckCharacterSet():void{
 		$secret = $this->authenticatorInterface->createSecret(32);
 
 		$this::assertMatchesRegularExpression('#^['.Base64::CHARSET.']+$#', $secret);
@@ -126,6 +127,21 @@ class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
 				: $this::assertTrue($verify);
 		}
 
+	}
+
+	public static function uriSettingsProvider():array{
+		return [
+			[[], ''],
+		];
+	}
+
+	/**
+	 * @param array<string, mixed> $options
+	 */
+	#[Test]
+	#[DataProvider('uriSettingsProvider')]
+	public function getUri(array $options, string $expected):void{
+		$this::markTestSkipped('N/A');
 	}
 
 }

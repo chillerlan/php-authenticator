@@ -11,19 +11,17 @@ declare(strict_types=1);
 
 namespace chillerlan\AuthenticatorTest\Common;
 
-use chillerlan\Authenticator\Common\Base64;
+use chillerlan\Authenticator\Common\{Base64, EncoderInterface};
 use InvalidArgumentException;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
-use function base64_decode;
-use function base64_encode;
+use PHPUnit\Framework\Attributes\Test;
 
-class Base64Test extends TestCase{
+class Base64Test extends EncoderInterfaceTestAbstract{
 
-	/**
-	 * @phpstan-return array<int, array<int, string>>
-	 */
-	public static function base64DataProvider():array{
+	protected function getEncoder():EncoderInterface{
+		return new Base64;
+	}
+
+	public static function encodeDataProvider():array{
 		return [
 			['a'                   , 'YQ=='                        ],
 			['ab'                  , 'YWI='                        ],
@@ -36,35 +34,12 @@ class Base64Test extends TestCase{
 		];
 	}
 
-	#[DataProvider('base64DataProvider')]
-	public function testEncode(string $str, string $base64):void{
-		$encoded = Base64::encode($str);
-		$this::assertSame($base64, $encoded);
-		// test against native PHP
-		$this::assertSame(base64_encode($str), $encoded);
-	}
-
-	#[DataProvider('base64DataProvider')]
-	public function testDecode(string $str, string $base64):void{
-		$decoded = Base64::decode($base64);
-
-		$this::assertSame($str, $decoded);
-		// test against native PHP
-		$this::assertSame(base64_decode($base64, true), $decoded);
-	}
-
-	#[DataProvider('base64DataProvider')]
-	public function testCheckCharset(string $str, string $base64):void{
-		$this->expectNotToPerformAssertions();
-
-		Base64::checkCharacterSet($base64);
-	}
-
-	public function testCheckCharsetException():void{
+	#[Test]
+	public function checkCharsetException():void{
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Base64 must match RFC4648 character set');
 
-		Base64::checkCharacterSet('YWJjZÄ==...');
+		$this->encoder::checkCharacterSet('YWJjZÄ==...');
 	}
 
 }

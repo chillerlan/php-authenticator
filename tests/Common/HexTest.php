@@ -11,19 +11,17 @@ declare(strict_types=1);
 
 namespace chillerlan\AuthenticatorTest\Common;
 
-use chillerlan\Authenticator\Common\Hex;
+use chillerlan\Authenticator\Common\{EncoderInterface, Hex};
 use InvalidArgumentException;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
-use function bin2hex;
-use function hex2bin;
+use PHPUnit\Framework\Attributes\Test;
 
-class HexTest extends TestCase{
+class HexTest extends EncoderInterfaceTestAbstract{
 
-	/**
-	 * @phpstan-return array<int, array<int, string>>
-	 */
-	public static function hexDataProvider():array{
+	protected function getEncoder():EncoderInterface{
+		return new Hex;
+	}
+
+	public static function encodeDataProvider():array{
 		return [
 			['a'                   , '61'                                      ],
 			['ab'                  , '6162'                                    ],
@@ -36,31 +34,8 @@ class HexTest extends TestCase{
 		];
 	}
 
-	#[DataProvider('hexDataProvider')]
-	public function testEncode(string $str, string $hex):void{
-		$encoded = Hex::encode($str);
-		$this::assertSame($hex, $encoded);
-		// test against native PHP
-		$this::assertSame(bin2hex($str), $encoded);
-	}
-
-	#[DataProvider('hexDataProvider')]
-	public function testDecode(string $str, string $hex):void{
-		$decoded = Hex::decode($hex);
-
-		$this::assertSame($str, $decoded);
-		// test against native PHP
-		$this::assertSame(hex2bin($hex), $decoded);
-	}
-
-	#[DataProvider('hexDataProvider')]
-	public function testCheckCharset(string $str, string $hex):void{
-		$this->expectNotToPerformAssertions();
-
-		Hex::checkCharacterSet($hex);
-	}
-
-	public function testCheckCharsetException():void{
+	#[Test]
+	public function checkCharsetException():void{
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('hex string must match hexadecimal character set: 0-9, A-F, a-f');
 
