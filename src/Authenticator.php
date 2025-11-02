@@ -14,6 +14,7 @@ namespace chillerlan\Authenticator;
 use chillerlan\Authenticator\Authenticators\AuthenticatorInterface;
 use chillerlan\Settings\SettingsContainerInterface;
 use SensitiveParameter;
+use function is_iterable;
 
 /**
  * Yet another Google authenticator implementation!
@@ -33,7 +34,7 @@ class Authenticator{
 	 * Authenticator constructor
 	 */
 	public function __construct(
-		SettingsContainerInterface|AuthenticatorOptions $options = new AuthenticatorOptions,
+		SettingsContainerInterface|AuthenticatorOptions|iterable $options = new AuthenticatorOptions,
 		string|null $secret = null,
 	){
 		// phpcs:ignore
@@ -51,7 +52,12 @@ class Authenticator{
 	 * Please note that this will reset the secret phrase stored with the authenticator instance
 	 * if a different mode than the current is given.
 	 */
-	public function setOptions(SettingsContainerInterface|AuthenticatorOptions $options):static{
+	public function setOptions(SettingsContainerInterface|AuthenticatorOptions|iterable $options):static{
+
+		if(is_iterable($options)){
+			$options = new AuthenticatorOptions($options);
+		}
+
 		$this->options = $options;
 
 		// invoke a new authenticator interface if necessary

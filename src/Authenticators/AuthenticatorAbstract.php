@@ -18,6 +18,7 @@ use InvalidArgumentException;
 use RuntimeException;
 use SensitiveParameter;
 use function http_build_query;
+use function is_iterable;
 use function random_bytes;
 use function rawurlencode;
 use function sprintf;
@@ -37,11 +38,16 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 	/**
 	 * AuthenticatorInterface constructor
 	 */
-	public function __construct(SettingsContainerInterface|AuthenticatorOptions $options = new AuthenticatorOptions){
+	public function __construct(SettingsContainerInterface|AuthenticatorOptions|iterable $options = new AuthenticatorOptions){
 		$this->setOptions($options);
 	}
 
-	public function setOptions(SettingsContainerInterface $options):static{
+	public function setOptions(SettingsContainerInterface|AuthenticatorOptions|iterable $options):static{
+
+		if(is_iterable($options)){
+			$options = new AuthenticatorOptions($options);
+		}
+
 		$this->options = $options;
 
 		return $this;
