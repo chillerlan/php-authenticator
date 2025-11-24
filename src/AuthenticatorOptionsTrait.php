@@ -97,7 +97,7 @@ trait AuthenticatorOptionsTrait{
 	 *
 	 * @link https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters
 	 */
-	protected bool $omitUriSettings = false;
+	protected bool $omitUriSettings = true;
 
 	/**
 	 * Sets the code length to either 6 or 8

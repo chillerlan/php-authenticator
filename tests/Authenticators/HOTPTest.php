@@ -64,9 +64,12 @@ class HOTPTest extends AuthenticatorInterfaceTestAbstract{
 
 	public static function uriSettingsProvider():array{
 		return [
-			'default' => [[], '&counter=42&digits=6&algorithm=SHA1'],
-			'digits'  => [['digits' => 8], '&counter=42&digits=8&algorithm=SHA1'],
-			'algo'    => [['algorithm' => AuthenticatorInterface::ALGO_SHA512], '&counter=42&digits=6&algorithm=SHA512'],
+			'default' => [['omitUriSettings' => false], '&counter=42&digits=6&algorithm=SHA1'],
+			'digits'  => [['omitUriSettings' => false, 'digits' => 8], '&counter=42&digits=8&algorithm=SHA1'],
+			'algo'    => [
+				['omitUriSettings' => false, 'algorithm' => AuthenticatorInterface::ALGO_SHA512],
+				'&counter=42&digits=6&algorithm=SHA512',
+			],
 			'omit'    => [['omitUriSettings' => true], '&counter=42'],
 		];
 	}

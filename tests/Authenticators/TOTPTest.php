@@ -120,10 +120,13 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 
 	public static function uriSettingsProvider():array{
 		return [
-			'default' => [[], '&digits=6&algorithm=SHA1&period=30'],
-			'digits'  => [['digits' => 8], '&digits=8&algorithm=SHA1&period=30'],
-			'period'  => [['period' => 45], '&digits=6&algorithm=SHA1&period=45'],
-			'algo'    => [['algorithm' => AuthenticatorInterface::ALGO_SHA512], '&digits=6&algorithm=SHA512&period=30'],
+			'default' => [['omitUriSettings' => false], '&digits=6&algorithm=SHA1&period=30'],
+			'digits'  => [['omitUriSettings' => false, 'digits' => 8], '&digits=8&algorithm=SHA1&period=30'],
+			'period'  => [['omitUriSettings' => false, 'period' => 45], '&digits=6&algorithm=SHA1&period=45'],
+			'algo'    => [
+				['omitUriSettings' => false, 'algorithm' => AuthenticatorInterface::ALGO_SHA512],
+				'&digits=6&algorithm=SHA512&period=30',
+			],
 			'omit'    => [['omitUriSettings' => true], ''],
 		];
 	}
