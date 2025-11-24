@@ -27,6 +27,7 @@ use const STR_PAD_LEFT;
  */
 class HOTP extends AuthenticatorAbstract{
 
+	/** @phan-suppress-next-line PhanAccessOverridesFinalConstant */
 	public const MODE = self::HOTP;
 
 	public function getCounter(?int $data = null):int{
