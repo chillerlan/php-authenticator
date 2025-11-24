@@ -39,7 +39,7 @@
 		"ext-curl": "*",
 		"ext-json": "*",
 		"ext-sodium": "*",
-		"phan/phan": "^5.5.2",
+		"phan/phan": "6.0.0-beta",
 		"phpmd/phpmd": "^2.15",
 		"phpstan/phpstan": "^2.1.31",
 		"phpstan/phpstan-deprecation-rules": "^2.0.3",
