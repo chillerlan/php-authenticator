@@ -1,26 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			rawMessage: '''
-				Call to deprecated method getUri() of class chillerlan\Authenticator\Authenticator:
-				5.3.0 The parameter `$omitSettings` will be removed in favor of `AuthenticatorOptions::$omitUriSettings`
-				                  in the next major version (6.x)
-			'''
-			identifier: method.deprecated
-			count: 2
-			path: examples/hotp.php
-
-		-
-			rawMessage: '''
-				Call to deprecated method getUri() of class chillerlan\Authenticator\Authenticator:
-				5.3.0 The parameter `$omitSettings` will be removed in favor of `AuthenticatorOptions::$omitUriSettings`
-				                  in the next major version (6.x)
-			'''
-			identifier: method.deprecated
-			count: 2
-			path: examples/totp.php
-
-		-
 			rawMessage: 'Method chillerlan\Authenticator\Authenticator::__construct() has parameter $options with no value type specified in iterable type iterable.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -79,16 +59,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/Authenticators/TOTP.php
-
-		-
-			rawMessage: '''
-				Call to deprecated method getUri() of class chillerlan\Authenticator\Authenticator:
-				5.3.0 The parameter `$omitSettings` will be removed in favor of `AuthenticatorOptions::$omitUriSettings`
-				                  in the next major version (6.x)
-			'''
-			identifier: method.deprecated
-			count: 1
-			path: tests/AuthenticatorTest.php
 
 		-
 			rawMessage: 'Method chillerlan\AuthenticatorTest\Authenticators\AuthenticatorInterfaceTestAbstract::uriSettingsProvider() return type has no value type specified in iterable type array.'
