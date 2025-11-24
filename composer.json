@@ -39,8 +39,9 @@
 		"ext-curl": "*",
 		"ext-json": "*",
 		"ext-sodium": "*",
+		"phan/phan": "6.0.0-beta",
 		"phpmd/phpmd": "^2.15",
-		"phpstan/phpstan": "^2.1.27",
+		"phpstan/phpstan": "^2.1.32",
 		"phpstan/phpstan-deprecation-rules": "^2.0.3",
 		"phpunit/phpunit": "^11.2",
 		"slevomat/coding-standard": "^8.23",
@@ -60,6 +61,7 @@
 		}
 	},
 	"scripts": {
+		"phan": "@php vendor/bin/phan",
 		"phpcs": "@php vendor/bin/phpcs",
 		"phpunit": "@php vendor/bin/phpunit",
 		"phpstan": "@php vendor/bin/phpstan",
