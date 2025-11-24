@@ -53,4 +53,4 @@ var_dump($auth->verify($code, (time() + 2 * $options->period))); // -> true
 var_dump($auth->getUri('test', 'example.com'));
 // omit additional settings
 // -> otpauth://totp/test?secret=FPBN5IDIAYIBUVRCNIKHCVJKAXL5SK4G&issuer=example.com
-var_dump($auth->getUri('test', 'example.com', null, true));
+var_dump($auth->getUri('test', 'example.com'));

@@ -45,4 +45,4 @@ var_dump($auth->verify($code, 42)); // -> true
 var_dump($auth->getUri('test', 'example.com', 42));
 // omit additional settings
 // -> otpauth://hotp/test?secret=XVSWWIXN4NMA3XNNDJ6XTFSLM3DILOTZ&issuer=example.com
-var_dump($auth->getUri('test', 'example.com', 42, true));
+var_dump($auth->getUri('test', 'example.com', 42));
