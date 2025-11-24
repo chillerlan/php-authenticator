@@ -43,6 +43,7 @@ class AuthenticatorTest extends TestCase{
 		$label  = rawurlencode(self::label);
 		$issuer = rawurlencode(self::issuer);
 
+		$this->options->omitUriSettings = false;
 		$this::assertSame(
 			sprintf('otpauth://totp/%s?secret=%s&issuer=%s&digits=6&algorithm=SHA1&period=30', $label, self::secret, $issuer),
 			$this->authenticator->getUri(self::label, self::issuer),
