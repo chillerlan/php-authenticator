@@ -31,7 +31,7 @@
 	"minimum-stability": "stable",
 	"prefer-stable": true,
 	"require": {
-		"php": "^8.2",
+		"php": "^8.4",
 		"chillerlan/php-settings-container": "^3.2.1",
 		"paragonie/constant_time_encoding": "^3.0"
 	},
