@@ -133,18 +133,9 @@ class Authenticator{
 	 *
 	 * @link https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters
 	 *
-	 * @deprecated 5.3.0 The parameter `$omitSettings` will be removed in favor of `AuthenticatorOptions::$omitUriSettings`
-	 *                   in the next major version (6.x)
-	 * @see \chillerlan\Authenticator\AuthenticatorOptionsTrait::$omitUriSettings
-	 *
 	 * @codeCoverageIgnore
 	 */
-	public function getUri(string $label, string $issuer, int|null $hotpCounter = null, bool|null $omitSettings = null):string{
-		// a little reckless but good enough until the deprecated parameter is removed
-		if($omitSettings !== null){
-			$this->options->omitUriSettings = $omitSettings;
-		}
-
+	public function getUri(string $label, string $issuer, int|null $hotpCounter = null):string{
 		return $this->authenticator->getUri($label, $issuer, $hotpCounter);
 	}
 
