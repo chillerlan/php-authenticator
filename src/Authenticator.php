@@ -17,6 +17,9 @@ use chillerlan\Settings\SettingsContainerInterface;
 /**
  * Yet another Google authenticator implementation!
  *
+ * Note: This class has been reduced oover time to a front-end to the several authenticator classes
+ *       (`HOTP`, `TOTP`, ...), which can be invoked on their own. `Authenticator` will remain for convenience.
+ *
  * @link https://tools.ietf.org/html/rfc4226
  * @link https://tools.ietf.org/html/rfc6238
  * @link https://github.com/google/google-authenticator

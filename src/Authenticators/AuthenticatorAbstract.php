@@ -26,7 +26,7 @@ use const PHP_QUERY_RFC3986;
 
 abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 
-	protected const userAgent = 'chillerlanAuthenticator/5.0 +https://github.com/chillerlan/php-authenticator';
+	protected const userAgent = 'chillerlanAuthenticator/4.0 +https://github.com/chillerlan/php-authenticator';
 
 	/** @var \chillerlan\Settings\SettingsContainerInterface|\chillerlan\Authenticator\AuthenticatorOptions */
 	protected SettingsContainerInterface $options;
