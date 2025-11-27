@@ -147,6 +147,7 @@ abstract class AuthenticatorInterfaceTestAbstract extends TestCase{
 	public function getUri(array $options, string $expected):void{
 
 		$this->authenticatorInterface
+			/** @phan-suppress-next-line PhanTypeMismatchArgumentReal */
 			->setOptions($options)
 			->setSecret(self::secret)
 		;
