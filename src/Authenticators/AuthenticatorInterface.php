@@ -37,7 +37,7 @@ interface AuthenticatorInterface{
 	];
 
 	/**
-	 * Mode identifier. Do not call this constant from the interface. but rather from an authenticator instance.
+	 * Mode identifier. Do not call this constant from the interface, but rather from an authenticator instance.
 	 *
 	 * @var string
 	 */
