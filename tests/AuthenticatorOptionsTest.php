@@ -81,7 +81,7 @@ class AuthenticatorOptionsTest extends TestCase{
 	}
 
 	public function testSetAdjacent():void{
-		for($adjacent = 0; $adjacent <= 10; $adjacent++){
+		for($adjacent = 0; $adjacent <= 20; $adjacent++){
 			$this->options->adjacent = $adjacent;
 			$this::assertSame($adjacent, $this->options->adjacent);
 		}
