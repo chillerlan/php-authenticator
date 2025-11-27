@@ -164,7 +164,7 @@ trait AuthenticatorOptionsTrait{
 	 */
 	protected function set_adjacent(int $adjacent):void{
 		// limit to a sane amount
-		if($adjacent < 0 || $adjacent > 10){
+		if($adjacent < 0 || $adjacent > 20){
 			throw new InvalidArgumentException('Invalid number of adjacent codes: '.$adjacent);
 		}
 
