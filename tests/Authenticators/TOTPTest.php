@@ -13,12 +13,9 @@ namespace chillerlan\AuthenticatorTest\Authenticators;
 
 use chillerlan\Authenticator\AuthenticatorOptions;
 use chillerlan\Authenticator\Authenticators\{AuthenticatorInterface, TOTP};
+use PHPUnit\Framework\Attributes\{DataProvider, Test};
 use Generator;
-use PHPUnit\Framework\Attributes\DataProvider;
-use function date;
-use function dechex;
-use function is_int;
-use function sprintf;
+use function date, dechex, is_int, sprintf;
 use const PHP_INT_SIZE;
 
 class TOTPTest extends AuthenticatorInterfaceTestAbstract{
@@ -69,14 +66,15 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 				continue;
 			}
 
-			$key = sprintf('%s %s',date('Y-m-d H:i:s', $timestamp), $algorithm);
+			$key = sprintf('%s %s', date('Y-m-d H:i:s', $timestamp), $algorithm);
 
 			yield $key => [$algorithm, $timestamp, $timeslice, $code, $totp];
 		}
 	}
 
+	#[Test]
 	#[DataProvider('totpVectors')]
-	public function testIntermediateValues(string $algorithm, int $timestamp, string $timeslice, int $code, string $totp):void{
+	public function intermediateValues(string $algorithm, int $timestamp, string $timeslice, int $code, string $totp):void{
 		$this->options->digits    = 8;
 		$this->options->algorithm = $algorithm;
 		$this->options->adjacent  = 0;
@@ -95,8 +93,9 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 		$this::assertTrue($this->authenticatorInterface->verify($totp, $timestamp));
 	}
 
+	#[Test]
 	#[DataProvider('totpVectors')]
-	public function testAdjacent(string $algorithm, int $timestamp, string $timeslice, int $code, string $totp):void{
+	public function adjacent(string $algorithm, int $timestamp, string $timeslice, int $code, string $totp):void{
 		$adjacent = 10;
 		$limit    = (2 * $adjacent);
 
@@ -117,6 +116,19 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 				: $this::assertTrue($verify);
 		}
 
+	}
+
+	public static function uriSettingsProvider():array{
+		return [
+			'default' => [['omitUriSettings' => false], '&digits=6&algorithm=SHA1&period=30'],
+			'digits'  => [['omitUriSettings' => false, 'digits' => 8], '&digits=8&algorithm=SHA1&period=30'],
+			'period'  => [['omitUriSettings' => false, 'period' => 45], '&digits=6&algorithm=SHA1&period=45'],
+			'algo'    => [
+				['omitUriSettings' => false, 'algorithm' => AuthenticatorInterface::ALGO_SHA512],
+				'&digits=6&algorithm=SHA512&period=30',
+			],
+			'omit'    => [['omitUriSettings' => true], ''],
+		];
 	}
 
 }

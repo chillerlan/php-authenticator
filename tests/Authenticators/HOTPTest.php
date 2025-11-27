@@ -13,10 +13,9 @@ namespace chillerlan\AuthenticatorTest\Authenticators;
 
 use chillerlan\Authenticator\AuthenticatorOptions;
 use chillerlan\Authenticator\Authenticators\{AuthenticatorInterface, HOTP};
+use PHPUnit\Framework\Attributes\{DataProvider, Test};
 use Generator;
-use PHPUnit\Framework\Attributes\DataProvider;
-use function bin2hex;
-use function sprintf;
+use function bin2hex,  sprintf;
 
 class HOTPTest extends AuthenticatorInterfaceTestAbstract{
 
@@ -49,8 +48,9 @@ class HOTPTest extends AuthenticatorInterfaceTestAbstract{
 	/**
 	 * @link https://github.com/winauth/winauth/issues/449#issuecomment-353670105
 	 */
+	#[Test]
 	#[DataProvider('hotpVectors')]
-	public function testHOTP(int $counter, string $hmac, int $code, string $hotp):void{
+	public function HOTP(int $counter, string $hmac, int $code, string $hotp):void{
 		$this->authenticatorInterface->setSecret($this::secret);
 
 		$hmac_intermediate = $this->authenticatorInterface->getHMAC($counter);
@@ -60,6 +60,18 @@ class HOTPTest extends AuthenticatorInterfaceTestAbstract{
 		$this::assertSame($code, $code_intermediate);
 
 		$this::assertTrue($this->authenticatorInterface->verify($hotp, $counter));
+	}
+
+	public static function uriSettingsProvider():array{
+		return [
+			'default' => [['omitUriSettings' => false], '&counter=42&digits=6&algorithm=SHA1'],
+			'digits'  => [['omitUriSettings' => false, 'digits' => 8], '&counter=42&digits=8&algorithm=SHA1'],
+			'algo'    => [
+				['omitUriSettings' => false, 'algorithm' => AuthenticatorInterface::ALGO_SHA512],
+				'&counter=42&digits=6&algorithm=SHA512',
+			],
+			'omit'    => [['omitUriSettings' => true], '&counter=42'],
+		];
 	}
 
 }
