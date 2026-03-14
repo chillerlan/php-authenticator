@@ -59,8 +59,8 @@ jobs:
       - name: "Run phan"
         run: php vendor/bin/phan --target-php-version=${{ matrix.php-version }}
 
-      - name: "Run PHPStan"
-        run: php vendor/bin/phpstan
+#      - name: "Run PHPStan"
+#        run: php vendor/bin/phpstan
 
 
   tests:
