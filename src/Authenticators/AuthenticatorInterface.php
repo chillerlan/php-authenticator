@@ -16,21 +16,21 @@ use SensitiveParameter;
 
 interface AuthenticatorInterface{
 
-	public const TOTP        = 'totp';
-	public const HOTP        = 'hotp';
-	public const STEAM_GUARD = 'steam';
+	public const string TOTP        = 'totp';
+	public const string HOTP        = 'hotp';
+	public const string STEAM_GUARD = 'steam';
 
-	public const ALGO_SHA1   = 'SHA1';
-	public const ALGO_SHA256 = 'SHA256';
-	public const ALGO_SHA512 = 'SHA512';
+	public const string ALGO_SHA1   = 'SHA1';
+	public const string ALGO_SHA256 = 'SHA256';
+	public const string ALGO_SHA512 = 'SHA512';
 
-	public const MODES = [
+	public const array MODES = [
 		self::HOTP        => HOTP::class,
 		self::TOTP        => TOTP::class,
 		self::STEAM_GUARD => SteamGuard::class,
 	];
 
-	public const HASH_ALGOS = [
+	public const array HASH_ALGOS = [
 		self::ALGO_SHA1,
 		self::ALGO_SHA256,
 		self::ALGO_SHA512,
@@ -38,10 +38,8 @@ interface AuthenticatorInterface{
 
 	/**
 	 * Mode identifier. Do not call this constant from the interface, but rather from an authenticator instance.
-	 *
-	 * @var string
 	 */
-	public const MODE = '';
+	public const string MODE = '';
 
 	/**
 	 * Sets the options

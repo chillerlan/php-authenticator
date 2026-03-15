@@ -18,9 +18,9 @@ use InvalidArgumentException;
 
 class AuthenticatorTest extends TestCase{
 
-	protected const secret = 'SECRETTEST234567';
-	protected const label  = 'some test-label';
-	protected const issuer = 'chillerlan.net';
+	protected const string secret = 'SECRETTEST234567';
+	protected const string label  = 'some test-label';
+	protected const string issuer = 'chillerlan.net';
 
 	protected Authenticator        $authenticator;
 	protected AuthenticatorOptions $options;

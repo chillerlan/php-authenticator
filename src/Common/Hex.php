@@ -23,7 +23,7 @@ use function function_exists, preg_match;
  */
 class Hex implements EncoderInterface{
 
-	public const CHARSET = '1234567890ABCDEFabcdef';
+	public const string CHARSET = '1234567890ABCDEFabcdef';
 
 	/**
 	 * Encode a string to hexadecimal

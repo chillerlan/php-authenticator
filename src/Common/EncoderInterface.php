@@ -23,7 +23,7 @@ interface EncoderInterface{
 	 *
 	 * @var string
 	 */
-	public const CHARSET = '';
+	public const string CHARSET = '';
 
 	/**
 	 * Encode a string

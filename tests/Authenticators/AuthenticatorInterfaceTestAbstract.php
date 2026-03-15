@@ -24,11 +24,11 @@ abstract class AuthenticatorInterfaceTestAbstract extends TestCase{
 	protected AuthenticatorOptions   $options;
 	protected AuthenticatorInterface $authenticatorInterface;
 
-	protected const rawsecret = '12345678901234567890';
-	protected const secret    = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
+	protected const string rawsecret = '12345678901234567890';
+	protected const string secret    = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
 
-	protected const label     = 'some test-label';
-	protected const issuer    = 'chillerlan.net';
+	protected const string label     = 'some test-label';
+	protected const string issuer    = 'chillerlan.net';
 
 	abstract protected function getInstance(AuthenticatorOptions $options):AuthenticatorInterface;
 

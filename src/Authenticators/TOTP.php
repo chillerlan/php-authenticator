@@ -22,7 +22,7 @@ use function time;
  */
 class TOTP extends HOTP{
 
-	public const MODE = self::TOTP;
+	public const string MODE = self::TOTP;
 
 	public function getCounter(int|null $data = null):int{
 		$data ??= time();

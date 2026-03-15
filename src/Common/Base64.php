@@ -27,7 +27,7 @@ class Base64 implements EncoderInterface{
 	 * @see https://datatracker.ietf.org/doc/html/rfc3548#section-3
 	 * @see https://datatracker.ietf.org/doc/html/rfc4648#section-4
 	 */
-	public const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+	public const string CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
 	/**
 	 * Encode a string to Base64

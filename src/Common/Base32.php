@@ -27,7 +27,7 @@ final class Base32 implements EncoderInterface{
 	 * @see https://datatracker.ietf.org/doc/html/rfc3548#section-5
 	 * @see https://datatracker.ietf.org/doc/html/rfc4648#section-6
 	 */
-	public const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+	public const string CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 
 	/**
 	 * Encode a string to Base32

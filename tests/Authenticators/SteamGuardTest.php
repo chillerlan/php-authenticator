@@ -24,14 +24,14 @@ use const PHP_INT_SIZE;
  */
 class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
 
-	protected const secret  = 'MTIzNDU2Nzg5MDEyMzQ1Njc4OTA=';
+	protected const string secret  = 'MTIzNDU2Nzg5MDEyMzQ1Njc4OTA=';
 
 	/**
 	 * Timestamps and -slices from the RFC6238 page, codes from a verified implementation
 	 *
 	 * @see https://tools.ietf.org/html/rfc6238#page-14
 	 */
-	protected const SteamGuardVectors = [
+	protected const array SteamGuardVectors = [
 		[         59,        '1', 'PV9M4'],
 		[ 1111111109,  '23523ec', 'PY4YB'],
 		[ 1111111111,  '23523ed', '5PP3V'],

@@ -28,7 +28,7 @@ use const STR_PAD_LEFT;
  */
 class HOTP extends AuthenticatorAbstract{
 
-	public const MODE = self::HOTP;
+	public const string MODE = self::HOTP;
 
 	public function getCounter(int|null $data = null):int{
 		return ($data ?? 0);

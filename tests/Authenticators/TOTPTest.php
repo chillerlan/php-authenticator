@@ -23,7 +23,7 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 	/**
 	 * @see https://tools.ietf.org/html/rfc6238#page-14
 	 */
-	protected const rfc6238Vectors = [
+	protected const array rfc6238Vectors = [
 		['sha1'  ,          59,        '1', 1094287082, '94287082'],
 		['sha256',          59,        '1',  746119246, '46119246'],
 		['sha512',          59,        '1',  490693936, '90693936'],
@@ -49,7 +49,7 @@ class TOTPTest extends AuthenticatorInterfaceTestAbstract{
 		['sha512', 20000000000, '27bc86aa', 1047863826, '47863826'],
 	];
 
-	protected const secrets = [
+	protected const array secrets = [
 		'sha1'   => self::secret,
 		'sha256' => 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA',
 		'sha512' => 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNA',
