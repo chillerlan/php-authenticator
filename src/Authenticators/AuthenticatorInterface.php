@@ -55,11 +55,25 @@ interface AuthenticatorInterface{
 	public function setSecret(string $encodedSecret):AuthenticatorInterface;
 
 	/**
+	 * Sets a secret phrase from a a raw binary representation
+	 *
+	 * @throws \RuntimeException
+	 */
+	public function setRawSecret(string $rawSecret):AuthenticatorInterface;
+
+	/**
 	 * Returns an encoded representation of the current secret phrase
 	 *
 	 * @throws \RuntimeException
 	 */
 	public function getSecret():string;
+
+	/**
+	 * Returns the raw representation of the current secret phrase
+	 *
+	 * @throws \RuntimeException
+	 */
+	public function getRawSecret():string;
 
 	/**
 	 * Generates a new (secure random) secret phrase

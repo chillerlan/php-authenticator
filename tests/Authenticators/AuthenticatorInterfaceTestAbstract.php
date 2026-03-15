@@ -43,11 +43,27 @@ abstract class AuthenticatorInterfaceTestAbstract extends TestCase{
 		$this::assertSame($this::rawsecret, Base32::decode($secret));
 	}
 
+	public function testSetGetRawSecret():void{
+		$this->authenticatorInterface->setRawSecret($this::rawsecret);
+
+		$secret = $this->authenticatorInterface->getRawSecret();
+
+		$this::assertSame($this::secret, Base32::encode($secret));
+		$this::assertSame($this::rawsecret, $secret);
+	}
+
 	public function testSetEmptySecretException():void{
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('The given secret string is empty');
 
 		$this->authenticatorInterface->setSecret('');
+	}
+
+	public function testSetEmptyRawSecretException():void{
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessage('The given secret string is empty');
+
+		$this->authenticatorInterface->setRawSecret('');
 	}
 
 	public function testSetInvalidSecretException():void{
@@ -61,6 +77,13 @@ abstract class AuthenticatorInterfaceTestAbstract extends TestCase{
 		$this->expectExceptionMessage('No secret set');
 
 		$this->authenticatorInterface->getSecret();
+	}
+
+	public function testGetRawSecretException():void{
+		$this->expectException(RuntimeException::class);
+		$this->expectExceptionMessage('No secret set');
+
+		$this->authenticatorInterface->getRawSecret();
 	}
 
 	public function testCreateSecretDefaultLength():void{

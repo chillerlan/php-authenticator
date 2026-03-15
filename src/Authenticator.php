@@ -66,7 +66,7 @@ class Authenticator{
 	}
 
 	/**
-	 * Sets a secret phrase from a Base32 representation
+	 * Sets a secret phrase from an encoded representation
 	 *
 	 * @codeCoverageIgnore
 	 */
@@ -77,12 +77,32 @@ class Authenticator{
 	}
 
 	/**
-	 * Returns a Base32 representation of the current secret phrase
+	 * Sets a secret phrase from a a raw binary representation
+	 *
+	 * @codeCoverageIgnore
+	 */
+	public function setRawSecret(string $rawSecret):self{
+		$this->authenticator->setRawSecret($rawSecret);
+
+		return $this;
+	}
+
+	/**
+	 * Returns an encoded representation of the current secret phrase
 	 *
 	 * @codeCoverageIgnore
 	 */
 	public function getSecret():string{
 		return $this->authenticator->getSecret();
+	}
+
+	/**
+	 * Returns the raw representation of the current secret phrase
+	 *
+	 * @codeCoverageIgnore
+	 */
+	public function getRawSecret():string{
+		return $this->authenticator->getRawSecret();
 	}
 
 	/**

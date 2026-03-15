@@ -28,8 +28,12 @@ class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
 
 	protected const secret  = 'MTIzNDU2Nzg5MDEyMzQ1Njc4OTA=';
 
+	/**
+	 * Timestamps and -slices from the RFC6238 page, codes from a verified implementation
+	 *
+	 * @see https://tools.ietf.org/html/rfc6238#page-14
+	 */
 	protected const SteamGuardVectors = [
-		// timestamps and time slices from RFC 6238, see https://tools.ietf.org/html/rfc6238#page-14
 		[         59,        '1', 'PV9M4'],
 		[ 1111111109,  '23523ec', 'PY4YB'],
 		[ 1111111111,  '23523ed', '5PP3V'],
@@ -50,6 +54,15 @@ class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
 
 		$this::assertSame($this::secret, $secret);
 		$this::assertSame($this::rawsecret, Base64::decode($secret));
+	}
+
+	public function testSetGetRawSecret():void{
+		$this->authenticatorInterface->setRawSecret($this::rawsecret);
+
+		$secret = $this->authenticatorInterface->getRawSecret();
+
+		$this::assertSame($this::secret, Base64::encode($secret));
+		$this::assertSame($this::rawsecret, $secret);
 	}
 
 	public function testCreateSecretDefaultLength():void{
@@ -75,11 +88,6 @@ class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
 		$this::assertMatchesRegularExpression('#^['.Base64::CHARSET.']+$#', $secret);
 	}
 
-	/**
-	 * Timestamps and -slices from the RFC6238 page, codes from a verified implementation
-	 *
-	 * @see https://tools.ietf.org/html/rfc6238#page-14
-	 */
 	public static function steamGuardVectors():Generator{
 		foreach(self::SteamGuardVectors as [$timestamp, $timeslice, $totp]){
 			// skip 64bit numbers on 32bit PHP
