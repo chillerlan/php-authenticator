@@ -59,6 +59,17 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 		return $this;
 	}
 
+	public function setRawSecret(#[SensitiveParameter] string $rawSecret):static{
+
+		if($rawSecret === ''){
+			throw new InvalidArgumentException('The given secret string is empty');
+		}
+
+		$this->secret = $rawSecret;
+
+		return $this;
+	}
+
 	public function getSecret():string{
 
 		if($this->secret === null){
@@ -67,6 +78,16 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 
 		return Base32::encode($this->secret);
 	}
+
+	public function getRawSecret():string{
+
+		if($this->secret === null){
+			throw new RuntimeException('No secret set');
+		}
+
+		return $this->secret;
+	}
+
 
 	public function createSecret(int|null $length = null):string{
 		$length ??= $this->options->secret_length;

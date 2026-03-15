@@ -56,11 +56,25 @@ interface AuthenticatorInterface{
 	public function setSecret(#[SensitiveParameter] string $encodedSecret):static;
 
 	/**
+	 * Sets a secret phrase from a a raw binary representation
+	 *
+	 * @throws \RuntimeException
+	 */
+	public function setRawSecret(#[SensitiveParameter] string $rawSecret):static;
+
+	/**
 	 * Returns an encoded representation of the current secret phrase
 	 *
 	 * @throws \RuntimeException
 	 */
 	public function getSecret():string;
+
+	/**
+	 * Returns the raw representation of the current secret phrase
+	 *
+	 * @throws \RuntimeException
+	 */
+	public function getRawSecret():string;
 
 	/**
 	 * Generates a new (secure random) secret phrase
