@@ -17,13 +17,13 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 [downloads-badge]: https://img.shields.io/packagist/dt/chillerlan/php-authenticator.svg?logo=packagist&logoColor=fff
 [downloads]: https://packagist.org/packages/chillerlan/php-authenticator/stats
 [license-badge]: https://img.shields.io/github/license/chillerlan/php-authenticator.svg
-[license]: https://github.com/chillerlan/php-authenticator/blob/main/LICENSE
-[gh-action-badge]: https://img.shields.io/github/actions/workflow/status/chillerlan/php-authenticator/ci.yml?branch=main&logo=github&logoColor=fff
-[gh-action]: https://github.com/chillerlan/php-authenticator/actions?query=branch%3Amain
-[coverage-badge]: https://img.shields.io/codecov/c/gh/chillerlan/php-authenticator/main?logo=codecov&logoColor=fff
-[coverage]: https://app.codecov.io/github/chillerlan/php-authenticator/tree/main
-[codacy-badge]: https://img.shields.io/codacy/grade/a2793225b448495c9659f27f7f52380a/main?logo=codacy&logoColor=fff
-[codacy]: https://www.codacy.com/gh/chillerlan/php-authenticator/dashboard?branch=main
+[license]: https://github.com/chillerlan/php-authenticator/blob/v6.x/LICENSE
+[gh-action-badge]: https://img.shields.io/github/actions/workflow/status/chillerlan/php-authenticator/ci.yml?branch=v6.x&logo=github&logoColor=fff
+[gh-action]: https://github.com/chillerlan/php-authenticator/actions?query=branch%3Av6.x
+[coverage-badge]: https://img.shields.io/codecov/c/gh/chillerlan/php-authenticator/v6.x?logo=codecov&logoColor=fff
+[coverage]: https://app.codecov.io/github/chillerlan/php-authenticator/tree/v6.x
+[codacy-badge]: https://img.shields.io/codacy/grade/a2793225b448495c9659f27f7f52380a/v6.x?logo=codacy&logoColor=fff
+[codacy]: https://www.codacy.com/gh/chillerlan/php-authenticator/dashboard?branch=v6.x
 
 # Documentation
 ## Requirements
@@ -42,11 +42,11 @@ via terminal: `composer require chillerlan/php-authenticator`
 {
 	"require": {
 		"php": "^8.4",
-		"chillerlan/php-authenticator": "dev-main"
+		"chillerlan/php-authenticator": "dev-v6.x"
 	}
 }
 ```
-Note: replace `dev-main` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^5.0` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions
+Note: replace `dev-v6.x` with a [version constraint](https://getcomposer.org/doc/articles/versions.md#writing-version-constraints), e.g. `^5.0` - see [releases](https://github.com/chillerlan/php-authenticator/releases) for valid versions
 
 Profit!
 
@@ -185,6 +185,6 @@ $options->algorithm = AuthenticatorInterface::ALGO_SHA512;
 
 <p align="center">
   <a href="https://twofactorauth.org">
-    <img alt="2FA ALL THE THINGS!" src="https://raw.githubusercontent.com/chillerlan/php-authenticator/main/.github/images/2fa-all-the-things.jpg">
+    <img alt="2FA ALL THE THINGS!" src="https://raw.githubusercontent.com/chillerlan/php-authenticator/v6.x/.github/images/2fa-all-the-things.jpg">
   </a>
 </p>

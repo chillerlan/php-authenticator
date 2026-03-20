@@ -4,10 +4,10 @@
 on:
   push:
     branches:
-      - main
+      - v6.x
   pull_request:
     branches:
-      - main
+      - v6.x
 
 name: "Continuous Integration"
 
