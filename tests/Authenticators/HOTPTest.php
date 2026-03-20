@@ -22,7 +22,7 @@ class HOTPTest extends AuthenticatorInterfaceTestAbstract{
 	/**
 	 * @see https://tools.ietf.org/html/rfc4226#page-32
 	 */
-	protected const array rfc4226Vectors = [
+	final protected const array rfc4226Vectors = [
 		[0, 'cc93cf18508d94934c64b65d8ba7667fb7cde4b0', 1284755224, '755224'],
 		[1, '75a48a19d4cbe100644e8ac1397eea747a2d33ab', 1094287082, '287082'],
 		[2, '0bacb7fa082fef30782211938bc1c5e70416ff44',  137359152, '359152'],

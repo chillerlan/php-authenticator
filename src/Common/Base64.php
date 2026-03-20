@@ -19,7 +19,7 @@ use function function_exists, preg_match;
 /**
  * Class to provide base64 encoding/decoding of strings using constant time functions
  */
-class Base64 implements EncoderInterface{
+final class Base64 implements EncoderInterface{
 
 	/**
 	 * The Base64 character set as defined by RFC3548

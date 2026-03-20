@@ -27,7 +27,7 @@ A generator for counter based ([RFC 4226](https://tools.ietf.org/html/rfc4226)) 
 
 # Documentation
 ## Requirements
-- PHP 8.2+
+- PHP 8.4+
   - [`ext-curl`](https://www.php.net/manual/book.curl) for Steam Guard server time synchronization
   - [`ext-sodium`](https://www.php.net/manual/book.sodium) for constant time implementations of base64 encode/decode and hex2bin/bin2hex
     ([`paragonie/constant_time_encoding`](https://github.com/paragonie/constant_time_encoding) is used as fallback)
@@ -41,7 +41,7 @@ via terminal: `composer require chillerlan/php-authenticator`
 ```json
 {
 	"require": {
-		"php": "^8.2",
+		"php": "^8.4",
 		"chillerlan/php-authenticator": "dev-main"
 	}
 }

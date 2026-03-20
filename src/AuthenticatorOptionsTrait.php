@@ -6,6 +6,9 @@
  * @author       smiley <smiley@chillerlan.net>
  * @copyright    2019 smiley
  * @license      MIT
+ *
+ * @see https://github.com/phan/phan/issues/5491
+ * @phan-file-suppress PhanUnreferencedUseNormal, PhanUnreferencedUseFunction, PhanPropertyHookWithDefaultValue
  */
 declare(strict_types=1);
 
@@ -17,36 +20,51 @@ use function in_array;
 use function strtolower;
 use function strtoupper;
 
-/**
- * @property int    $digits
- * @property int    $period
- * @property int    $secret_length
- * @property string $algorithm
- * @property string $mode
- * @property int    $adjacent
- * @property int    $time_offset
- * @property bool   $useLocalTime
- * @property bool   $forceTimeRefresh
- * @property bool   $omitUriSettings
- */
 trait AuthenticatorOptionsTrait{
 
 	/**
 	 * Code length: either 6 or 8
 	 */
-	protected int $digits = 6;
+	public int $digits = 6 {
+		set{
+
+			if(!in_array($value, [6, 8], true)){
+				throw new InvalidArgumentException('Invalid code length: '.$value);
+			}
+
+			$this->digits = $value;
+		}
+	}
 
 	/**
 	 * Validation period (seconds): 15 - 60
 	 */
-	protected int $period = 30;
+	public int $period = 30 {
+		set{
+
+			if($value < 15 || $value > 60){
+				throw new InvalidArgumentException('Invalid period: '.$value);
+			}
+
+			$this->period = $value;
+		}
+	}
 
 	/**
 	 * Length of the secret phrase (bytes, unencoded binary)
 	 *
 	 * @see \random_bytes()
 	 */
-	protected int $secret_length = 20;
+	public int $secret_length = 20 {
+		set{
+
+			if($value < 16 || $value > 1024){
+				throw new InvalidArgumentException('Invalid secret length: '.$value);
+			}
+
+			$this->secret_length = $value;
+		}
+	}
 
 	/**
 	 * Hash algorithm:
@@ -55,7 +73,17 @@ trait AuthenticatorOptionsTrait{
 	 *   - `AuthenticatorInterface::ALGO_SHA256`
 	 *   - `AuthenticatorInterface::ALGO_SHA512`
 	 */
-	protected string $algorithm = AuthenticatorInterface::ALGO_SHA1;
+	public string $algorithm = AuthenticatorInterface::ALGO_SHA1 {
+		set{
+			$value = strtoupper($value);
+
+			if(!in_array($value, AuthenticatorInterface::HASH_ALGOS, true)){
+				throw new InvalidArgumentException('Invalid algorithm: '.$value);
+			}
+
+			$this->algorithm = $value;
+		}
+	}
 
 	/**
 	 * Authenticator mode:
@@ -64,19 +92,38 @@ trait AuthenticatorOptionsTrait{
 	 *   - `AuthenticatorInterface::TOTP`  = time based
 	 *   - `AuthenticatorInterface::STEAM` = time based (Steam Guard)
 	 */
-	protected string $mode = AuthenticatorInterface::TOTP;
+	public string $mode = AuthenticatorInterface::TOTP {
+		set{
+			$value = strtolower($value);
+
+			if(!isset(AuthenticatorInterface::MODES[$value])){
+				throw new InvalidArgumentException('Invalid mode: '.$value);
+			}
+
+			$this->mode = $value;
+		}
+	}
 
 	/**
 	 * Number of allowed adjacent codes
 	 */
-	protected int $adjacent = 1;
+	public int $adjacent = 1 {
+		set{
+			// limit to a sane amount
+			if($value < 0 || $value > 20){
+				throw new InvalidArgumentException('Invalid number of adjacent codes: '.$value);
+			}
+
+			$this->adjacent = $value;
+		}
+	}
 
 	/**
 	 * A fixed time offset that will be added to the current time value
 	 *
 	 * @see \chillerlan\Authenticator\Authenticators\AuthenticatorInterface::getCounter()
 	 */
-	protected int $time_offset = 0;
+	public int $time_offset = 0;
 
 	/**
 	 * Whether to use local time or request server time from the API
@@ -85,102 +132,18 @@ trait AuthenticatorOptionsTrait{
 	 *
 	 * note: API requests needs ext-curl installed
 	 */
-	protected bool $useLocalTime = true;
+	public bool $useLocalTime = true;
 
 	/**
 	 * Whether to force refreshing server time on each call or use the time returned from the last request
 	 */
-	protected bool $forceTimeRefresh = false;
+	public bool $forceTimeRefresh = false;
 
 	/**
 	 * Whether to omit the additional settings in the URI for an authenticator app (algo, digits, period)
 	 *
 	 * @link https://github.com/google/google-authenticator/wiki/Key-Uri-Format#parameters
 	 */
-	protected bool $omitUriSettings = true;
-
-	/**
-	 * Sets the code length to either 6 or 8
-	 *
-	 * @throws \InvalidArgumentException
-	 */
-	protected function set_digits(int $digits):void{
-
-		if(!in_array($digits, [6, 8], true)){
-			throw new InvalidArgumentException('Invalid code length: '.$digits);
-		}
-
-		$this->digits = $digits;
-	}
-
-	/**
-	 * Sets the period to a value between 15 and 60 seconds
-	 *
-	 * @throws \InvalidArgumentException
-	 */
-	protected function set_period(int $period):void{
-
-		if($period < 15 || $period > 60){
-			throw new InvalidArgumentException('Invalid period: '.$period);
-		}
-
-		$this->period = $period;
-	}
-
-	/**
-	 * Sets the hash algorithm
-	 *
-	 * @throws \InvalidArgumentException
-	 */
-	protected function set_algorithm(string $algorithm):void{
-		$algorithm = strtoupper($algorithm);
-
-		if(!in_array($algorithm, AuthenticatorInterface::HASH_ALGOS, true)){
-			throw new InvalidArgumentException('Invalid algorithm: '.$algorithm);
-		}
-
-		$this->algorithm = $algorithm;
-	}
-
-	/**
-	 * Sets the authenticator mode
-	 *
-	 * @throws \InvalidArgumentException
-	 */
-	protected function set_mode(string $mode):void{
-		$mode = strtolower($mode);
-
-		if(!isset(AuthenticatorInterface::MODES[$mode])){
-			throw new InvalidArgumentException('Invalid mode: '.$mode);
-		}
-
-		$this->mode = $mode;
-	}
-
-	/**
-	 * Sets the adjacent amount
-	 *
-	 * @throws \InvalidArgumentException
-	 */
-	protected function set_adjacent(int $adjacent):void{
-		// limit to a sane amount
-		if($adjacent < 0 || $adjacent > 20){
-			throw new InvalidArgumentException('Invalid number of adjacent codes: '.$adjacent);
-		}
-
-		$this->adjacent = $adjacent;
-	}
-
-	/**
-	 * @throws \InvalidArgumentException
-	 */
-	protected function set_secret_length(int $secret_length):void{
-
-		if($secret_length < 16 || $secret_length > 1024){
-			throw new InvalidArgumentException('Invalid secret length: '.$secret_length);
-		}
-
-		$this->secret_length = $secret_length;
-	}
+	public bool $omitUriSettings = true;
 
 }

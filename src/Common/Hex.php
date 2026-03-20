@@ -21,7 +21,7 @@ use function function_exists, preg_match;
  *
  * (class is currently unused)
  */
-class Hex implements EncoderInterface{
+final class Hex implements EncoderInterface{
 
 	public const string CHARSET = '1234567890ABCDEFabcdef';
 

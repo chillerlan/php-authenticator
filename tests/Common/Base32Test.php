@@ -15,7 +15,7 @@ use chillerlan\Authenticator\Common\{Base32, EncoderInterface};
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 
-class Base32Test extends EncoderInterfaceTestAbstract{
+final class Base32Test extends EncoderInterfaceTestAbstract{
 
 	protected function getEncoder():EncoderInterface{
 		return new Base32;

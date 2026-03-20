@@ -28,7 +28,7 @@ use const PHP_QUERY_RFC3986;
 
 abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 
-	protected const string userAgent = 'chillerlanAuthenticator/5.0 +https://github.com/chillerlan/php-authenticator';
+	protected const string userAgent = 'chillerlanAuthenticator/6.0 +https://github.com/chillerlan/php-authenticator';
 
 	protected SettingsContainerInterface|AuthenticatorOptions $options;
 	protected string|null                                     $secret          = null;
@@ -87,7 +87,6 @@ abstract class AuthenticatorAbstract implements AuthenticatorInterface{
 
 		return $this->secret;
 	}
-
 
 	public function createSecret(int|null $length = null):string{
 		$length ??= $this->options->secret_length;

@@ -22,7 +22,7 @@ use const PHP_INT_SIZE;
 /**
  * @property \chillerlan\Authenticator\Authenticators\SteamGuard $authenticatorInterface
  */
-class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
+final class SteamGuardTest extends AuthenticatorInterfaceTestAbstract{
 
 	protected const string secret  = 'MTIzNDU2Nzg5MDEyMzQ1Njc4OTA=';
 

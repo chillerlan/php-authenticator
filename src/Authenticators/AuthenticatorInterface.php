@@ -16,13 +16,13 @@ use SensitiveParameter;
 
 interface AuthenticatorInterface{
 
-	public const string TOTP        = 'totp';
-	public const string HOTP        = 'hotp';
-	public const string STEAM_GUARD = 'steam';
+	final public const string TOTP        = 'totp';
+	final public const string HOTP        = 'hotp';
+	final public const string STEAM_GUARD = 'steam';
 
-	public const string ALGO_SHA1   = 'SHA1';
-	public const string ALGO_SHA256 = 'SHA256';
-	public const string ALGO_SHA512 = 'SHA512';
+	final public const string ALGO_SHA1   = 'SHA1';
+	final public const string ALGO_SHA256 = 'SHA256';
+	final public const string ALGO_SHA512 = 'SHA512';
 
 	public const array MODES = [
 		self::HOTP        => HOTP::class,

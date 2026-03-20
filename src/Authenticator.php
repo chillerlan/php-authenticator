@@ -19,7 +19,7 @@ use function is_iterable;
 /**
  * Yet another Google authenticator implementation!
  *
- * Note: This class has been reduced oover time to a front-end to the several authenticator classes
+ * Note: This class has been reduced over time to a front-end to the several authenticator classes
  *       (`HOTP`, `TOTP`, ...), which can be invoked on their own. `Authenticator` will remain for convenience.
  *
  * @link https://tools.ietf.org/html/rfc4226

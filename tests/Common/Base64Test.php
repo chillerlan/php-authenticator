@@ -15,7 +15,7 @@ use chillerlan\Authenticator\Common\{Base64, EncoderInterface};
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 
-class Base64Test extends EncoderInterfaceTestAbstract{
+final class Base64Test extends EncoderInterfaceTestAbstract{
 
 	protected function getEncoder():EncoderInterface{
 		return new Base64;

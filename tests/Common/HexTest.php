@@ -15,7 +15,7 @@ use chillerlan\Authenticator\Common\{EncoderInterface, Hex};
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 
-class HexTest extends EncoderInterfaceTestAbstract{
+final class HexTest extends EncoderInterfaceTestAbstract{
 
 	protected function getEncoder():EncoderInterface{
 		return new Hex;
