@@ -35,7 +35,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: "Install PHP"
         uses: shivammathur/setup-php@v2
@@ -49,7 +49,7 @@ jobs:
         run: composer validate --ansi --strict
 
       - name: "Install dependencies with composer"
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: "Run PHP_CodeSniffer"
         run: php vendor/bin/phpcs -v
@@ -78,7 +78,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: "Install PHP with extensions"
         uses: shivammathur/setup-php@v2
@@ -89,13 +89,13 @@ jobs:
           coverage: pcov
 
       - name: "Install dependencies with composer"
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: "Run tests with phpunit"
         run: php vendor/bin/phpunit --colors=always --configuration=phpunit.xml.dist
 
       - name: "Send code coverage report to Codecov.io"
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: .build/coverage/clover.xml
